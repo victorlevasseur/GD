@@ -13,6 +13,7 @@
 #include <vector>
 #include "catch.hpp"
 #include "GDCore/String.h"
+#include "GDCore/GraphemeStringAdapter.h"
 #include <SFML/System/String.hpp>
 
 TEST_CASE( "Utf8 String", "[common][utf8]") {
@@ -254,5 +255,97 @@ TEST_CASE( "Utf8 String", "[common][utf8]") {
 		REQUIRE( str2.FindCaseInsensitive(u8"SS") == 7 );
 		REQUIRE( str2.FindCaseInsensitive(u8"SS", 7) == 7 );
 		REQUIRE( str2.FindCaseInsensitive(u8"SS", 8) == 19 );
+	}
+}
+
+TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
+	SECTION("Iterators") {
+		gd::String str1 = u8"A simple string";
+		gd::String str2 = u8"Les graph\x65\xCC\x80mes ont march\x65\xCC\x81 !"; //Use the decomposed graphemes "è" and "é"
+		//                            |___|______|            |___|______|
+		//                              e + grave accent        e + acute accent
+
+		REQUIRE( str1.size() == 15 );
+		REQUIRE( str2.size() == 28 ); //There are 28 characters but e + grave accent and e + acute accent count as 2 characters each
+
+		//Let's try with GraphemeStringAdapter
+		gd::GraphemeStringAdapter str2gr(str2);
+
+		REQUIRE( std::distance( str2gr.begin(), str2gr.end() ) == 26 ); //Now, the GraphemeStringAdapter is able to distinguish combining characters like accents
+
+		{
+			auto it = str2gr.begin();
+			std::advance(it, 9);
+			REQUIRE( std::distance( str2.begin(), it.base() ) == 9 );
+			++it;
+			REQUIRE( std::distance( str2.begin(), it.base() ) == 11 );
+		}
+		{
+			auto it = str2gr.begin();
+			std::advance(it, 26);
+			REQUIRE( it == str2gr.end() );
+			REQUIRE( it.base() == str2.end() );
+
+			std::advance(it, -25);
+			REQUIRE( std::distance( str2.begin(), it.base() ) == 1 );
+			--it;
+			REQUIRE( it == str2gr.begin() );
+			REQUIRE( it.base() == str2.begin() );
+		}
+		{
+			auto it = str2gr.begin();
+			REQUIRE( *it == "L" );
+			++it;
+			REQUIRE( *it == "e" );
+			++it;
+			REQUIRE( *it == "s" );
+			++it;
+			REQUIRE( *it == " " );
+			++it;
+			REQUIRE( *it == "g" );
+			++it;
+			REQUIRE( *it == "r" );
+			++it;
+			REQUIRE( *it == "a" );
+			++it;
+			REQUIRE( *it == "p" );
+			++it;
+			REQUIRE( *it == "h" );
+			++it;
+			REQUIRE( *it == "\x65\xCC\x80" );
+			++it;
+			REQUIRE( *it == "m" );
+			++it;
+			REQUIRE( *it == "e" );
+			++it;
+			REQUIRE( *it == "s" );
+			++it;
+			REQUIRE( *it == " " );
+			++it;
+			REQUIRE( *it == "o" );
+			++it;
+			REQUIRE( *it == "n" );
+			++it;
+			REQUIRE( *it == "t" );
+			++it;
+			REQUIRE( *it == " " );
+			++it;
+			REQUIRE( *it == "m" );
+			++it;
+			REQUIRE( *it == "a" );
+			++it;
+			REQUIRE( *it == "r" );
+			++it;
+			REQUIRE( *it == "c" );
+			++it;
+			REQUIRE( *it == "h" );
+			++it;
+			REQUIRE( *it == "\x65\xCC\x81" );
+			++it;
+			REQUIRE( *it == " " );
+			++it;
+			REQUIRE( *it == "!" );
+			++it;
+		}
 	}
 }

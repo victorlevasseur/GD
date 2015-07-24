@@ -7,6 +7,7 @@
 #ifndef GDCORE_GRAPHEME_STRING_ADAPTER
 #define GDCORE_GRAPHEME_STRING_ADAPTER
 
+#include <iostream>
 #include "GDCore/String.h"
 #include "GDCore/Utf8/utf8proc.h"
 
@@ -25,7 +26,7 @@ public:
     public:
         GraphemeIterator() : strIt(), beginIt(), endIt() {};
         GraphemeIterator(const GraphemeIterator<T> &other) : strIt(other.strIt), beginIt(other.beginIt), endIt(other.endIt) {}
-        GraphemeIterator<T>& operator=(const GraphemeIterator<T> &other) { strIt = other.strIt; beginIt = other.beginIt; endIt = other.endIt; }
+        GraphemeIterator<T>& operator=(const GraphemeIterator<T> &other) { strIt = other.strIt; beginIt = other.beginIt; endIt = other.endIt; return *this; }
 
         gd::String operator*()
         {
@@ -73,10 +74,8 @@ public:
                 ++it;
                 if(it == endIt)
                     break;
-
                 codepoint = *it;
             }
-
             strIt = it;
 
             return *this;

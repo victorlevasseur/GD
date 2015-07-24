@@ -346,6 +346,7 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 			++it;
 			REQUIRE( *it == "!" );
 			++it;
+			REQUIRE( it == str2gr.end() );
 		}
 	}
 }

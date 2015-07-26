@@ -18,6 +18,15 @@ class GraphemeStringAdapter
 {
 public:
 
+    typedef gd::String value_type;
+    typedef gd::String& reference;
+    typedef const gd::String& const_reference;
+    typedef gd::String* pointer;
+    typedef const gd::String* const_pointer;
+
+    typedef String::size_type size_type;
+    typedef String::difference_type difference_type;
+
     template<class T>
     class GD_CORE_API GraphemeIterator : public std::iterator<std::bidirectional_iterator_tag, String::value_type, String::difference_type>
     {
@@ -26,26 +35,27 @@ public:
     public:
         GraphemeIterator() : strIt(), beginIt(), endIt() {};
         GraphemeIterator(const GraphemeIterator<T> &other) : strIt(other.strIt), beginIt(other.beginIt), endIt(other.endIt) {}
+        template<class U> GraphemeIterator(const GraphemeIterator<U> &other) : strIt(other.strIt) {} //Convert from const_iterator to iterator
         GraphemeIterator<T>& operator=(const GraphemeIterator<T> &other) { strIt = other.strIt; beginIt = other.beginIt; endIt = other.endIt; return *this; }
 
-        gd::String operator*()
+        GraphemeStringAdapter::value_type operator*()
         {
             T it = strIt;
-
-            std::u32string grapheme;
-            grapheme.push_back(*it);
+            String::value_type previousCodepoint = *it;
 
             ++it;
-            char32_t codepoint = *it;
+            String::value_type codepoint = *it;
 
-            while( !utf8proc_grapheme_break(grapheme.back(), codepoint) )
+            while( !utf8proc_grapheme_break(previousCodepoint, codepoint) )
             {
-                grapheme.push_back(codepoint);
+                previousCodepoint = codepoint;
                 ++it;
                 codepoint = *it;
             }
 
-            return gd::String(grapheme);
+            std::string grapheme(strIt.base(), it.base());
+
+            return GraphemeStringAdapter::value_type(grapheme.c_str());
         }
 
         GraphemeIterator<T>& operator++()
@@ -56,7 +66,7 @@ public:
             {
                 return *this;
             }
-            char32_t previousCodepoint = *it;
+            String::value_type previousCodepoint = *it;
 
             ++it;
             if(it == endIt)
@@ -65,7 +75,7 @@ public:
                 strIt = it;
                 return *this;
             }
-            char32_t codepoint = *it;
+            String::value_type codepoint = *it;
 
             while( !utf8proc_grapheme_break(previousCodepoint, codepoint) )
             {
@@ -94,10 +104,10 @@ public:
                 strIt = it;
                 return *this;
             }
-            char32_t codepoint = *it;
+            String::value_type codepoint = *it;
 
             --it;
-            char32_t previousCodepoint = *it;
+            String::value_type previousCodepoint = *it;
 
             while( !utf8proc_grapheme_break(previousCodepoint, codepoint) )
             {
@@ -147,7 +157,13 @@ public:
     GraphemeStringAdapter& operator=( const GraphemeStringAdapter & ) = delete;
 
     iterator begin();
+    const_iterator begin() const;
+
     iterator end();
+    const_iterator end() const;
+
+    String::size_type size() const;
+    String::size_type length() const { return size(); }
 
 private:
     String &str;

@@ -81,6 +81,8 @@ public:
 
         T base() const {return strIt;}
 
+        String::value_type ReadCodePointAndIterate() { return ::utf8::unchecked::next(strIt); }
+
     private:
         StringIterator(T strIt) : strIt(strIt) {};
         T strIt;

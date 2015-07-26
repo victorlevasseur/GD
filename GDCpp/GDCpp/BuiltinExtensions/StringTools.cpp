@@ -6,6 +6,7 @@
 #include <string>
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/String.h"
+#include "GDCpp/GraphemeIterator.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ gd::String GD_API StrAt(const gd::String & str, size_t pos )
  */
 unsigned int GD_API StrLen(const gd::String & str)
 {
-    return str.size();
+    return std::distance(gd::grapheme::GetIterator(str, str.begin()), gd::grapheme::GetIterator(str, str.end()));
 }
 
 /**

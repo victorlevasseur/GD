@@ -13,7 +13,7 @@
 #include <vector>
 #include "catch.hpp"
 #include "GDCore/String.h"
-#include "GDCore/GraphemeStringAdapter.h"
+#include "GDCore/GraphemeIterator.h"
 #include <SFML/System/String.hpp>
 
 TEST_CASE( "Utf8 String", "[common][utf8]") {
@@ -269,31 +269,30 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 		REQUIRE( str2.size() == 28 ); //There are 28 characters but e + grave accent and e + acute accent count as 2 characters each
 
 		//Let's try with GraphemeStringAdapter
-		gd::GraphemeStringAdapter str2gr(str2);
 
-		REQUIRE( std::distance( str2gr.begin(), str2gr.end() ) == 26 ); //Now, the GraphemeStringAdapter is able to distinguish combining characters like accents
+		REQUIRE( std::distance( gd::grapheme::GetIterator(str2, str2.begin()), gd::grapheme::GetIterator(str2, str2.end()) ) == 26 ); //Now, the GraphemeStringAdapter is able to distinguish combining characters like accents
 
 		{
-			auto it = str2gr.begin();
+			auto it = gd::grapheme::GetIterator(str2, str2.begin());
 			std::advance(it, 9);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 9 );
 			++it;
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 11 );
 		}
 		{
-			auto it = str2gr.begin();
+			auto it = gd::grapheme::GetIterator(str2, str2.begin());
 			std::advance(it, 26);
-			REQUIRE( it == str2gr.end() );
+			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.end()) );
 			REQUIRE( it.base() == str2.end() );
 
 			std::advance(it, -25);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 1 );
 			--it;
-			REQUIRE( it == str2gr.begin() );
+			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.begin()) );
 			REQUIRE( it.base() == str2.begin() );
 		}
 		{
-			auto it = str2gr.begin();
+			auto it = gd::grapheme::GetIterator(str2, str2.begin());
 			REQUIRE( *it == "L" );
 			++it;
 			REQUIRE( *it == "e" );
@@ -346,7 +345,7 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 			++it;
 			REQUIRE( *it == "!" );
 			++it;
-			REQUIRE( it == str2gr.end() );
+			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.end()) );
 		}
 	}
 }

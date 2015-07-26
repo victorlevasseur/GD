@@ -20,10 +20,31 @@ namespace StringTools
  */
 gd::String GD_API SubStr(const gd::String & str, size_t start, size_t length )
 {
-    if ( start < str.size() )
-        return str.substr(start, length);
+    auto it = gd::grapheme::GetIterator(str, str.begin());
+    while(start > 0 && it != gd::grapheme::GetIterator(str, str.end()))
+    {
+        start--;
+        ++it;
+    }
+    if(start > 0)
+        return "";
 
-    return "";
+    auto it2 = it;
+    while(length > 0 && it2 != gd::grapheme::GetIterator(str, str.end()))
+    {
+        length--;
+        ++it2;
+    }
+    if(length > 0)
+        return str.substr(
+            std::distance(str.begin(), it.base()),
+            gd::String::npos
+            );
+    else
+        return str.substr(
+            std::distance(str.begin(), it.base()),
+            std::distance(str.begin(), it2.base())
+            );
 }
 
 /**
@@ -31,10 +52,16 @@ gd::String GD_API SubStr(const gd::String & str, size_t start, size_t length )
  */
 gd::String GD_API StrAt(const gd::String & str, size_t pos )
 {
-    if ( pos < str.size() )
-        return str.substr(pos, 1);
+    auto it = gd::grapheme::GetIterator(str, str.begin());
+    while(pos > 0 && it != gd::grapheme::GetIterator(str, str.end()))
+    {
+        pos--;
+        ++it;
+    }
+    if(pos > 0)
+        return "";
 
-    return "";
+    return *it;
 }
 
 /**

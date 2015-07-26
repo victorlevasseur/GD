@@ -60,18 +60,17 @@ public:
             strIt = it;
             return *this;
         }
-        String::value_type codepoint = *it;
+        String::value_type codepoint = it.ReadCodePointAndIterate();
 
         while( !utf8proc_grapheme_break(previousCodepoint, codepoint) )
         {
             previousCodepoint = codepoint;
 
-            ++it;
             if(it == endIt)
                 break;
-            codepoint = *it;
+            codepoint = it.ReadCodePointAndIterate();
         }
-        strIt = it;
+        strIt = --it;
 
         return *this;
     }
@@ -149,6 +148,8 @@ gd::String::size_type FromGraphemePos( const gd::String &str, size_t n );
  * \return the index of the grapheme (the number of grapheme before it) in the string from the position of its first codepoint
  */
 size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos);
+
+
 
 }
 

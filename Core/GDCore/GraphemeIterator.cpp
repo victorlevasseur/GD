@@ -22,7 +22,7 @@ GraphemeIterator<gd::String::iterator> GD_CORE_API GetIterator(gd::String &str, 
     return GraphemeIterator<gd::String::iterator>(it, str.begin(), str.end());
 }
 
-gd::String::size_type GetCodepointPosFromGrapheme( const gd::String &str, size_t n )
+gd::String::size_type FromGraphemePos( const gd::String &str, size_t n )
 {
     auto it = GetIterator(str, str.begin());
     auto beginIt = GetIterator(str, str.begin());
@@ -39,7 +39,7 @@ gd::String::size_type GetCodepointPosFromGrapheme( const gd::String &str, size_t
     return std::distance(beginIt.base(), it.base());
 }
 
-size_t GetGraphemePosFromCodepoint( const gd::String &str, gd::String::size_type codepointPos)
+size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos)
 {
     auto itCp = str.begin();
     while(itCp != str.end() && codepointPos > 0)

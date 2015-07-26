@@ -268,9 +268,7 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 		REQUIRE( str1.size() == 15 );
 		REQUIRE( str2.size() == 28 ); //There are 28 characters but e + grave accent and e + acute accent count as 2 characters each
 
-		//Let's try with GraphemeStringAdapter
-
-		REQUIRE( std::distance( gd::grapheme::GetIterator(str2, str2.begin()), gd::grapheme::GetIterator(str2, str2.end()) ) == 26 ); //Now, the GraphemeStringAdapter is able to distinguish combining characters like accents
+		REQUIRE( std::distance( gd::grapheme::GetIterator(str2, str2.begin()), gd::grapheme::GetIterator(str2, str2.end()) ) == 26 ); //The count is correct with GraphemeIterators
 
 		{
 			auto it = gd::grapheme::GetIterator(str2, str2.begin());
@@ -347,5 +345,20 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 			++it;
 			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.end()) );
 		}
+
+		REQUIRE( gd::grapheme::FromGraphemePos(str2, 9) == 9 );
+		REQUIRE( gd::grapheme::FromCodepoint(str2, 9) == 9 );
+
+		REQUIRE( gd::grapheme::FromGraphemePos(str2, 10) == 11 ); //After the è
+		REQUIRE( gd::grapheme::FromCodepoint(str2, 11) == 10 );
+
+		REQUIRE( gd::grapheme::FromGraphemePos(str2, 23) == 24 ); //After the è and just before the é
+		REQUIRE( gd::grapheme::FromCodepoint(str2, 24) == 23 );
+
+		REQUIRE( gd::grapheme::FromGraphemePos(str2, 24) == 26 ); //After the è and é
+		REQUIRE( gd::grapheme::FromCodepoint(str2, 26) == 24 );
+
+		REQUIRE( gd::grapheme::FromGraphemePos(str2, 40) == (size_t)-1 );
+		REQUIRE( gd::grapheme::FromCodepoint(str2, 40) == (size_t)-1 );
 	}
 }

@@ -66,9 +66,10 @@ public:
         {
             previousCodepoint = codepoint;
 
+            ++it;
             if(it == endIt)
                 break;
-            codepoint = it.ReadCodePointAndIterate();
+            codepoint = *it;
         }
         strIt = it;
 
@@ -142,12 +143,12 @@ GraphemeIterator<gd::String::iterator> GD_CORE_API GetIterator(gd::String &str, 
 /**
  * \return the position of the first codepoint of the **n**-th grapheme of the gd::String str
  */
-gd::String::size_type GetCodepointPosFromGrapheme( const gd::String &str, size_t n );
+gd::String::size_type FromGraphemePos( const gd::String &str, size_t n );
 
 /**
  * \return the index of the grapheme (the number of grapheme before it) in the string from the position of its first codepoint
  */
-size_t GetGraphemePosFromCodepoint( const gd::String &str, gd::String::size_type codepointPos);
+size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos);
 
 }
 

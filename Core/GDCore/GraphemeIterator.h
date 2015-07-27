@@ -142,14 +142,16 @@ GraphemeIterator<gd::String::iterator> GD_CORE_API GetIterator(gd::String &str, 
 /**
  * \return the position of the first codepoint of the **n**-th grapheme of the gd::String str
  */
-gd::String::size_type FromGraphemePos( const gd::String &str, size_t n );
+gd::String::size_type GD_CORE_API FromGraphemePos( const gd::String &str, size_t n );
 
 /**
  * \return the index of the grapheme (the number of grapheme before it) in the string from the position of its first codepoint
  */
-size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos);
+size_t GD_CORE_API FromCodepoint( const gd::String &str, gd::String::size_type codepointPos);
 
+size_t GD_CORE_API size( const gd::String &str );
 
+gd::String GD_CORE_API substr( const gd::String &str, size_t start, size_t length );
 
 }
 

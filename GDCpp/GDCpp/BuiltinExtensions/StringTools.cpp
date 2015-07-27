@@ -20,31 +20,14 @@ namespace StringTools
  */
 gd::String GD_API SubStr(const gd::String & str, size_t start, size_t length )
 {
-    auto it = gd::grapheme::GetIterator(str, str.begin());
-    while(start > 0 && it != gd::grapheme::GetIterator(str, str.end()))
+    try
     {
-        start--;
-        ++it;
+        return gd::grapheme::substr(str, start, length);
     }
-    if(start > 0)
+    catch(const std::exception &e)
+    {
         return "";
-
-    auto it2 = it;
-    while(length > 0 && it2 != gd::grapheme::GetIterator(str, str.end()))
-    {
-        length--;
-        ++it2;
     }
-    if(length > 0)
-        return str.substr(
-            std::distance(str.begin(), it.base()),
-            gd::String::npos
-            );
-    else
-        return str.substr(
-            std::distance(str.begin(), it.base()),
-            std::distance(str.begin(), it2.base())
-            );
 }
 
 /**
@@ -52,16 +35,14 @@ gd::String GD_API SubStr(const gd::String & str, size_t start, size_t length )
  */
 gd::String GD_API StrAt(const gd::String & str, size_t pos )
 {
-    auto it = gd::grapheme::GetIterator(str, str.begin());
-    while(pos > 0 && it != gd::grapheme::GetIterator(str, str.end()))
+    try
     {
-        pos--;
-        ++it;
+        return gd::grapheme::substr(str, pos, 1);
     }
-    if(pos > 0)
+    catch(const std::exception &e)
+    {
         return "";
-
-    return *it;
+    }
 }
 
 /**
@@ -69,7 +50,7 @@ gd::String GD_API StrAt(const gd::String & str, size_t pos )
  */
 unsigned int GD_API StrLen(const gd::String & str)
 {
-    return std::distance(gd::grapheme::GetIterator(str, str.begin()), gd::grapheme::GetIterator(str, str.end()));
+    return gd::grapheme::size(str);
 }
 
 /**

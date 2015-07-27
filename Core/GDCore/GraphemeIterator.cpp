@@ -22,7 +22,7 @@ GraphemeIterator<gd::String::iterator> GD_CORE_API GetIterator(gd::String &str, 
     return GraphemeIterator<gd::String::iterator>(it, str.begin(), str.end());
 }
 
-gd::String::size_type FromGraphemePos( const gd::String &str, size_t n )
+gd::String::size_type GD_CORE_API FromGraphemePos( const gd::String &str, size_t n )
 {
     auto it = GetIterator(str, str.begin());
     auto beginIt = GetIterator(str, str.begin());
@@ -39,7 +39,7 @@ gd::String::size_type FromGraphemePos( const gd::String &str, size_t n )
     return std::distance(beginIt.base(), it.base());
 }
 
-size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos)
+size_t GD_CORE_API FromCodepoint( const gd::String &str, gd::String::size_type codepointPos)
 {
     auto itCp = str.begin();
     while(itCp != str.end() && codepointPos > 0)
@@ -57,6 +57,34 @@ size_t FromCodepoint( const gd::String &str, gd::String::size_type codepointPos)
     for(; itGr.base() < itCp; ++itGr, graphemePos++);
 
     return graphemePos;
+}
+
+size_t GD_CORE_API size( const gd::String &str )
+{
+    return std::distance(GetIterator(str, str.begin()), GetIterator(str, str.end()));
+}
+
+gd::String GD_CORE_API substr( const gd::String &str, size_t start, size_t length )
+{
+    auto it = gd::grapheme::GetIterator(str, str.begin());
+    while(start > 0 && it != gd::grapheme::GetIterator(str, str.end()))
+    {
+        start--;
+        ++it;
+    }
+    if(start > 0)
+        throw std::out_of_range("[gd::grapheme::substr] starting pos greater than size");
+
+    auto it2 = it;
+    while(length > 0 && it2 != gd::grapheme::GetIterator(str, str.end()))
+    {
+        length--;
+        ++it2;
+    }
+    if(length > 0)
+        return gd::String::FromUTF8(std::string(it.base().base(), str.Raw().end()));
+    else
+        return gd::String::FromUTF8(std::string(it.base().base(), it2.base().base()));
 }
 
 }

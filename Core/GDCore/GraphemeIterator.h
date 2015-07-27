@@ -53,6 +53,7 @@ public:
     {
         //Find next grapheme
         T it = strIt;
+        T previousIt = strIt;
         String::value_type previousCodepoint = it.ReadCodePointAndIterate();
         if(it == endIt)
         {
@@ -60,6 +61,7 @@ public:
             strIt = it;
             return *this;
         }
+        previousIt = it;
         String::value_type codepoint = it.ReadCodePointAndIterate();
 
         while( !utf8proc_grapheme_break(previousCodepoint, codepoint) )
@@ -68,9 +70,10 @@ public:
 
             if(it == endIt)
                 break;
+            previousIt = it;
             codepoint = it.ReadCodePointAndIterate();
         }
-        strIt = --it;
+        strIt = previousIt;
 
         return *this;
     }

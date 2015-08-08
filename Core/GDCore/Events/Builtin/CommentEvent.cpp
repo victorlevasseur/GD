@@ -94,7 +94,7 @@ void CommentEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::Event
     unsigned int height = std::max(text1Height, text2Height)+sideSeparation*2;
     height = std::max(height, (unsigned int)15);
     wxRect rectangle(x, y, width-2, height);
-    dc.GradientFillLinear(rectangle, wxColour(r+20 > 255 ? 255 : r+20, v+20 > 255 ? 255 : v+20, b+20 > 255 ? 255 : b+20), wxColour(r, v, b), wxSOUTH);
+    dc.GradientFillLinear(rectangle, wxColour(r, v, b)/*wxColour(r+20 > 255 ? 255 : r+20, v+20 > 255 ? 255 : v+20, b+20 > 255 ? 255 : b+20)*/, wxColour(r, v, b), wxSOUTH);
     dc.DrawRectangle(rectangle);
 
     //Draw text

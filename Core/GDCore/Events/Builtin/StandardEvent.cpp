@@ -83,10 +83,6 @@ void StandardEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::Even
     gd::EventsRenderingHelper * renderingHelper = gd::EventsRenderingHelper::Get();
     int border = renderingHelper->instructionsListBorder;
 
-    //Draw event rectangle
-    wxRect rect(x, y, renderingHelper->GetConditionsColumnWidth()+border, GetRenderedHeight(width, platform));
-    renderingHelper->DrawNiceRectangle(dc, rect);
-
     renderingHelper->DrawConditionsList(conditions, dc,
                                         x+border,
                                         y+border,

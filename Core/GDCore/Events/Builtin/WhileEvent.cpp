@@ -114,10 +114,6 @@ void WhileEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::EventsE
     dc.DrawText( _("Repeat :"), x+4, y+whileConditionsHeight+3);
     whileConditionsHeight += repeatHeight;
 
-    //Draw conditions rectangle
-    wxRect rect(x, y+whileConditionsHeight, renderingHelper->GetConditionsColumnWidth()+border, GetRenderedHeight(width, platform)-whileConditionsHeight);
-    renderingHelper->DrawNiceRectangle(dc, rect);
-
     renderingHelper->DrawConditionsList(conditions, dc,
                                         x+border,
                                         y+whileConditionsHeight+border,

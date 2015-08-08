@@ -111,10 +111,6 @@ void RepeatEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::Events
     dc.SetTextForeground(wxColour(0,0,0));
     dc.DrawText( _("Repeat") + " " + repeatNumberExpression.GetPlainString() + " " + _("times :"), x + 4, y + 3 );
 
-    //Draw conditions rectangle
-    wxRect rect(x, y+repeatTextHeight, renderingHelper->GetConditionsColumnWidth()+border, GetRenderedHeight(width, platform)-repeatTextHeight);
-    renderingHelper->DrawNiceRectangle(dc, rect);
-
     //Draw actions and conditions
     renderingHelper->DrawConditionsList(conditions, dc,
                                         x+border,

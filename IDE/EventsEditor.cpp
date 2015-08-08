@@ -648,7 +648,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
             itemsAreas.AddEventArea( eventArea, eventAccessor );
         }
 
-        y += height;
+        y += height + gd::EventsRenderingHelper::Get()->separationBetweenEvents;
 
         //Folding and sub events
         if ( events[i].CanHaveSubEvents() && !events[i].GetSubEvents().IsEmpty())

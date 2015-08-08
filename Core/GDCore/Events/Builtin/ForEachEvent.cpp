@@ -112,10 +112,6 @@ void ForEachEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::Event
     dc.SetTextForeground(wxColour(0,0,0));
     dc.DrawText( _("For each object") + " " + objectsToPick.GetPlainString() + _(", repeat :"), x + 4, y + 3 );
 
-    //Draw conditions rectangle
-    wxRect rect(x, y+forEachTextHeight, renderingHelper->GetConditionsColumnWidth()+border, GetRenderedHeight(width, platform)-forEachTextHeight);
-    renderingHelper->DrawNiceRectangle(dc, rect);
-
     //Draw actions and conditions
     renderingHelper->DrawConditionsList(conditions, dc,
                                         x+border,

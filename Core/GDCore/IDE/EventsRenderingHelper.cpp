@@ -104,20 +104,22 @@ eventConditionsBorderColor(wxColour(185, 185, 247)),
 selectionColor(wxColour(255,230,156)),
 disabledColor(wxColour(245,245,254)),
 disabledColor2(wxColour(245,245,245)),
-instructionsListBorder(5),
-separationBetweenInstructions(2),
+instructionsListBorder(1),
+instructionsListPadding(4),
+separationBetweenInstructions(3),
+separationBetweenEvents(4),
 conditionsColumnWidth(400),
-selectionRectangleOutline(wxPen(wxColour(244,217,141), 1)),
-selectionRectangleFill(wxBrush(wxColour(251,235,189))),
-highlightRectangleOutline(wxPen(wxColour(206,206,206), 1)),
-highlightRectangleFill(wxBrush(wxColour(226,226,226))),
+selectionRectangleOutline(wxPen(wxColour(187,210,225), 1)),
+selectionRectangleFill(wxBrush(wxColour(187,210,225))),
+highlightRectangleOutline(wxPen(wxColour(204,229,245), 1)),
+highlightRectangleFill(wxBrush(wxColour(204,229,245))),
 niceRectangleFill1(wxColour(225,225,246)),
-niceRectangleFill2(wxColour(198,198,246)),
+niceRectangleFill2(wxColour(225,225,246)),//niceRectangleFill2(wxColour(198,198,246)),
 niceRectangleOutline(wxPen(wxColour(205,205,246), 1)),
 actionsRectangleOutline(wxPen(wxColour(205,205,246))),
 conditionsRectangleOutline(wxPen(wxColour(185,185,247), 1)),
 actionsRectangleFill(*wxWHITE_BRUSH),
-conditionsRectangleFill(wxBrush(wxColour(252,252,255)))
+conditionsRectangleFill(wxBrush(wxColour(240,240,240)))
 {
     fakeBmp.Create(10,10,-1);
 
@@ -175,8 +177,10 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No conditions"), x + 2, y + 1 );
 
-        return 15;
+        return 15+2*instructionsListPadding;
     }
+
+    y+=instructionsListPadding;
 
     //Draw each conditions
     for ( unsigned int j = 0;j < conditions.size();j++ )
@@ -242,7 +246,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
             y += DrawConditionsList(conditions[j].GetSubInstructions(), dc, x + 18, y, width-18, event, areas, selection, platform);
     }
 
-    return y-initialYPosition;
+    return y+instructionsListPadding-initialYPosition;
 }
 
 int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC & dc, int x, int y, int width, gd::BaseEvent * event,
@@ -276,8 +280,10 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No actions"), x + 2, y + 1 );
 
-        return 15;
+        return 15+2*instructionsListPadding;
     }
+
+    y+= instructionsListPadding;
 
     //Draw each actions
     for ( unsigned int j = 0;j < actions.size();j++ )
@@ -335,17 +341,17 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
             y += DrawActionsList(actions[j].GetSubInstructions(), dc, x + 18, y, width-18, event, areas, selection, platform);
     }
 
-    return y-initialYPosition;
+    return y+instructionsListPadding-initialYPosition;
 }
 
 unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::InstructionsList & conditions, int width, const gd::Platform & platform)
 {
-    int y = 0;
+    int y = instructionsListPadding;
 
     const int iconWidth = 18;
 
     if ( conditions.empty() )
-        return 15;
+        return 15+2*instructionsListPadding;
 
     for ( unsigned int j = 0;j < conditions.size();j++ )
     {
@@ -366,18 +372,18 @@ unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::In
             y += GetRenderedConditionsListHeight(conditions[j].GetSubInstructions(), width-18, platform);
     }
 
-    return y;
+    return y + instructionsListPadding;
 }
 
 unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::InstructionsList & actions, int width, const gd::Platform & platform)
 {
-    int y = 0;
+    int y = instructionsListPadding;
 
     const int iconWidth = 18;
 
     //Draw Actions rectangle
     if ( actions.empty() )
-        return 15;
+        return 15+2*instructionsListPadding;
 
     //Draw each actions
     for ( unsigned int j = 0;j < actions.size();j++ )
@@ -398,7 +404,7 @@ unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::Instr
             y += GetRenderedActionsListHeight(actions[j].GetSubInstructions(), width-18, platform);
     }
 
-    return y;
+    return y + instructionsListPadding;
 }
 
 int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const gd::InstructionMetadata & instructionMetadata, bool isCondition,

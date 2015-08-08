@@ -170,7 +170,9 @@ public:
     wxColor disabledColor2;
 
     int instructionsListBorder;
+    int instructionsListPadding;
     int separationBetweenInstructions;
+    int separationBetweenEvents;
 
 private:
     EventsRenderingHelper();

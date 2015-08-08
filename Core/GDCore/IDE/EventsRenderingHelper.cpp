@@ -108,6 +108,7 @@ instructionsListBorder(1),
 instructionsListPadding(4),
 separationBetweenInstructions(3),
 separationBetweenEvents(4),
+addInstructionButtonHeight(6),
 conditionsColumnWidth(400),
 selectionRectangleOutline(wxPen(wxColour(187,210,225), 1)),
 selectionRectangleFill(wxBrush(wxColour(187,210,225))),
@@ -177,7 +178,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No conditions"), x + 2, y + 1 );
 
-        return 15+2*instructionsListPadding;
+        y += 15;
     }
 
     y+=instructionsListPadding;
@@ -246,7 +247,26 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
             y += DrawConditionsList(conditions[j].GetSubInstructions(), dc, x + 18, y, width-18, event, areas, selection, platform);
     }
 
-    return y+instructionsListPadding-initialYPosition;
+    y += instructionsListPadding;
+
+    //Insert the condition insertion rectangle
+    gd::InstructionAdderItem adderItem(/**isCondition=*/true, &conditions, event);
+    areas.AddInstructionAdderItem(wxRect(x, y, width, addInstructionButtonHeight+1), adderItem);
+
+    //Draw the condition insertion rectangle
+    if(selection.InstructionAdderHighlighted(adderItem))
+    {
+        dc.SetPen(wxColor(0, 200, 0));
+        dc.SetBrush(wxColor(0, 200, 0));
+    }
+    else
+    {
+        dc.SetPen(wxColor(200, 200, 200));
+        dc.SetBrush(wxColor(200, 200, 200));
+    }
+    dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
+
+    return y+addInstructionButtonHeight-initialYPosition;
 }
 
 int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC & dc, int x, int y, int width, gd::BaseEvent * event,
@@ -280,7 +300,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No actions"), x + 2, y + 1 );
 
-        return 15+2*instructionsListPadding;
+        y += 15;
     }
 
     y+= instructionsListPadding;
@@ -305,7 +325,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
             dc.SetPen(selectionRectangleOutline);
             dc.SetBrush(selectionRectangleFill);
-            dc.DrawRectangle(x, y, width, height);
+            dc.DrawRectangle(x, y-1, width, height+2);
             DrawInstruction(actions[j], instructionMetadata, /*isCondition=*/false, dc, wxPoint(x + iconWidth, y), freeWidth, event, areas, selection);
         }
         else if ( selection.InstructionHighlighted(accessor) )
@@ -315,7 +335,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
             dc.SetPen(highlightRectangleOutline);
             dc.SetBrush(highlightRectangleFill);
-            dc.DrawRectangle(x, y, width, height);
+            dc.DrawRectangle(x, y-1, width, height+2);
             DrawInstruction(actions[j], instructionMetadata, /*isCondition=*/false, dc, wxPoint(x + iconWidth, y), freeWidth, event, areas, selection);
 
             if ( selection.IsDraggingInstruction() )
@@ -341,7 +361,26 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
             y += DrawActionsList(actions[j].GetSubInstructions(), dc, x + 18, y, width-18, event, areas, selection, platform);
     }
 
-    return y+instructionsListPadding-initialYPosition;
+    y += instructionsListPadding;
+
+    //Insert the condition insertion rectangle
+    gd::InstructionAdderItem adderItem(/**isCondition=*/false, &actions, event);
+    areas.AddInstructionAdderItem(wxRect(x, y, width, addInstructionButtonHeight+1), adderItem);
+
+    //Draw the condition insertion rectangle
+    if(selection.InstructionAdderHighlighted(adderItem))
+    {
+        dc.SetPen(wxColor(0, 200, 0));
+        dc.SetBrush(wxColor(0, 200, 0));
+    }
+    else
+    {
+        dc.SetPen(wxColor(220, 220, 220));
+        dc.SetBrush(wxColor(220, 220, 220));
+    }
+    dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
+
+    return y+instructionsListPadding+addInstructionButtonHeight-initialYPosition;
 }
 
 unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::InstructionsList & conditions, int width, const gd::Platform & platform)
@@ -351,7 +390,7 @@ unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::In
     const int iconWidth = 18;
 
     if ( conditions.empty() )
-        return 15+2*instructionsListPadding;
+        return 15+2*instructionsListPadding + addInstructionButtonHeight;
 
     for ( unsigned int j = 0;j < conditions.size();j++ )
     {
@@ -372,7 +411,7 @@ unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::In
             y += GetRenderedConditionsListHeight(conditions[j].GetSubInstructions(), width-18, platform);
     }
 
-    return y + instructionsListPadding;
+    return y + addInstructionButtonHeight + instructionsListPadding;
 }
 
 unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::InstructionsList & actions, int width, const gd::Platform & platform)
@@ -383,7 +422,7 @@ unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::Instr
 
     //Draw Actions rectangle
     if ( actions.empty() )
-        return 15+2*instructionsListPadding;
+        return 15+2*instructionsListPadding+addInstructionButtonHeight;
 
     //Draw each actions
     for ( unsigned int j = 0;j < actions.size();j++ )
@@ -404,7 +443,7 @@ unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::Instr
             y += GetRenderedActionsListHeight(actions[j].GetSubInstructions(), width-18, platform);
     }
 
-    return y + instructionsListPadding;
+    return y + addInstructionButtonHeight + instructionsListPadding;
 }
 
 int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const gd::InstructionMetadata & instructionMetadata, bool isCondition,

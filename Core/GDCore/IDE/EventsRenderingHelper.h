@@ -174,6 +174,8 @@ public:
     int separationBetweenInstructions;
     int separationBetweenEvents;
 
+    int addInstructionButtonHeight;
+
 private:
     EventsRenderingHelper();
     virtual ~EventsRenderingHelper() {};

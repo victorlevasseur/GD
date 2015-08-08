@@ -205,6 +205,31 @@ FoldingItem EventsEditorItemsAreas::GetFoldingItemAt(int x, int y)
     return dummy;
 }
 
+bool EventsEditorItemsAreas::IsOnInstructionAdderItem(int x, int y)
+{
+    for (unsigned int i = 0;i<instructionAdderAreas.size();++i)
+    {
+        if ( instructionAdderAreas[i].first.Contains(x,y) )
+            return true;
+    }
+
+    return false;
+}
+
+InstructionAdderItem EventsEditorItemsAreas::GetInstructionAdderItemAt(int x, int y)
+{
+    for (unsigned int i = 0;i<instructionAdderAreas.size();++i)
+    {
+        if ( instructionAdderAreas[i].first.Contains(x,y) )
+            return instructionAdderAreas[i].second;
+    }
+
+    std::cout << "WARNING, RETURNING DUMMY InstructionAdderItem";
+
+    InstructionAdderItem dummy;
+    return dummy;
+}
+
 void EventsEditorItemsAreas::Clear()
 {
     eventsAreas.clear();
@@ -212,6 +237,7 @@ void EventsEditorItemsAreas::Clear()
     instructionListsAreas.clear();
     parametersAreas.clear();
     foldingAreas.clear();
+    instructionAdderAreas.clear();
 }
 
 void EventsEditorItemsAreas::AddInstructionArea(wxRect area, gd::InstructionItem & instruction)
@@ -237,6 +263,11 @@ void EventsEditorItemsAreas::AddFoldingItem(wxRect area, FoldingItem & item)
 void EventsEditorItemsAreas::AddInstructionListArea(wxRect area, InstructionListItem & item)
 {
     instructionListsAreas.push_back(std::make_pair(area, item));
+}
+
+void EventsEditorItemsAreas::AddInstructionAdderItem(wxRect area, InstructionAdderItem & item)
+{
+    instructionAdderAreas.push_back(std::make_pair(area, item));
 }
 
 //EventItem stuff :
@@ -333,6 +364,26 @@ FoldingItem::FoldingItem(gd::BaseEvent * event_) :
 }
 
 FoldingItem::FoldingItem() :
+    event(NULL)
+{
+}
+
+//InstructionAdderItem stuff :
+bool InstructionAdderItem::operator==(const InstructionAdderItem & other) const
+{
+    return (isConditionList == other.isConditionList && instructionList == other.instructionList && event == other.event);
+}
+
+InstructionAdderItem::InstructionAdderItem(bool isCondition_, gd::InstructionsList* instructionList_, gd::BaseEvent * event_ ) :
+    isConditionList(isCondition_),
+    instructionList(instructionList_),
+    event(event_)
+{
+}
+
+InstructionAdderItem::InstructionAdderItem() :
+    isConditionList(true),
+    instructionList(NULL),
     event(NULL)
 {
 }

@@ -335,6 +335,8 @@ private:
 
     bool ctrlKeyDown;
 
+    bool doNotBeginDrag;
+
     std::vector < gd::EventsList > history; ///<Changes history
     std::vector < gd::EventsList > redoHistory;
     gd::EventsList latestState; ///< Necessary to keep track of what changed
@@ -347,4 +349,3 @@ private:
 };
 
 #endif
-

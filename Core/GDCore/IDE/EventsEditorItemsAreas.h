@@ -120,6 +120,24 @@ public:
 };
 
 /**
+ * \brief Used to indicate to EventsEditorItemsAreas that a button to insert instructions is displayed somewhere
+ * \ingroup IDEDialogsEventsEditor
+ */
+class GD_CORE_API InstructionAdderItem
+{
+public:
+    InstructionAdderItem(bool isConditionList, gd::InstructionsList* instructionList_, gd::BaseEvent * event );
+    InstructionAdderItem();
+    ~InstructionAdderItem() {};
+
+    bool operator==(const InstructionAdderItem & other) const;
+
+    bool isConditionList; ///< If the instructions list the button is related to is a conditions list.
+    gd::InstructionsList* instructionList;
+    gd::BaseEvent * event;
+};
+
+/**
  * \brief Allow events to indicate where is displayed an instruction or parameter.
  *
  * Events editor also uses this internally to indicate where events are displayed.
@@ -153,6 +171,11 @@ public:
      * \brief Notify the editor there is a list in this area
      */
     void AddInstructionListArea(wxRect area, InstructionListItem & item);
+
+    /**
+     * \brief Notify the editor there is an instruction adder button in this area
+     */
+    void AddInstructionAdderItem(wxRect area, InstructionAdderItem & item);
 
     /**
      * \brief True if a point is on an event.
@@ -225,6 +248,16 @@ public:
     FoldingItem GetFoldingItemAt(int x, int y);
 
     /**
+     * \brief True if a point is on an instruction adder button.
+     */
+    bool IsOnInstructionAdderItem(int x, int y);
+
+    /**
+     * \brief Return instruction adder button at point (x,y). Be sure there is one here using IsOnFoldingItem(x,y);
+     */
+    InstructionAdderItem GetInstructionAdderItemAt(int x, int y);
+
+    /**
      * \brief Clear all areas ( typically before redraw )
      */
     void Clear();
@@ -244,6 +277,7 @@ public:
     std::vector< std::pair<wxRect, ParameterItem > > parametersAreas;
     std::vector< std::pair<wxRect, FoldingItem > > foldingAreas;
     std::vector< std::pair<wxRect, InstructionListItem > > instructionListsAreas;
+    std::vector< std::pair<wxRect, InstructionAdderItem > > instructionAdderAreas;
 
 private:
 };
@@ -269,10 +303,10 @@ namespace std
     {
         std::size_t operator()(gd::InstructionItem const& item) const
         {
-            return (std::hash<gd::Instruction*>()(item.instruction)) ^ 
-                   (std::hash<gd::InstructionsList*>()(item.instructionList) << 1) ^ 
+            return (std::hash<gd::Instruction*>()(item.instruction)) ^
+                   (std::hash<gd::InstructionsList*>()(item.instructionList) << 1) ^
                    (std::hash<unsigned int>()(item.positionInList) << 2) ^
-                   (std::hash<gd::BaseEvent*>()(item.event) << 3) ^ 
+                   (std::hash<gd::BaseEvent*>()(item.event) << 3) ^
                    (std::hash<bool>()(item.isCondition) << 4);
         }
     };
@@ -282,8 +316,8 @@ namespace std
     {
         std::size_t operator()(gd::InstructionListItem const& item) const
         {
-            return (std::hash<gd::InstructionsList*>()(item.instructionList)) ^ 
-                   (std::hash<gd::BaseEvent*>()(item.event) << 1) ^ 
+            return (std::hash<gd::InstructionsList*>()(item.instructionList)) ^
+                   (std::hash<gd::BaseEvent*>()(item.event) << 1) ^
                    (std::hash<bool>()(item.isConditionList) << 2);
         }
     };
@@ -293,7 +327,7 @@ namespace std
     {
         std::size_t operator()(gd::ParameterItem const& item) const
         {
-            return (std::hash<gd::Expression*>()(item.parameter)) ^ 
+            return (std::hash<gd::Expression*>()(item.parameter)) ^
                    (std::hash<gd::BaseEvent*>()(item.event) << 1);
         }
     };

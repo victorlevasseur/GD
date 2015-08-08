@@ -76,6 +76,11 @@ public:
     void SetHighlighted(const ParameterItem & parameter);
 
     /**
+     * Highlight an instruction adder item
+     */
+    void SetHighlighted(const InstructionAdderItem & adderItem);
+
+    /**
      * Set if the mouse is on the bottom hand side of the instruction, or on the top hand side.
      */
     void InstructionHighlightedOnBottomPart(bool isOnbottomHandSide);
@@ -114,6 +119,11 @@ public:
      * Return true if a parameter is highlighted
      */
     bool ParameterHighLighted(const ParameterItem & parameter) { return parameterHighlighted == parameter; };
+
+    /**
+     * Return true if an instruction adder button is highlighted
+     */
+    bool InstructionAdderHighlighted(const InstructionAdderItem & adderItem) { return adderItemHighlighted == adderItem; };
 
     /**
      * Return highlighted event item
@@ -184,6 +194,7 @@ private:
     bool isOnbottomHandSideOfInstruction;
     InstructionListItem instructionListHighlighted;
     ParameterItem parameterHighlighted;
+    InstructionAdderItem adderItemHighlighted;
 
     bool dragging; ///< True if dragging event
     bool draggingInstruction; ///< True if dragging instruction

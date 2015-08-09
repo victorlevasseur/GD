@@ -261,8 +261,8 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     }
     else
     {
-        dc.SetPen(wxColor(225, 225, 225));
-        dc.SetBrush(wxColor(225, 225, 225));
+        dc.SetPen(wxColor(230, 230, 230));
+        dc.SetBrush(wxColor(230, 230, 230));
     }
 
     if(selection.InstructionListHighlighted(item))
@@ -276,7 +276,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     }
     else
     {
-        dc.DrawRectangle(x-1, y, width+2, addInstructionButtonHeight);
+        dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
     }
 
     return y+addInstructionButtonHeight-initialYPosition;
@@ -388,8 +388,8 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     }
     else
     {
-        dc.SetPen(wxColor(225, 225, 225));
-        dc.SetBrush(wxColor(225, 225, 225));
+        dc.SetPen(wxColor(240, 240, 240));
+        dc.SetBrush(wxColor(240, 240, 240));
     }
 
     if(selection.InstructionListHighlighted(item))
@@ -403,7 +403,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     }
     else
     {
-        dc.DrawRectangle(x-1, y, width+2, addInstructionButtonHeight);
+        dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
     }
 
 

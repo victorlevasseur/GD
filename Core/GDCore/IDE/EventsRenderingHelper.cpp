@@ -105,7 +105,7 @@ selectionColor(wxColour(255,230,156)),
 disabledColor(wxColour(245,245,254)),
 disabledColor2(wxColour(245,245,245)),
 instructionsListBorder(1),
-instructionsListPadding(4),
+instructionsListPadding(5),
 separationBetweenInstructions(3),
 separationBetweenEvents(4),
 addInstructionButtonHeight(8),
@@ -176,7 +176,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
 
         dc.SetTextForeground( wxColour(0,0,0) );
         dc.SetFont( niceFont.Italic() );
-        dc.DrawText( _("No conditions"), x + 2, y + 1 );
+        dc.DrawText( _("No conditions"), x + 2, y + instructionsListPadding + 1 );
 
         y += 15;
     }
@@ -251,27 +251,32 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
 
     //Insert the condition insertion rectangle
     gd::InstructionAdderItem adderItem(/**isCondition=*/true, &conditions, event);
-    areas.AddInstructionAdderItem(wxRect(x, y, width, addInstructionButtonHeight+1), adderItem);
+    areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
     //Draw the condition insertion rectangle
     if(selection.InstructionAdderHighlighted(adderItem))
     {
-        dc.SetPen(wxColor(0, 200, 0));
-        dc.SetBrush(wxColor(0, 200, 0));
-        dc.DrawRectangle(x-1, y - 4, width+1, addInstructionButtonHeight + 4);
+        dc.SetPen(selectionRectangleOutline);
+        dc.SetBrush(selectionRectangleFill);
     }
     else
     {
-        dc.SetPen(wxColor(200, 200, 200));
-        dc.SetBrush(wxColor(200, 200, 200));
-        dc.DrawRectangle(x-1, y, width+1, addInstructionButtonHeight);
+        dc.SetPen(wxColor(225, 225, 225));
+        dc.SetBrush(wxColor(225, 225, 225));
     }
 
-    if(selection.InstructionAdderHighlighted(adderItem))
+    if(selection.InstructionListHighlighted(item))
     {
-        dc.SetPen(wxColor(0, 0, 0));
+        dc.SetPen(wxColor(180, 180, 180));
+        dc.DrawRectangle(x - 1, y - instructionsListPadding + 1, width + 2, addInstructionButtonHeight + instructionsListPadding - 1 + separationBetweenEvents);
+
+        dc.SetTextForeground(wxColour(0, 0, 0));
         dc.SetFont(GetNiceFont());
-        dc.DrawText(_("Add condition"), x + 2, y-4);
+        dc.DrawText(u8"\342\234\232 " + _("Add condition"), x + 2, y - instructionsListPadding + 2);
+    }
+    else
+    {
+        dc.DrawRectangle(x-1, y, width+2, addInstructionButtonHeight);
     }
 
     return y+addInstructionButtonHeight-initialYPosition;
@@ -306,7 +311,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
         dc.SetTextForeground( wxColour(0,0,0) );
         dc.SetFont( niceFont.Italic() );
-        dc.DrawText( _("No actions"), x + 2, y + 1 );
+        dc.DrawText( _("No actions"), x + 2, y + instructionsListPadding + 1 );
 
         y += 15;
     }
@@ -371,30 +376,36 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
     y += instructionsListPadding;
 
-    //Insert the condition insertion rectangle
+    //Insert the action insertion rectangle
     gd::InstructionAdderItem adderItem(/**isCondition=*/false, &actions, event);
-    areas.AddInstructionAdderItem(wxRect(x, y, width, addInstructionButtonHeight+1), adderItem);
+    areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
-    //Draw the condition insertion rectangle
+    //Draw the action insertion rectangle
     if(selection.InstructionAdderHighlighted(adderItem))
     {
-        dc.SetPen(wxColor(0, 200, 0));
-        dc.SetBrush(wxColor(0, 200, 0));
-        dc.DrawRectangle(x-1, y - 4, width+1, addInstructionButtonHeight + 4);
+        dc.SetPen(selectionRectangleOutline);
+        dc.SetBrush(selectionRectangleFill);
     }
     else
     {
-        dc.SetPen(wxColor(200, 200, 200));
-        dc.SetBrush(wxColor(200, 200, 200));
-        dc.DrawRectangle(x-1, y, width+1, addInstructionButtonHeight);
+        dc.SetPen(wxColor(225, 225, 225));
+        dc.SetBrush(wxColor(225, 225, 225));
     }
 
-    if(selection.InstructionAdderHighlighted(adderItem))
+    if(selection.InstructionListHighlighted(item))
     {
-        dc.SetPen(wxColor(0, 0, 0));
+        dc.SetPen(wxColor(180, 180, 180));
+        dc.DrawRectangle(x - 1, y - instructionsListPadding + 1, width + 2, addInstructionButtonHeight + instructionsListPadding - 1 + separationBetweenEvents);
+
+        dc.SetTextForeground(wxColour(0, 0, 0));
         dc.SetFont(GetNiceFont());
-        dc.DrawText(_("Add action"), x + 2, y-4);
+        dc.DrawText(u8"\342\234\232 " + _("Add action"), x + 2, y - instructionsListPadding + 2);
     }
+    else
+    {
+        dc.DrawRectangle(x-1, y, width+2, addInstructionButtonHeight);
+    }
+
 
     return y+instructionsListPadding+addInstructionButtonHeight-initialYPosition;
 }

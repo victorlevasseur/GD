@@ -254,7 +254,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
     //Draw the condition insertion rectangle
-    if(selection.InstructionAdderHighlighted(adderItem))
+    if(selection.InstructionAdderHighlighted(adderItem) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
     {
         dc.SetPen(selectionRectangleOutline);
         dc.SetBrush(selectionRectangleFill);
@@ -265,7 +265,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         dc.SetBrush(wxColor(230, 230, 230));
     }
 
-    if(selection.InstructionListHighlighted(item))
+    if(selection.InstructionListHighlighted(item) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
     {
         dc.SetPen(wxColor(180, 180, 180));
         dc.DrawRectangle(x - 1, y - instructionsListPadding + 1, width + 2, addInstructionButtonHeight + instructionsListPadding - 1 + separationBetweenEvents);
@@ -381,7 +381,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
     //Draw the action insertion rectangle
-    if(selection.InstructionAdderHighlighted(adderItem))
+    if(selection.InstructionAdderHighlighted(adderItem) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
     {
         dc.SetPen(selectionRectangleOutline);
         dc.SetBrush(selectionRectangleFill);
@@ -392,7 +392,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         dc.SetBrush(wxColor(240, 240, 240));
     }
 
-    if(selection.InstructionListHighlighted(item))
+    if(selection.InstructionListHighlighted(item) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
     {
         dc.SetPen(wxColor(180, 180, 180));
         dc.DrawRectangle(x - 1, y - instructionsListPadding + 1, width + 2, addInstructionButtonHeight + instructionsListPadding - 1 + separationBetweenEvents);

@@ -272,7 +272,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
 
         dc.SetTextForeground(wxColour(0, 0, 0));
         dc.SetFont(GetNiceFont());
-        dc.DrawText(u8"\342\234\232 " + _("Add condition"), x + 2, y - instructionsListPadding + 2);
+        dc.DrawText(gd::String("\342\234\232 ") + _("Add condition"), x + 2, y - instructionsListPadding + 2);
     }
     else
     {
@@ -399,7 +399,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
         dc.SetTextForeground(wxColour(0, 0, 0));
         dc.SetFont(GetNiceFont());
-        dc.DrawText(u8"\342\234\232 " + _("Add action"), x + 2, y - instructionsListPadding + 2);
+        dc.DrawText(gd::String("\342\234\232 ") + _("Add action"), x + 2, y - instructionsListPadding + 2);
     }
     else
     {

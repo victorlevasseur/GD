@@ -164,7 +164,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     dc.DrawRectangle(rect);
 
     InstructionListItem item(/**isCondition=*/true, &conditions, event);
-    areas.AddInstructionListArea(rect, item);
+    areas.AddItem(rect, item);
 
     if ( conditions.empty() )
     {
@@ -240,7 +240,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         }
         else if ( bmp->IsOk() ) dc.DrawBitmap( *bmp, x + 1, y, true );
 
-        areas.AddInstructionArea(wxRect(x,y, width, height), accessor);
+        areas.AddItem(wxRect(x,y, width, height), accessor);
         y+=height;
 
         //Draw sub conditions
@@ -252,7 +252,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
 
     //Insert the condition insertion rectangle
     gd::InstructionAdderItem adderItem(/**isCondition=*/true, &conditions, event);
-    areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
+    areas.AddItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
     //Draw the condition insertion rectangle
     if(selection.InstructionAdderHighlighted(adderItem) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
@@ -299,7 +299,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     dc.DrawRectangle(rect);
 
     InstructionListItem item(/**isCondition=*/false, &actions, event);
-    areas.AddInstructionListArea(rect, item);
+    areas.AddItem(rect, item);
 
     if ( actions.empty() )
     {
@@ -367,7 +367,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         if ( !bmp->IsOk() ) bmp = &gd::CommonBitmapManager::Get()->unknownBt;
         if ( bmp->IsOk() ) dc.DrawBitmap( *bmp, x + 1, y, true );
 
-        areas.AddInstructionArea(wxRect(x,y, width, height), accessor);
+        areas.AddItem(wxRect(x,y, width, height), accessor);
         y+=height;
 
         //Draw sub actions
@@ -379,7 +379,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
 
     //Insert the action insertion rectangle
     gd::InstructionAdderItem adderItem(/**isCondition=*/false, &actions, event);
-    areas.AddInstructionAdderItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
+    areas.AddItem(wxRect(x, y-instructionsListPadding, width, addInstructionButtonHeight+instructionsListPadding+1), adderItem);
 
     //Draw the action insertion rectangle
     if(selection.InstructionAdderHighlighted(adderItem) && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction())
@@ -504,7 +504,7 @@ int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const 
                 dc.DrawRectangle(lastPos.x, lastPos.y,  parameterWidth, fontCharacterHeight);
             }
 
-            areas.AddParameterArea(wxRect(lastPos.x, lastPos.y, parameterWidth, fontCharacterHeight) ,item);
+            areas.AddItem(wxRect(lastPos.x, lastPos.y, parameterWidth, fontCharacterHeight) ,item);
         }
 
         dc.SetFont(font);

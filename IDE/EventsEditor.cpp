@@ -548,7 +548,7 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 	gd::EventAdderItem dummy;
 	if( !selection.EventAdderHighlighted(dummy) ) //only if a event adder is highlighted
 	{
-		wxRect eventAdderArea = itemsAreas.GetAreaOfEventAdderItem(selection.GetHighlightedEventAdder());
+		wxRect eventAdderArea = itemsAreas.GetAreaOfItem<gd::EventAdderItem>(selection.GetHighlightedEventAdder());
 
 		dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleOutlinePen().GetColour().ChangeLightness(80));
 		dc.SetBrush(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush());
@@ -566,7 +566,7 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 				selection.GetHighlightedEventAdder().positionInList+1
 				);
 
-			wxRect nextEventArea = itemsAreas.GetAreaOfEvent(nextEventAccessor);
+			wxRect nextEventArea = itemsAreas.GetAreaOfItem<gd::EventItem>(nextEventAccessor);
 
 			insertionIndicatorPos.y = nextEventArea.GetTopLeft().y - gd::EventsRenderingHelper::Get()->separationBetweenEvents - 1;
 		}
@@ -713,7 +713,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 				dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont().Scaled(3));
 				dc.DrawBitmap(wxBitmap("res/icons_default/add_event16.png"), x+5+4, y+height-24+4);
 
-				itemsAreas.AddEventAdderItem(wxRect(x+5, y+height-24, 24, 24), eventAdderAccessor);
+				itemsAreas.AddItem(wxRect(x+5, y+height-24, 24, 24), eventAdderAccessor);
 			}
 
             if ( drawDragTarget )
@@ -725,7 +725,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 
             //Registering event in items which are displayed
             wxRect eventArea(0,y,eventsPanel->GetSize().x,height);
-            itemsAreas.AddEventArea( eventArea, eventAccessor );
+            itemsAreas.AddItem( eventArea, eventAccessor );
         }
 
         y += height + gd::EventsRenderingHelper::Get()->separationBetweenEvents;
@@ -738,7 +738,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
             if ( !events[i].IsFolded() )
             {
                 dc.DrawBitmap(foldBmp, x-5-foldBmp.GetWidth(), y-foldBmp.GetHeight()-2, true /*Use mask*/ );
-                itemsAreas.AddFoldingItem(wxRect(x-5-foldBmp.GetWidth(), y-foldBmp.GetHeight()-2, foldBmp.GetWidth(), foldBmp.GetHeight()), foldingItem);
+                itemsAreas.AddItem(wxRect(x-5-foldBmp.GetWidth(), y-foldBmp.GetHeight()-2, foldBmp.GetWidth(), foldBmp.GetHeight()), foldingItem);
 
                 //Draw sub events
                 y += DrawEvents(dc, events[i].GetSubEvents(), x+24, y, scrollTo);
@@ -746,7 +746,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
             else
             {
                 dc.DrawBitmap(unfoldBmp, x-5-unfoldBmp.GetWidth(), y-unfoldBmp.GetHeight()-2, true /*Use mask*/ );
-                itemsAreas.AddFoldingItem(wxRect(x-5-unfoldBmp.GetWidth(), y-unfoldBmp.GetHeight()-2, unfoldBmp.GetWidth(), unfoldBmp.GetHeight()), foldingItem);
+                itemsAreas.AddItem(wxRect(x-5-unfoldBmp.GetWidth(), y-unfoldBmp.GetHeight()-2, unfoldBmp.GetWidth(), unfoldBmp.GetHeight()), foldingItem);
 
                 dc.SetPen(wxPen(wxColour(0,0,0)));
                 dc.DrawLine(x-5-unfoldBmp.GetWidth(), y-2, eventsPanel->GetSize().x, y-2);
@@ -857,21 +857,21 @@ void EventsEditor::OneventsPanelLeftDown(wxMouseEvent& event)
     HandleSelectionAfterClick(event.GetX(), event.GetY());
 
     //Begin drag
-    if ( !doNotBeginDrag && itemsAreas.IsOnInstruction(event.GetX(), event.GetY()) && selection.InstructionSelected(itemsAreas.GetInstructionAt(event.GetX(), event.GetY())) )
+    if ( !doNotBeginDrag && itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) && selection.InstructionSelected(itemsAreas.GetItemAt<gd::InstructionItem>(event.GetX(), event.GetY())) )
         selection.BeginDragInstruction();
-    else if ( !doNotBeginDrag && itemsAreas.IsOnEvent(event.GetX(), event.GetY()) && selection.EventSelected(itemsAreas.GetEventAt(event.GetX(), event.GetY())) )
+    else if ( !doNotBeginDrag && itemsAreas.IsOnItemAt<gd::EventItem>(event.GetX(), event.GetY()) && selection.EventSelected(itemsAreas.GetItemAt<gd::EventItem>(event.GetX(), event.GetY())) )
         selection.BeginDragEvent();
 }
 
 void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditingParameters)
 {
-    if ( allowLiveEditingParameters && itemsAreas.IsOnParameter(x, y) )
+    if ( allowLiveEditingParameters && itemsAreas.IsOnItemAt<gd::ParameterItem>(x, y) )
     {
         selection.ClearSelection();
 
-        wxRect parameterArea = itemsAreas.GetAreaOfParameterAt(x, y);
-        liveEditedParameter = itemsAreas.GetParameterAt(x, y);
-        liveEditedAssociatedInstruction = itemsAreas.GetInstructionAt(x, y);
+        wxRect parameterArea = itemsAreas.GetAreaOfItemAt<gd::ParameterItem>(x, y);
+        liveEditedParameter = itemsAreas.GetItemAt<gd::ParameterItem>(x, y);
+        liveEditedAssociatedInstruction = itemsAreas.GetItemAt<gd::InstructionItem>(x, y);
 
         if (liveEditedParameter.parameter == NULL ) return;
 
@@ -883,9 +883,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
         liveEditingChangesMade = false;
     }
     //gd::Instruction selection?
-    else if ( itemsAreas.IsOnInstruction(x, y) )
+    else if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(x, y) )
     {
-        gd::InstructionItem item = itemsAreas.GetInstructionAt(x, y);
+        gd::InstructionItem item = itemsAreas.GetItemAt<gd::InstructionItem>(x, y);
 
         if ( !ctrlKeyDown && !selection.InstructionSelected(item) ) selection.ClearSelection();
         selection.AddInstruction(item);
@@ -893,9 +893,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
         //Log file
         if ( LogFileManager::Get()->IsLogActivated() )
         {
-            if ( itemsAreas.IsOnEvent(x, y) )
+            if ( itemsAreas.IsOnItemAt<gd::EventItem>(x, y) )
             {
-                EventItem eventItem = itemsAreas.GetEventAt(x, y);
+                EventItem eventItem = itemsAreas.GetItemAt<gd::EventItem>(x, y);
                 if ( item.isCondition )
                     LogFileManager::Get()->WriteToLogFile("Condition selected ( Layout \""+scene.GetName()+"\", Event position in the last list: "+gd::String::From(eventItem.positionInList)+" )");
                 else
@@ -904,10 +904,10 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
         }
     }
     //Un/folding?
-    else if ( itemsAreas.IsOnFoldingItem(x, y) )
+    else if ( itemsAreas.IsOnItemAt<gd::FoldingItem>(x, y) )
     {
         if ( !ctrlKeyDown ) selection.ClearSelection();
-        gd::BaseEvent * eventToFold = itemsAreas.GetFoldingItemAt(x, y).event;
+        gd::BaseEvent * eventToFold = itemsAreas.GetItemAt<gd::FoldingItem>(x, y).event;
         if (eventToFold)
         {
             eventToFold->SetFolded(!eventToFold->IsFolded());
@@ -915,9 +915,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
         }
     }
 	//Instruction adder? (Add condition / add action)
-	else if ( itemsAreas.IsOnInstructionAdderItem(x, y) )
+	else if ( itemsAreas.IsOnItemAt<gd::InstructionAdderItem>(x, y) )
 	{
-		gd::InstructionAdderItem item = itemsAreas.GetInstructionAdderItemAt(x, y);
+		gd::InstructionAdderItem item = itemsAreas.GetItemAt<gd::InstructionAdderItem>(x, y);
 
         if ( item.instructionList == NULL || item.event == NULL) return;
 
@@ -938,9 +938,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
 		doNotBeginDrag = true;
 	}
 	//event adder? (to add an event)
-	else if ( itemsAreas.IsOnEventAdderItem(x, y) )
+	else if ( itemsAreas.IsOnItemAt<gd::EventAdderItem>(x, y) )
 	{
-		gd::EventAdderItem item = itemsAreas.GetEventAdderItemAt(x, y);
+		gd::EventAdderItem item = itemsAreas.GetItemAt<gd::EventAdderItem>(x, y);
 
         if ( item.eventsList == NULL || item.event == NULL) return;
 
@@ -950,9 +950,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
 		doNotBeginDrag = true;
 	}
     //Event selection?
-    else if ( itemsAreas.IsOnEvent(x, y) ) //Don't take the selection if an instruction adder button is clicked
+    else if ( itemsAreas.IsOnItemAt<gd::EventItem>(x, y) ) //Don't take the selection if an instruction adder button is clicked
     {
-        EventItem item = itemsAreas.GetEventAt(x, y);
+        EventItem item = itemsAreas.GetItemAt<gd::EventItem>(x, y);
 
         if ( !ctrlKeyDown && !selection.EventSelected(item) ) selection.ClearSelection();
         selection.AddEvent(item);
@@ -965,9 +965,9 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
 void EventsEditor::OneventsPanelLeftDClick(wxMouseEvent& event)
 {
     //gd::Instruction selection?
-    if ( itemsAreas.IsOnInstruction(event.GetX(), event.GetY()) )
+    if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
     {
-        gd::InstructionItem item = itemsAreas.GetInstructionAt(event.GetX(), event.GetY());
+        gd::InstructionItem item = itemsAreas.GetItemAt<gd::InstructionItem>(event.GetX(), event.GetY());
 
         if (item.instruction == NULL || item.instructionList == NULL || item.event == NULL) return;
 
@@ -989,9 +989,9 @@ void EventsEditor::OneventsPanelLeftDClick(wxMouseEvent& event)
             ChangesMadeOnEvents();
         }
     }
-    else if (itemsAreas.IsOnInstructionList(event.GetX(), event.GetY()) )
+    else if (itemsAreas.IsOnItemAt<gd::InstructionListItem>(event.GetX(), event.GetY()) )
     {
-        gd::InstructionListItem item = itemsAreas.GetInstructionListAt(event.GetX(), event.GetY());
+        gd::InstructionListItem item = itemsAreas.GetItemAt<gd::InstructionListItem>(event.GetX(), event.GetY());
 
         if ( item.instructionList == NULL || item.event == NULL) return;
 
@@ -1010,9 +1010,9 @@ void EventsEditor::OneventsPanelLeftDClick(wxMouseEvent& event)
         }
     }
     //Event selection?
-    else if ( itemsAreas.IsOnEvent(event.GetX(), event.GetY()) )
+    else if ( itemsAreas.IsOnItemAt<gd::EventItem>(event.GetX(), event.GetY()) )
     {
-        std::shared_ptr<gd::BaseEvent> evt = itemsAreas.GetEventAt(event.GetX(), event.GetY()).event;
+        std::shared_ptr<gd::BaseEvent> evt = itemsAreas.GetItemAt<gd::EventItem>(event.GetX(), event.GetY()).event;
 
         if ( evt == std::shared_ptr<gd::BaseEvent>() ) return;
 
@@ -1060,22 +1060,22 @@ void EventsEditor::OneventsPanelMouseMove(wxMouseEvent& event)
 	selection.SetHighlighted(dummy6);
 
     //Highlight management
-    if ( itemsAreas.IsOnEvent(event.GetX(), event.GetY()) )
+    if ( itemsAreas.IsOnItemAt<gd::EventItem>(event.GetX(), event.GetY()) )
     {
-        selection.SetHighlighted(itemsAreas.GetEventAt(event.GetX(), event.GetY()));
+        selection.SetHighlighted(itemsAreas.GetItemAt<gd::EventItem>(event.GetX(), event.GetY()));
 
-		if( itemsAreas.IsOnEventAdderItem(event.GetX(), event.GetY()) )
+		if( itemsAreas.IsOnItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()) )
 		{
-			selection.SetHighlighted(itemsAreas.GetEventAdderItemAt(event.GetX(), event.GetY()));
+			selection.SetHighlighted(itemsAreas.GetItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()));
 		}
 
-        wxRect area = itemsAreas.GetAreaOfEventAt(event.GetX(), event.GetY());
+        wxRect area = itemsAreas.GetAreaOfItemAt<gd::EventItem>(event.GetX(), event.GetY());
         selection.EventHighlightedOnBottomPart(area.y+area.height/2.0 < event.GetY());
 
-        if ( itemsAreas.IsOnInstructionList(event.GetX(), event.GetY()) )
+        if ( itemsAreas.IsOnItemAt<gd::InstructionListItem>(event.GetX(), event.GetY()) )
         {
-            selection.SetHighlighted(itemsAreas.GetInstructionListAt(event.GetX(), event.GetY()));
-            wxRect area = itemsAreas.GetAreaOfInstructionListAt(event.GetX(), event.GetY());
+            selection.SetHighlighted(itemsAreas.GetItemAt<gd::InstructionListItem>(event.GetX(), event.GetY()));
+            wxRect area = itemsAreas.GetAreaOfItemAt<gd::InstructionListItem>(event.GetX(), event.GetY());
 
             //Update context panel ( unless we're dragging something )
             /*if ( !selection.IsDraggingEvent() && ! selection.IsDraggingInstruction())
@@ -1085,24 +1085,24 @@ void EventsEditor::OneventsPanelMouseMove(wxMouseEvent& event)
                 showlistContextPanel = true;
             }*/
 
-            if ( itemsAreas.IsOnInstruction(event.GetX(), event.GetY()) )
+            if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
             {
-                selection.SetHighlighted(itemsAreas.GetInstructionAt(event.GetX(), event.GetY()));
+                selection.SetHighlighted(itemsAreas.GetItemAt<gd::InstructionItem>(event.GetX(), event.GetY()));
 
-                wxRect area = itemsAreas.GetAreaOfInstructionAt(event.GetX(), event.GetY());
+                wxRect area = itemsAreas.GetAreaOfItemAt<gd::InstructionItem>(event.GetX(), event.GetY());
                 selection.InstructionHighlightedOnBottomPart(area.y+area.height/2.0 < event.GetY());
 
-                if ( itemsAreas.IsOnParameter(event.GetX(), event.GetY()) )
-                    selection.SetHighlighted(itemsAreas.GetParameterAt(event.GetX(), event.GetY()));
+                if ( itemsAreas.IsOnItemAt<gd::ParameterItem>(event.GetX(), event.GetY()) )
+                    selection.SetHighlighted(itemsAreas.GetItemAt<gd::ParameterItem>(event.GetX(), event.GetY()));
             }
 
-			if ( itemsAreas.IsOnInstructionAdderItem(event.GetX(), event.GetY()) )
+			if ( itemsAreas.IsOnItemAt<gd::InstructionAdderItem>(event.GetX(), event.GetY()) )
 			{
-				selection.SetHighlighted(itemsAreas.GetInstructionAdderItemAt(event.GetX(), event.GetY()));
+				selection.SetHighlighted(itemsAreas.GetItemAt<gd::InstructionAdderItem>(event.GetX(), event.GetY()));
 			}
         }
-        else if ( itemsAreas.IsOnParameter(event.GetX(), event.GetY()) ) //Parameter without list ( a simple gd::Expression )
-            selection.SetHighlighted(itemsAreas.GetParameterAt(event.GetX(), event.GetY()));
+        else if ( itemsAreas.IsOnItemAt<gd::ParameterItem>(event.GetX(), event.GetY()) ) //Parameter without list ( a simple gd::Expression )
+            selection.SetHighlighted(itemsAreas.GetItemAt<gd::ParameterItem>(event.GetX(), event.GetY()));
 
     }
     else
@@ -1118,7 +1118,7 @@ void EventsEditor::OneventsPanelRightUp(wxMouseEvent& event)
 {
     HandleSelectionAfterClick(event.GetX(), event.GetY(), false /*Do not start editing a parameter*/);
 
-    if ( itemsAreas.IsOnInstruction(event.GetX(), event.GetY()) )
+    if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
     {
         eventsContextMenu.Enable(deleteMenuItem, true);
         eventsContextMenu.Enable(toggleActivationMenuItem, false);
@@ -1126,7 +1126,7 @@ void EventsEditor::OneventsPanelRightUp(wxMouseEvent& event)
         eventsContextMenu.Enable(cutMenuItem, true);
         PopupMenu(&eventsContextMenu);
     }
-    else if ( itemsAreas.IsOnInstructionList(event.GetX(), event.GetY()) )
+    else if ( itemsAreas.IsOnItemAt<gd::InstructionListItem>(event.GetX(), event.GetY()) )
     {
         eventsContextMenu.Enable(deleteMenuItem, false);
         eventsContextMenu.Enable(toggleActivationMenuItem, false);
@@ -1134,7 +1134,7 @@ void EventsEditor::OneventsPanelRightUp(wxMouseEvent& event)
         eventsContextMenu.Enable(cutMenuItem, false);
         PopupMenu(&eventsContextMenu);
     }
-    else if ( itemsAreas.IsOnEvent(event.GetX(), event.GetY()) )
+    else if ( itemsAreas.IsOnItemAt<gd::EventItem>(event.GetX(), event.GetY()) )
     {
         eventsContextMenu.Enable(deleteMenuItem, true);
         eventsContextMenu.Enable(toggleActivationMenuItem, true);

@@ -218,6 +218,11 @@ public:
     wxRect GetAreaOfEventAt(int x, int y);
 
     /**
+     * \brief Return the area of an event.
+     */
+    wxRect GetAreaOfEvent(const EventItem &eventItem);
+
+    /**
      * \brief True if a point is on an instruction.
      */
     bool IsOnInstruction(int x, int y);

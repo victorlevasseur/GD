@@ -555,6 +555,27 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 		dc.SetTextForeground(wxColour(0, 0, 0));
 		dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont());
 
+		//Find the next event if one
+		wxPoint insertionIndicatorPos(eventAdderArea.GetBottomLeft().x, 0);
+		if(selection.GetHighlightedEventAdder().positionInList < selection.GetHighlightedEventAdder().eventsList->GetEventsCount() - 1)
+		{
+			//Get its position
+			gd::EventItem nextEventAccessor(
+				events->GetEventSmartPtr(selection.GetHighlightedEventAdder().positionInList+1),
+				events,
+				selection.GetHighlightedEventAdder().positionInList+1
+				);
+
+			wxRect nextEventArea = itemsAreas.GetAreaOfEvent(nextEventAccessor);
+
+			insertionIndicatorPos.y = nextEventArea.GetTopLeft().y - gd::EventsRenderingHelper::Get()->separationBetweenEvents - 1;
+		}
+		else
+		{
+			//It's the last event
+			insertionIndicatorPos.y = eventAdderArea.GetBottomLeft().y;
+		}
+
 		std::array<wxPoint, 5> points{
 			wxPoint(0, 0),
 			wxPoint(300, 0),
@@ -563,12 +584,16 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 			wxPoint(0, 16),
 		 	};
 
-		dc.DrawPolygon(5, points.data(), eventAdderArea.GetBottomLeft().x, eventAdderArea.GetBottomLeft().y);
+		dc.DrawPolygon(5, points.data(), insertionIndicatorPos.x, insertionIndicatorPos.y);
 
+		dc.DrawRectangle( wxRect(eventAdderArea.GetBottomLeft(), insertionIndicatorPos + wxPoint(eventAdderArea.GetWidth()-1, 0)) );
+
+		//Hide some borders
 		dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush().GetColour());
 		dc.DrawLine(eventAdderArea.GetBottomLeft() + wxPoint(1, 0), eventAdderArea.GetBottomRight() + wxPoint(0, 0));
+		dc.DrawLine(insertionIndicatorPos + wxPoint(1, 0), wxPoint(eventAdderArea.GetBottomRight().x, insertionIndicatorPos.y));
 
-		dc.DrawText( _("Add event here (right-click for more options)"), eventAdderArea.GetBottomRight() + wxPoint(2, 2));
+		dc.DrawText( _("Add event here (right-click for other kinds of events)"), insertionIndicatorPos + wxPoint(2, 2));
 	}
 
 	//Draw a indication text
@@ -686,7 +711,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 				dc.DrawRectangle(wxRect(x+5, y+height-24, 24, 24));
 
 				dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont().Scaled(3));
-				dc.DrawText(gd::String("+"), x+5+3, y+height-24-5);
+				dc.DrawBitmap(wxBitmap("res/icons_default/add_event16.png"), x+5+4, y+height-24+4);
 
 				itemsAreas.AddEventAdderItem(wxRect(x+5, y+height-24, 24, 24), eventAdderAccessor);
 			}

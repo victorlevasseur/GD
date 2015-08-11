@@ -51,6 +51,19 @@ wxRect EventsEditorItemsAreas::GetAreaOfEventAt(int x, int y)
     return dummy;
 }
 
+wxRect EventsEditorItemsAreas::GetAreaOfEvent(const EventItem &eventItem)
+{
+    for (unsigned int i = 0;i<eventsAreas.size();++i)
+    {
+        if ( eventsAreas[i].second == eventItem )
+            return eventsAreas[i].first;
+    }
+
+    std::cout << "WARNING, CAN'T FIND THE AREA OF AN EVENT ITEM";
+
+    return wxRect();
+}
+
 bool EventsEditorItemsAreas::IsOnInstruction(int x, int y)
 {
     for (unsigned int i = 0;i<instructionsAreas.size();++i)

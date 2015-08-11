@@ -230,6 +230,44 @@ InstructionAdderItem EventsEditorItemsAreas::GetInstructionAdderItemAt(int x, in
     return dummy;
 }
 
+bool EventsEditorItemsAreas::IsOnEventAdderItem(int x, int y)
+{
+    for (unsigned int i = 0;i<eventAdderAreas.size();++i)
+    {
+        if ( eventAdderAreas[i].first.Contains(x,y) )
+            return true;
+    }
+
+    return false;
+}
+
+EventAdderItem EventsEditorItemsAreas::GetEventAdderItemAt(int x, int y)
+{
+    for (unsigned int i = 0;i<eventAdderAreas.size();++i)
+    {
+        if ( eventAdderAreas[i].first.Contains(x,y) )
+            return eventAdderAreas[i].second;
+    }
+
+    std::cout << "WARNING, RETURNING DUMMY InstructionAdderItem";
+
+    EventAdderItem dummy;
+    return dummy;
+}
+
+wxRect EventsEditorItemsAreas::GetAreaOfEventAdderItem(const gd::EventAdderItem &eventAdderItem)
+{
+    for (unsigned int i = 0;i<eventAdderAreas.size();++i)
+    {
+        if ( eventAdderAreas[i].second == eventAdderItem )
+            return eventAdderAreas[i].first;
+    }
+
+    std::cout << "WARNING, CAN'T FIND THE AREA OF AN EVENT ADDER ITEM";
+
+    return wxRect();
+}
+
 void EventsEditorItemsAreas::Clear()
 {
     eventsAreas.clear();
@@ -238,6 +276,7 @@ void EventsEditorItemsAreas::Clear()
     parametersAreas.clear();
     foldingAreas.clear();
     instructionAdderAreas.clear();
+    eventAdderAreas.clear();
 }
 
 void EventsEditorItemsAreas::AddInstructionArea(wxRect area, gd::InstructionItem & instruction)
@@ -268,6 +307,11 @@ void EventsEditorItemsAreas::AddInstructionListArea(wxRect area, InstructionList
 void EventsEditorItemsAreas::AddInstructionAdderItem(wxRect area, InstructionAdderItem & item)
 {
     instructionAdderAreas.push_back(std::make_pair(area, item));
+}
+
+void EventsEditorItemsAreas::AddEventAdderItem(wxRect area, EventAdderItem & item)
+{
+    eventAdderAreas.push_back(std::make_pair(area, item));
 }
 
 //EventItem stuff :
@@ -387,6 +431,28 @@ InstructionAdderItem::InstructionAdderItem() :
     event(NULL)
 {
 }
+
+//EventAdderItem stuff :
+bool EventAdderItem::operator==(const gd::EventAdderItem & other) const
+{
+    return (event == other.event && eventsList == other.eventsList && positionInList == other.positionInList);
+}
+
+EventAdderItem::EventAdderItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, unsigned int positionInList_ ) :
+    event(event_),
+    eventsList(eventsList_),
+    positionInList(positionInList_)
+{
+
+}
+
+EventAdderItem::EventAdderItem() :
+    eventsList(NULL),
+    positionInList(0)
+{
+
+}
+
 
 }
 

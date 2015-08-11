@@ -81,6 +81,11 @@ public:
     void SetHighlighted(const InstructionAdderItem & adderItem);
 
     /**
+     * Highlight an event adder item
+     */
+    void SetHighlighted(const EventAdderItem & eventAdderItem);
+
+    /**
      * Set if the mouse is on the bottom hand side of the instruction, or on the top hand side.
      */
     void InstructionHighlightedOnBottomPart(bool isOnbottomHandSide);
@@ -126,6 +131,11 @@ public:
     bool InstructionAdderHighlighted(const InstructionAdderItem & adderItem) { return adderItemHighlighted == adderItem; };
 
     /**
+     * Return true if an event adder button is highlighted
+     */
+    bool EventAdderHighlighted(const EventAdderItem & eventAdderItem) { return eventAdderHighlighted == eventAdderItem; };
+
+    /**
      * Return highlighted event item
      */
     gd::EventItem & GetHighlightedEvent() { return eventHighlighted; };
@@ -134,6 +144,11 @@ public:
      * Return highlighted instruction list item
      */
     InstructionListItem & GetHighlightedInstructionList() { return instructionListHighlighted; };
+
+    /**
+     * Return highlighted event adder button
+     */
+    gd::EventAdderItem & GetHighlightedEventAdder() { return eventAdderHighlighted; };
 
     /**
      * Return true if some events are selected
@@ -195,6 +210,7 @@ private:
     InstructionListItem instructionListHighlighted;
     ParameterItem parameterHighlighted;
     InstructionAdderItem adderItemHighlighted;
+    EventAdderItem eventAdderHighlighted;
 
     bool dragging; ///< True if dragging event
     bool draggingInstruction; ///< True if dragging instruction

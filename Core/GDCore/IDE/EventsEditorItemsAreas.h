@@ -138,6 +138,26 @@ public:
 };
 
 /**
+ * \brief Tool class to store information about an event adder button.
+ *
+ * Used by events editor to indicate to EventsEditorItemsAreas that an event adder button is displayed somewhere.
+ * \ingroup IDEDialogsEventsEditor
+ */
+class GD_CORE_API EventAdderItem
+{
+public:
+    EventAdderItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, unsigned int positionInList_ );
+    EventAdderItem();
+    ~EventAdderItem() {};
+
+    bool operator==(const gd::EventAdderItem & other) const;
+
+    std::shared_ptr<gd::BaseEvent> event;
+    gd::EventsList * eventsList;
+    unsigned int positionInList;
+};
+
+/**
  * \brief Allow events to indicate where is displayed an instruction or parameter.
  *
  * Events editor also uses this internally to indicate where events are displayed.
@@ -176,6 +196,11 @@ public:
      * \brief Notify the editor there is an instruction adder button in this area
      */
     void AddInstructionAdderItem(wxRect area, InstructionAdderItem & item);
+
+    /**
+     * \brief Notify the editor there is an event adder button in this area
+     */
+    void AddEventAdderItem(wxRect area, EventAdderItem & item);
 
     /**
      * \brief True if a point is on an event.
@@ -253,9 +278,24 @@ public:
     bool IsOnInstructionAdderItem(int x, int y);
 
     /**
-     * \brief Return instruction adder button at point (x,y). Be sure there is one here using IsOnFoldingItem(x,y);
+     * \brief Return instruction adder button at point (x,y). Be sure there is one here using IsOnInstructionAdderItem(x,y);
      */
     InstructionAdderItem GetInstructionAdderItemAt(int x, int y);
+
+    /**
+     * \brief True if a point is on an event adder button.
+     */
+    bool IsOnEventAdderItem(int x, int y);
+
+    /**
+     * \brief Return instruction adder button at point (x,y). Be sure there is one here using IsOnEventAdderItem(x,y);
+     */
+    EventAdderItem GetEventAdderItemAt(int x, int y);
+
+    /**
+     * \brief Return the area of a event adder button.
+     */
+    wxRect GetAreaOfEventAdderItem(const gd::EventAdderItem &eventAdderItem);
 
     /**
      * \brief Clear all areas ( typically before redraw )
@@ -278,6 +318,7 @@ public:
     std::vector< std::pair<wxRect, FoldingItem > > foldingAreas;
     std::vector< std::pair<wxRect, InstructionListItem > > instructionListsAreas;
     std::vector< std::pair<wxRect, InstructionAdderItem > > instructionAdderAreas;
+    std::vector< std::pair<wxRect, EventAdderItem > > eventAdderAreas;
 
 private:
 };

@@ -153,6 +153,11 @@ void EventsEditorSelection::SetHighlighted(const InstructionAdderItem & adderIte
     adderItemHighlighted = adderItem;
 }
 
+void EventsEditorSelection::SetHighlighted(const EventAdderItem & eventAdderItem)
+{
+    eventAdderHighlighted = eventAdderItem;
+}
+
 void EventsEditorSelection::BeginDragEvent()
 {
     dragging = true;

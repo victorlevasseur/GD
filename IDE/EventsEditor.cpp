@@ -541,8 +541,37 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
     //Clear selection areas
     itemsAreas.Clear();
 
+	//Draw events
     unsigned int totalHeight = DrawEvents(dc, *events, leftMargin + ( profilingActivated ? 23 : 0), -scrollBar->GetThumbPosition());
 
+	//Draw the event adder button indicator
+	gd::EventAdderItem dummy;
+	if( !selection.EventAdderHighlighted(dummy) ) //only if a event adder is highlighted
+	{
+		wxRect eventAdderArea = itemsAreas.GetAreaOfEventAdderItem(selection.GetHighlightedEventAdder());
+
+		dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleOutlinePen().GetColour().ChangeLightness(80));
+		dc.SetBrush(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush());
+		dc.SetTextForeground(wxColour(0, 0, 0));
+		dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont());
+
+		std::array<wxPoint, 5> points{
+			wxPoint(0, 0),
+			wxPoint(300, 0),
+			wxPoint(308, 8),
+			wxPoint(300, 16),
+			wxPoint(0, 16),
+		 	};
+
+		dc.DrawPolygon(5, points.data(), eventAdderArea.GetBottomLeft().x, eventAdderArea.GetBottomLeft().y);
+
+		dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush().GetColour());
+		dc.DrawLine(eventAdderArea.GetBottomLeft() + wxPoint(1, 0), eventAdderArea.GetBottomRight() + wxPoint(0, 0));
+
+		dc.DrawText( _("Add event here (right-click for more options)"), eventAdderArea.GetBottomRight() + wxPoint(2, 2));
+	}
+
+	//Draw a indication text
     wxString text;
     if ( events->IsEmpty() )
         text = _("Add an event with the ribbon.\nHighlight then an event/action/condition with the cursor to get more edition options,\nor make a double click to edit an item.");
@@ -593,13 +622,13 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
                 dc.DrawRectangle(0,y-2,eventsPanel->GetSize().x,height+4);
 
                 //Update context panel ( unless we're dragging something )
-                if ( !selection.IsDraggingEvent() && ! selection.IsDraggingInstruction())
+                /*if ( !selection.IsDraggingEvent() && ! selection.IsDraggingInstruction())
                 {
                     if ( eventContextPanel->GetPosition() != wxPoint(eventsPanel->GetSize().x-eventContextPanel->GetSize().x-10, y+height-1))
                         eventContextPanel->SetPosition(wxPoint(eventsPanel->GetSize().x-eventContextPanel->GetSize().x-10, y+height-1));
                     if ( !eventContextPanel->IsShown() )
                         eventContextPanel->Show(true);
-                }
+                }*/
 
                 if ( selection.IsDraggingEvent() )
                     drawDragTarget = true;//Draw drag target, but after
@@ -635,7 +664,32 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 
 
             //Event rendering
-            events[i].Render(dc, x, y, width, itemsAreas, selection, game.GetCurrentPlatform());
+            events[i].Render(dc, x+28, y, width-28, itemsAreas, selection, game.GetCurrentPlatform());
+
+			//Event adder button rendering
+			gd::EventAdderItem eventAdderAccessor(events.GetEventSmartPtr(i), &events, i);
+			if ( selection.EventHighlighted(eventAccessor) ) //only if the event is highlighted
+			{
+				if( selection.EventAdderHighlighted(eventAdderAccessor) )
+				{
+					dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleOutlinePen().GetColour().ChangeLightness(80));
+					dc.SetBrush(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush());
+					dc.SetTextForeground(gd::EventsRenderingHelper::Get()->GetSelectedRectangleOutlinePen().GetColour().ChangeLightness(80));
+				}
+				else
+				{
+					dc.SetPen(wxColour(200, 200, 200));
+					dc.SetBrush(wxColour(240, 240, 240));
+					dc.SetTextForeground(wxColour(170, 170, 170));
+				}
+
+				dc.DrawRectangle(wxRect(x+5, y+height-24, 24, 24));
+
+				dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont().Scaled(3));
+				dc.DrawText(gd::String("+"), x+5+3, y+height-24-5);
+
+				itemsAreas.AddEventAdderItem(wxRect(x+5, y+height-24, 24, 24), eventAdderAccessor);
+			}
 
             if ( drawDragTarget )
             {
@@ -835,6 +889,7 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
             Refresh();
         }
     }
+	//Instruction adder? (Add condition / add action)
 	else if ( itemsAreas.IsOnInstructionAdderItem(x, y) )
 	{
 		gd::InstructionAdderItem item = itemsAreas.GetInstructionAdderItemAt(x, y);
@@ -854,6 +909,18 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
             Refresh();
             ChangesMadeOnEvents();
         }
+
+		doNotBeginDrag = true;
+	}
+	//event adder? (to add an event)
+	else if ( itemsAreas.IsOnEventAdderItem(x, y) )
+	{
+		gd::EventAdderItem item = itemsAreas.GetEventAdderItemAt(x, y);
+
+        if ( item.eventsList == NULL || item.event == NULL) return;
+
+		gd::EventItem eventAccessor(item.event, item.eventsList, item.positionInList);
+        AddEvent(eventAccessor);
 
 		doNotBeginDrag = true;
 	}
@@ -964,11 +1031,18 @@ void EventsEditor::OneventsPanelMouseMove(wxMouseEvent& event)
     selection.SetHighlighted(dummy4);
 	gd::InstructionAdderItem dummy5;
 	selection.SetHighlighted(dummy5);
+	gd::EventAdderItem dummy6;
+	selection.SetHighlighted(dummy6);
 
     //Highlight management
     if ( itemsAreas.IsOnEvent(event.GetX(), event.GetY()) )
     {
         selection.SetHighlighted(itemsAreas.GetEventAt(event.GetX(), event.GetY()));
+
+		if( itemsAreas.IsOnEventAdderItem(event.GetX(), event.GetY()) )
+		{
+			selection.SetHighlighted(itemsAreas.GetEventAdderItemAt(event.GetX(), event.GetY()));
+		}
 
         wxRect area = itemsAreas.GetAreaOfEventAt(event.GetX(), event.GetY());
         selection.EventHighlightedOnBottomPart(area.y+area.height/2.0 < event.GetY());

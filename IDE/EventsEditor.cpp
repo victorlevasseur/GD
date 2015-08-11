@@ -578,9 +578,9 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 
 		std::array<wxPoint, 5> points{
 			wxPoint(0, 0),
-			wxPoint(300, 0),
-			wxPoint(308, 8),
-			wxPoint(300, 16),
+			wxPoint(400, 0),
+			wxPoint(408, 8),
+			wxPoint(400, 16),
 			wxPoint(0, 16),
 		 	};
 

@@ -198,6 +198,7 @@ private:
 
     wxFont font; ///< Fixed width font
     float fontCharacterWidth;
+    float fontCharacterHeight;
 
     wxFont niceFont;
 

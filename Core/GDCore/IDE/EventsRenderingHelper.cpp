@@ -53,7 +53,7 @@ wxPoint EventsRenderingHelper::DrawTextInArea(gd::String text, wxDC & dc, wxRect
     wxString displayedText;
     for (unsigned int i = 0;i<cutCount;++i)
     {
-        if (i != 0 ) point.y += 15;
+        if (i != 0) point.y += fontCharacterHeight;
 
         #if defined(LINUX)
         try
@@ -87,7 +87,7 @@ unsigned int EventsRenderingHelper::GetTextHeightInArea(const gd::String & text,
     int cutCount = ceil(static_cast<double>(text.length())/static_cast<double>(charactersInALine));
     if ( cutCount <= 0 ) cutCount = 1;
 
-    return cutCount*15;
+    return cutCount * fontCharacterHeight;
 }
 
 EventsRenderingHelper::EventsRenderingHelper() :
@@ -124,16 +124,16 @@ conditionsRectangleFill(wxBrush(wxColour(240,240,240)))
 {
     fakeBmp.Create(10,10,-1);
 
-    //Setup fonts, with "retina" support.
-    int fontSize = gd::GUIContentScaleFactor::Get() > 1 ? 15 : 9;
-    int niceFontSize = gd::GUIContentScaleFactor::Get() > 1 ? 12 : 8;
+    niceFont = wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    niceFont.SetPointSize(10);
 
-    niceFont = wxFont(niceFontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     #if defined(WINDOWS)
-    SetFont(wxFont(fontSize, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas"));
+    wxFont font(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
     #else
-    SetFont(wxFont(fontSize, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    wxFont font(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
     #endif
+    font.SetPointSize(10);
+    SetFont(font);
 }
 
 void EventsRenderingHelper::SetFont(const wxFont & font_)
@@ -145,6 +145,7 @@ void EventsRenderingHelper::SetFont(const wxFont & font_)
     dc.SelectObject(fakeBmp);
     dc.SetFont(font);
     fontCharacterWidth = static_cast<float>(dc.GetTextExtent("abcdef").GetWidth())/6.0f;
+    fontCharacterHeight = dc.GetTextExtent("abcdef").GetHeight();
 }
 
 int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions, wxDC & dc, int x, int y, int width, gd::BaseEvent * event,
@@ -178,7 +179,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No conditions"), x + 2, y + instructionsListPadding + 1 );
 
-        y += 15;
+        y += fontCharacterHeight;
     }
 
     y+=instructionsListPadding;
@@ -313,7 +314,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         dc.SetFont( niceFont.Italic() );
         dc.DrawText( _("No actions"), x + 2, y + instructionsListPadding + 1 );
 
-        y += 15;
+        y += fontCharacterHeight;
     }
 
     y+= instructionsListPadding;
@@ -417,7 +418,7 @@ unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::In
     const int iconWidth = 18;
 
     if ( conditions.empty() )
-        return 15+2*instructionsListPadding + addInstructionButtonHeight;
+        return fontCharacterHeight+2*instructionsListPadding + addInstructionButtonHeight;
 
     for ( unsigned int j = 0;j < conditions.size();j++ )
     {
@@ -449,7 +450,7 @@ unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::Instr
 
     //Draw Actions rectangle
     if ( actions.empty() )
-        return 15+2*instructionsListPadding+addInstructionButtonHeight;
+        return fontCharacterHeight+2*instructionsListPadding+addInstructionButtonHeight;
 
     //Draw each actions
     for ( unsigned int j = 0;j < actions.size();j++ )
@@ -500,10 +501,10 @@ int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const 
             {
                 dc.SetBrush(wxBrush(wxColour(255, 163, 163)));
                 dc.SetPen(wxPen(wxColour(209, 0, 0)));
-                dc.DrawRectangle(lastPos.x, lastPos.y,  parameterWidth, 15);
+                dc.DrawRectangle(lastPos.x, lastPos.y,  parameterWidth, fontCharacterHeight);
             }
 
-            areas.AddParameterArea(wxRect(lastPos.x, lastPos.y, parameterWidth,15) ,item);
+            areas.AddParameterArea(wxRect(lastPos.x, lastPos.y, parameterWidth, fontCharacterHeight) ,item);
         }
 
         dc.SetFont(font);
@@ -517,7 +518,7 @@ int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const 
     font.SetStyle(wxFONTSTYLE_NORMAL);
     dc.SetFont(font);
 
-    return lastPos.y-point.y+15;
+    return lastPos.y-point.y + fontCharacterHeight;
 }
 
 void EventsRenderingHelper::DrawNiceRectangle(wxDC & dc, const wxRect & rect) const

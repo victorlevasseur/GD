@@ -192,7 +192,7 @@ public:
     template<class T>
     bool IsOnItemAt(int x, int y) const
     {
-        if(areas.count(typeid(T)) == 0)
+        if(areas.count(typeid(T)) == 0 || areas.at(typeid(T)).size() == 0)
             return false;
 
         return std::any_of(

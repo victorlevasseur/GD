@@ -673,7 +673,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 
 			//Event adder button rendering
 			gd::EventAdderItem eventAdderAccessor(events.GetEventSmartPtr(i), &events, i);
-			if ( selection.EventHighlighted(eventAccessor) ) //only if the event is highlighted
+			if ( selection.EventHighlighted(eventAccessor) && !ctrlKeyDown && !selection.IsDraggingEvent() && !selection.IsDraggingInstruction() ) //only if the event is highlighted and ctrl not pressed
 			{
 				if( selection.EventAdderHighlighted(eventAdderAccessor) )
 				{
@@ -814,6 +814,19 @@ void EventsEditor::OneventsPanelLeftUp(wxMouseEvent& event)
         ChangesMadeOnEvents();
     }
 
+	//Add an event if clicked with left click on the event adder button
+	if ( itemsAreas.IsOnItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()) )
+	{
+		gd::EventAdderItem item = itemsAreas.GetItemAt<gd::EventAdderItem>(event.GetX(), event.GetY());
+
+        if ( item.eventsList == NULL || item.event == NULL) return;
+
+		gd::EventItem eventAccessor(item.event, item.eventsList, item.positionInList);
+        AddEvent(eventAccessor);
+
+		doNotBeginDrag = true;
+	}
+
     Refresh();
 }
 
@@ -920,13 +933,6 @@ void EventsEditor::HandleSelectionAfterClick(int x, int y, bool allowLiveEditing
 	//event adder? (to add an event)
 	else if ( itemsAreas.IsOnItemAt<gd::EventAdderItem>(x, y) )
 	{
-		gd::EventAdderItem item = itemsAreas.GetItemAt<gd::EventAdderItem>(x, y);
-
-        if ( item.eventsList == NULL || item.event == NULL) return;
-
-		gd::EventItem eventAccessor(item.event, item.eventsList, item.positionInList);
-        AddEvent(eventAccessor);
-
 		doNotBeginDrag = true;
 	}
     //Event selection?
@@ -1139,6 +1145,7 @@ void EventsEditor::OneventsPanelKeyDown(wxKeyEvent& event)
     if ( event.GetKeyCode() == WXK_CONTROL )
     {
         ctrlKeyDown = true;
+		Refresh();
     }
     else if ( event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_BACK )
     {

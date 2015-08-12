@@ -579,9 +579,9 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 		std::array<wxPoint, 5> points{
 			wxPoint(0, 0),
 			wxPoint(400, 0),
-			wxPoint(408, 8),
-			wxPoint(400, 16),
-			wxPoint(0, 16),
+			wxPoint(408, (dc.GetCharHeight()+2)/2),
+			wxPoint(400, (dc.GetCharHeight()+2)/2*2),
+			wxPoint(0, (dc.GetCharHeight()+2)/2*2),
 		 	};
 
 		dc.DrawPolygon(5, points.data(), insertionIndicatorPos.x, insertionIndicatorPos.y);
@@ -711,7 +711,7 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
 				dc.DrawRectangle(wxRect(x+5, y+height-24, 24, 24));
 
 				dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont().Scaled(3));
-				dc.DrawBitmap(wxBitmap("res/icons_default/add_event16.png"), x+5+4, y+height-24+4);
+				dc.DrawBitmap(wxBitmap("res/icons_default/add_event16.png", wxBITMAP_TYPE_ANY), x+5+4, y+height-24+4);
 
 				itemsAreas.AddItem(wxRect(x+5, y+height-24, 24, 24), eventAdderAccessor);
 			}

@@ -173,25 +173,25 @@ ChooseVariableDialog::ChooseVariableDialog(wxWindow* parent, gd::VariablesContai
         itemCount++;
     }
 
-    int bestHeight = 200+itemCount*10;
-    bestHeight = (bestHeight < 200) ? 350 : bestHeight;
+    int bestHeight = 300+itemCount*10;
+    bestHeight = (bestHeight < 300) ? 350 : bestHeight;
     bestHeight = (bestHeight > 500) ? 500 : bestHeight;
 
-    SetSize(GetSize().GetWidth(), bestHeight);
+    SetSize(500, bestHeight);
 }
 
 void ChooseVariableDialog::UpdateTitle()
 {
     if ( editingOnly )
     {
-        gd::String context = "";
+        wxString context = "";
         if ( associatedProject != NULL && associatedLayout == NULL ) context = _("Global variables");
-        else if ( associatedProject != NULL && associatedLayout != NULL && associatedObject == NULL  ) context = associatedLayout->GetName() + " " + _("scene variables");
-        else if ( associatedProject != NULL && associatedLayout != NULL && associatedObject != NULL ) context = associatedObject->GetName();
+        else if ( associatedProject != NULL && associatedLayout != NULL && associatedObject == NULL  ) context = wxString::Format(_("\"%s\" scene variables").ToWxString(), associatedLayout->GetName().ToWxString());
+        else if ( associatedProject != NULL && associatedLayout != NULL && associatedObject != NULL ) context = wxString::Format(_("\"%s\" object variables").ToWxString(), associatedObject->GetName().ToWxString());
         else context = "Instance variables";
 
         SetTitle(wxString::Format(wxString(_("Edit the variables (%s)")),
-            context.ToWxString()));
+            context));
         okBt->SetLabel(_("Ok"));
     }
 }

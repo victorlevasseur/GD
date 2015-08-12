@@ -555,45 +555,25 @@ void EventsEditor::OneventsPanelPaint(wxPaintEvent& event)
 		dc.SetTextForeground(wxColour(0, 0, 0));
 		dc.SetFont(gd::EventsRenderingHelper::Get()->GetNiceFont());
 
-		//Find the next event if one
-		wxPoint insertionIndicatorPos(eventAdderArea.GetBottomLeft().x, 0);
-		if(selection.GetHighlightedEventAdder().positionInList < selection.GetHighlightedEventAdder().eventsList->GetEventsCount() - 1)
-		{
-			//Get its position
-			gd::EventItem nextEventAccessor(
-				events->GetEventSmartPtr(selection.GetHighlightedEventAdder().positionInList+1),
-				events,
-				selection.GetHighlightedEventAdder().positionInList+1
-				);
+		//Calculate the position of the indicator
+		wxPoint insertionIndicatorPos(eventAdderArea.GetBottomLeft());
 
-			wxRect nextEventArea = itemsAreas.GetAreaOfItem<gd::EventItem>(nextEventAccessor);
-
-			insertionIndicatorPos.y = nextEventArea.GetTopLeft().y - gd::EventsRenderingHelper::Get()->separationBetweenEvents - 1;
-		}
-		else
-		{
-			//It's the last event
-			insertionIndicatorPos.y = eventAdderArea.GetBottomLeft().y;
-		}
-
-		std::array<wxPoint, 5> points{
+		std::array<wxPoint, 4> points{
 			wxPoint(0, 0),
 			wxPoint(400, 0),
-			wxPoint(408, (dc.GetCharHeight()+2)/2),
-			wxPoint(400, (dc.GetCharHeight()+2)/2*2),
-			wxPoint(0, (dc.GetCharHeight()+2)/2*2),
+			wxPoint(400, dc.GetCharHeight()+3),
+			wxPoint(0, dc.GetCharHeight()+3),
 		 	};
 
-		dc.DrawPolygon(5, points.data(), insertionIndicatorPos.x, insertionIndicatorPos.y);
+		dc.DrawPolygon(4, points.data(), insertionIndicatorPos.x, insertionIndicatorPos.y);
 
 		dc.DrawRectangle( wxRect(eventAdderArea.GetBottomLeft(), insertionIndicatorPos + wxPoint(eventAdderArea.GetWidth()-1, 0)) );
 
 		//Hide some borders
 		dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush().GetColour());
-		dc.DrawLine(eventAdderArea.GetBottomLeft() + wxPoint(1, 0), eventAdderArea.GetBottomRight() + wxPoint(0, 0));
 		dc.DrawLine(insertionIndicatorPos + wxPoint(1, 0), wxPoint(eventAdderArea.GetBottomRight().x, insertionIndicatorPos.y));
 
-		dc.DrawText( _("Add event here (right-click for other kinds of events)"), insertionIndicatorPos + wxPoint(2, 2));
+		dc.DrawText( _("Add event (right-click for other kinds of events)"), insertionIndicatorPos + wxPoint(2, 2));
 	}
 
 	//Draw a indication text

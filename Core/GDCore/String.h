@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 #include <SFML/System/String.hpp>
-
 #include "GDCore/Utf8/utf8.h"
 
 namespace sf {class String;};
@@ -27,6 +26,8 @@ namespace gd
 {
 
 class String;
+class ConstGraphemeInterface;
+class GraphemeInterface;
 
 /**
  * \brief String represents an UTF8 encoded string.
@@ -681,9 +682,45 @@ public:
  * \}
  */
 
+/**
+ * \name Grapheme clusters aware interface
+ * \{
+ */
+
+    /**
+     * \brief Returns a interface that allows to manipulate this string with grapheme
+     * clusters aware methods.
+     * \note These methods are often slower than their standard counterpart but supports
+     * combining characters.
+     * \warning This class is not meant to be stored in a variable but used directly :
+     * \code
+     * gd::String str = u8"This is a sentence";
+     * if(str.Grapheme().find("is") != gd::String::npos)
+     *     std::cout << "Found \"is\"" << std::endl;
+     * \endcode
+     */
+    GraphemeInterface Grapheme();
+
+    /**
+     * \brief Returns a interface that allows to manipulate this string with grapheme
+     * clusters aware methods.
+     * \note These methods are often slower than their standard counterpart but supports
+     * combining characters.
+     * \warning This class is not meant to be stored in a variable but used directly :
+     * \code
+     * gd::String str = u8"This is a sentence";
+     * if(str.Grapheme().find("is") != gd::String::npos)
+     *     std::cout << "Found \"is\"" << std::endl;
+     * \endcode
+     */
+    ConstGraphemeInterface Grapheme() const;
+
+/**
+ * \}
+ */
+
 private:
     std::string m_string; ///< Internal std::string container
-
 };
 
 /**

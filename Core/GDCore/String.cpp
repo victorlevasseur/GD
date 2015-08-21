@@ -8,6 +8,7 @@
 
 #include <SFML/System/String.hpp>
 #include "GDCore/CommonTools.h"
+#include "GDCore/GraphemeInterface.h"
 #include "GDCore/Utf8/utf8proc.h"
 
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -659,6 +660,16 @@ String::size_type String::FindCaseInsensitive( const String &search, size_type p
         return npos;
     else
         return priv::GetPositionFromCaseFolded(*this, findPos);
+}
+
+GraphemeInterface String::Grapheme()
+{
+    return GraphemeInterface(*this);
+}
+
+ConstGraphemeInterface String::Grapheme() const
+{
+    return ConstGraphemeInterface(*this);
 }
 
 String GD_CORE_API operator+(String lhs, const String &rhs)

@@ -15,10 +15,9 @@
 #include <memory>
 #include "GDCpp/ObjInstancesHolder.h"
 #include "GDCpp/RuntimeLayer.h"
-#include "GDCpp/Text.h"
 #include "GDCpp/InputManager.h"
 #include "GDCpp/ManualTimer.h"
-#include "GDCpp/AutomatismsRuntimeSharedDataHolder.h"
+#include "GDCpp/BehaviorsRuntimeSharedDataHolder.h"
 namespace sf { class RenderWindow; }
 namespace sf { class Event; }
 namespace gd { class Project; }
@@ -27,7 +26,7 @@ namespace gd { class ImageManager; }
 class CppPlatform;
 class RuntimeLayer;
 class RuntimeGame;
-class AutomatismsRuntimeSharedData;
+class BehaviorsRuntimeSharedData;
 class ExtensionBase;
 class Text;
 class CodeExecutionEngine;
@@ -92,17 +91,11 @@ public:
     RuntimeLayer & GetRuntimeLayer(const gd::String & name);
 
     /**
-     * Add a text to be displayed on the scene
-     * \deprecated
-     */
-    void DisplayText(Text & text);
-
-    /**
-     * \brief Return the shared data for an automatism.
+     * \brief Return the shared data for a behavior.
      * \warning Be careful, no check is made to ensure that the shared data exist.
-     * \param name The name of the automatism for which shared data must be fetched.
+     * \param name The name of the behavior for which shared data must be fetched.
      */
-    const std::shared_ptr<AutomatismsRuntimeSharedData> & GetAutomatismSharedData(const gd::String & automatismName) const { return automatismsSharedDatas.GetAutomatismSharedData(automatismName); }
+    const std::shared_ptr<BehaviorsRuntimeSharedData> & GetBehaviorSharedData(const gd::String & behaviorName) const { return behaviorsSharedDatas.GetBehaviorSharedData(behaviorName); }
 
     /**
      * \brief Set up the RuntimeScene using a gd::Layout.
@@ -127,9 +120,8 @@ public:
      * \param container The object containing the initial instances to be created
      * \param xOffset The offset on x axis to be applied to objects created
      * \param yOffset The offset on y axis to be applied to objects created
-     * \param optionalMap An optional pointer to a std::map<const gd::InitialInstance *, std::shared_ptr<RuntimeObject> > which will be filled with the index of the initial instances. Can be NULL.
      */
-    void CreateObjectsFrom(const gd::InitialInstancesContainer & container, float xOffset = 0, float yOffset = 0, std::map<const gd::InitialInstance *, std::shared_ptr<RuntimeObject> > * optionalMap = NULL);
+    void CreateObjectsFrom(const gd::InitialInstancesContainer & container, float xOffset = 0, float yOffset = 0);
 
     /**
      * \brief Change the window used for rendering the scene
@@ -239,13 +231,13 @@ protected:
     void Render();
 
     /**
-     * \brief To be called once during a step, to launch automatisms pre-events steps.
+     * \brief To be called once during a step, to launch behaviors pre-events steps.
      */
     void ManageObjectsBeforeEvents();
 
     /**
      * \brief To be called once during a step, to remove objects marked as deleted in events,
-     * and to update objects position, forces and automatisms.
+     * and to update objects position, forces and behaviors.
      */
     void ManageObjectsAfterEvents();
 
@@ -269,10 +261,9 @@ protected:
     RuntimeVariablesContainer               variables; ///<List of the scene variables
     std::vector < ExtensionBase * >         extensionsToBeNotifiedOnObjectDeletion; ///< List, built during LoadFromScene, containing a list of extensions which must be notified when an object is deleted.
     sf::Clock                               clock;
-    AutomatismsRuntimeSharedDataHolder      automatismsSharedDatas; ///<Contains all automatisms shared datas.
+    BehaviorsRuntimeSharedDataHolder      behaviorsSharedDatas; ///<Contains all behaviors shared datas.
     std::vector < RuntimeLayer >            layers; ///< The layers used at runtime to display the scene.
     std::shared_ptr<CodeExecutionEngine>    codeExecutionEngine;
-    std::vector < Text >                    legacyTexts; ///<Deprecated way of displaying a text
     SceneChange                             requestedChange; ///< What should be done at the end of the frame.
 
     static RuntimeLayer badRuntimeLayer; ///< Null object return by GetLayer when no appropriate layer could be found.

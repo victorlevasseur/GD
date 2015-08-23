@@ -1108,7 +1108,7 @@ void EventsEditor::OneventsPanelRightUp(wxMouseEvent& event)
 	{
 		PopupMenu(&eventTypesMenu, itemsAreas.GetAreaOfItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()).GetBottomLeft());
 	}
-    if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
+    else if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
     {
         eventsContextMenu.Enable(deleteMenuItem, true);
         eventsContextMenu.Enable(toggleActivationMenuItem, false);

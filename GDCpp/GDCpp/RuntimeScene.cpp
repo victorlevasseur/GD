@@ -25,11 +25,10 @@
 #include "GDCpp/profile.h"
 #include "GDCpp/Position.h"
 #include "GDCpp/FontManager.h"
-#include "GDCpp/AutomatismsSharedData.h"
-#include "GDCpp/AutomatismsRuntimeSharedData.h"
+#include "GDCpp/BehaviorsSharedData.h"
+#include "GDCpp/BehaviorsRuntimeSharedData.h"
 #include "GDCpp/RuntimeContext.h"
 #include "GDCpp/Project.h"
-#include "GDCpp/Text.h"
 #include "GDCpp/ManualTimer.h"
 #include "GDCpp/CppPlatform.h"
 #include "GDCore/Tools/Localization.h"
@@ -115,39 +114,6 @@ void RuntimeScene::RequestChange(SceneChange::Change change, gd::String sceneNam
     requestedChange.requestedScene = sceneName;
 }
 
-#ifndef RELEASE
-void DisplayProfile(sf::RenderWindow * renderWindow, CProfileIterator * iter, int x, int & y)
-{
-    if (!renderWindow) return;
-    FontManager * fontManager = FontManager::Get();
-
-    y += 15;
-    while ( !iter->Is_Done() )
-    {
-        sf::Text text("", *fontManager->GetFont(""));
-        text.setCharacterSize(12);
-        ostringstream texte;
-        if ( CProfileManager::Get_Frame_Count_Since_Reset() != 0 )
-            texte << fixed <<  iter->Get_Current_Name()   << " Calls/Frame:" << iter->Get_Current_Total_Calls()/CProfileManager::Get_Frame_Count_Since_Reset()
-                                                << " Time/Frame:" << iter->Get_Current_Total_Time()/CProfileManager::Get_Frame_Count_Since_Reset()
-                                                << " %Time/Parent " << iter->Get_Current_Total_Time()/iter->Get_Current_Parent_Total_Time()*100.0f;
-        text.setString(texte.str());
-        text.setPosition(x,y);
-        renderWindow->draw(text);
-
-        //Childs
-        CProfileIterator * childIter = CProfileManager::Get_Iterator();
-        *childIter = *iter;
-        childIter->Enter_Child(0);
-        DisplayProfile(renderWindow, childIter, x+15, y);
-        CProfileManager::Release_Iterator(childIter);
-
-        y += 15;
-        iter->Next();
-    }
-}
-#endif
-
 bool RuntimeScene::RenderAndStep()
 {
     requestedChange.change = SceneChange::CONTINUE;
@@ -165,12 +131,7 @@ bool RuntimeScene::RenderAndStep()
     #endif
 
     if (GetCodeExecutionEngine()->Ready())
-    {
-        #if !defined(RELEASE)
-        BT_PROFILE("Events");
-        #endif
         GetCodeExecutionEngine()->Execute();
-    }
 
     #if defined(GD_IDE_ONLY)
     if( GetProfiler() && GetProfiler()->profilingActivated )
@@ -188,7 +149,6 @@ bool RuntimeScene::RenderAndStep()
 
     //Rendering
     Render();
-    legacyTexts.clear();
 
     #if defined(GD_IDE_ONLY)
     if( GetProfiler() && GetProfiler()->profilingActivated )
@@ -292,25 +252,9 @@ void RuntimeScene::Render()
                     if (allObjects[id]->GetLayer() == layers[layerIndex].GetName())
                         allObjects[id]->Draw(*renderWindow);
                 }
-
-                //Texts
-                DisplayLegacyTexts(layers[layerIndex].GetName());
             }
         }
     }
-
-    //Internal profiler
-    #ifndef RELEASE
-    if ( sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
-        CProfileManager::Reset();
-
-    renderWindow->setView(sf::View(sf::FloatRect(0.0f,0.0f, game->GetMainWindowDefaultWidth(), game->GetMainWindowDefaultHeight())));
-
-    CProfileIterator * iter = CProfileManager::Get_Iterator();
-    int y = 0;
-    DisplayProfile(renderWindow, iter, 0,y);
-    CProfileManager::Increment_Frame_Counter();
-    #endif
 
     // Display window contents on screen
     renderWindow->popGLStates();
@@ -354,24 +298,6 @@ bool RuntimeScene::OrderObjectsByZOrder(RuntimeObjList & objList)
     return true;
 }
 
-void RuntimeScene::DisplayText(Text & text)
-{
-    legacyTexts.push_back(text);
-}
-
-bool RuntimeScene::DisplayLegacyTexts(gd::String layer)
-{
-    if (!renderWindow) return false;
-
-    for ( unsigned int i = 0;i < legacyTexts.size();i++ )
-    {
-        if ( legacyTexts[i].layer == layer )
-            legacyTexts[i].Draw(*renderWindow);
-    }
-
-    return true;
-}
-
 RuntimeLayer & RuntimeScene::GetRuntimeLayer(const gd::String & name)
 {
     for (unsigned int i = 0;i<layers.size();++i)
@@ -398,7 +324,7 @@ void RuntimeScene::ManageObjectsAfterEvents()
         }
     }
 
-    //Update objects positions, forces and automatisms
+    //Update objects positions, forces and behaviors
     allObjects = objectsInstances.GetAllObjects();
     for (unsigned int id = 0;id<allObjects.size();++id)
     {
@@ -406,7 +332,7 @@ void RuntimeScene::ManageObjectsAfterEvents()
         allObjects[id]->SetY( allObjects[id]->GetY() + ( allObjects[id]->TotalForceY() * static_cast<double>(GetElapsedTime())/1000000.0 ));
         allObjects[id]->UpdateTime( static_cast<double>(GetElapsedTime())/1000000.0 );
         allObjects[id]->UpdateForce( static_cast<double>(GetElapsedTime())/1000000.0 );
-        allObjects[id]->DoAutomatismsPostEvents(*this);
+        allObjects[id]->DoBehaviorsPostEvents(*this);
     }
 }
 
@@ -414,7 +340,7 @@ void RuntimeScene::ManageObjectsBeforeEvents()
 {
     RuntimeObjList allObjects = objectsInstances.GetAllObjects();
     for (unsigned int id = 0;id<allObjects.size();++id)
-        allObjects[id]->DoAutomatismsPreEvents(*this);
+        allObjects[id]->DoBehaviorsPreEvents(*this);
 }
 
 /**
@@ -423,12 +349,11 @@ void RuntimeScene::ManageObjectsBeforeEvents()
 class ObjectsFromInitialInstanceCreator : public gd::InitialInstanceFunctor
 {
 public:
-    ObjectsFromInitialInstanceCreator(gd::Project & game_, RuntimeScene & scene_, float xOffset_, float yOffset_, std::map<const gd::InitialInstance *, std::shared_ptr<RuntimeObject> > * optionalMap_) :
+    ObjectsFromInitialInstanceCreator(gd::Project & game_, RuntimeScene & scene_, float xOffset_, float yOffset_) :
         game(game_),
         scene(scene_),
         xOffset(xOffset_),
-        yOffset(yOffset_),
-        optionalMap(optionalMap_)
+        yOffset(yOffset_)
     {};
     virtual ~ObjectsFromInitialInstanceCreator() {};
 
@@ -467,8 +392,6 @@ public:
         }
         else
             std::cout << "Could not find and put object " << instance.GetObjectName() << std::endl;
-
-        if ( optionalMap ) (*optionalMap)[&instance] = newObject;
     }
 
 private:
@@ -476,12 +399,11 @@ private:
     RuntimeScene & scene;
     float xOffset;
     float yOffset;
-    std::map<const gd::InitialInstance *, std::shared_ptr<RuntimeObject> > * optionalMap;
 };
 
-void RuntimeScene::CreateObjectsFrom(const gd::InitialInstancesContainer & container, float xOffset, float yOffset, std::map<const gd::InitialInstance *, std::shared_ptr<RuntimeObject> > * optionalMap)
+void RuntimeScene::CreateObjectsFrom(const gd::InitialInstancesContainer & container, float xOffset, float yOffset)
 {
-    ObjectsFromInitialInstanceCreator func(*game, *this, xOffset, yOffset, optionalMap);
+    ObjectsFromInitialInstanceCreator func(*game, *this, xOffset, yOffset);
     const_cast<gd::InitialInstancesContainer&>(container).IterateOverInstances(func);
 }
 
@@ -504,7 +426,6 @@ bool RuntimeScene::LoadFromSceneAndCustomInstances( const gd::Layout & scene, co
 
     //Clear RuntimeScene datas
     objectsInstances.Clear();
-    legacyTexts.clear();
     timers.clear();
     firstLoop = true;
     elapsedTime = 0;
@@ -532,9 +453,9 @@ bool RuntimeScene::LoadFromSceneAndCustomInstances( const gd::Layout & scene, co
     std::cout << ".";
     CreateObjectsFrom(instances);
 
-    //Automatisms shared data
+    //Behaviors shared data
     std::cout << ".";
-    automatismsSharedDatas.LoadFrom(scene.automatismsInitialSharedDatas);
+    behaviorsSharedDatas.LoadFrom(scene.behaviorsInitialSharedDatas);
 
     std::cout << ".";
     //Extensions specific initialization

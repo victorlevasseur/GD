@@ -74,10 +74,11 @@ gd::String CodeCompilerCall::GetFullCall() const
         //Compiler default directories
         std::vector<gd::String> standardsIncludeDirs;
         #if defined(WINDOWS)
+        gd::String gccVersion = gd::String::From(__GNUC__) + "." + gd::String::From(__GNUC_MINOR__) + "." + gd::String::From(__GNUC_PATCHLEVEL__);
         standardsIncludeDirs.push_back("CppPlatform/MinGW32/include");
-        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/4.9.2/include");
-        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/4.9.2/include/c++");
-        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/4.9.2/include/c++/mingw32");
+        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/" + gccVersion + "/include");
+        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/" + gccVersion + "/include/c++");
+        standardsIncludeDirs.push_back("CppPlatform/MinGW32/lib/gcc/mingw32/" + gccVersion + "/include/c++/mingw32");
         #elif defined(LINUX)
         standardsIncludeDirs.push_back("CppPlatform/include/linux/usr/include/i686-linux-gnu/");
         standardsIncludeDirs.push_back("CppPlatform/include/linux/usr/lib/gcc/i686-linux-gnu/4.7/include");
@@ -627,7 +628,7 @@ void CodeCompilerProcess::WatchOutput()
 
 void CodeCompilerProcess::ReadOutput()
 {
-    wxChar c;
+    char c;
 
     if(IsInputAvailable())
     {
@@ -637,12 +638,12 @@ void CodeCompilerProcess::ReadOutput()
             c = GetInputStream()->GetC();
             if ( GetInputStream()->Eof() ) break; // Check we've not just overrun
 
-            line += c;
-            if ( c==wxT('\n') ) break; // If \n, break to print the line
+            if ( c=='\n' ) break; // If \n, break to print the line
+            line.Raw() += c;
         }
         while ( IsInputAvailable() ); // Unless \n, loop to get another char
 
-        output.push_back(line); // Either there's a full line in 'line', or we've run out of input. Either way, print it
+        output.push_back(line.ReplaceInvalid()); // Either there's a full line in 'line', or we've run out of input. Either way, print it
     }
     if(IsErrorAvailable())
     {
@@ -652,12 +653,12 @@ void CodeCompilerProcess::ReadOutput()
             c = GetErrorStream()->GetC();
             if ( GetErrorStream()->Eof() ) break; // Check we've not just overrun
 
-            line += c;
-            if ( c==wxT('\n') ) break; // If \n, break to print the line
+            if ( c=='\n' ) break; // If \n, break to print the line
+            line.Raw() += c;
         }
         while ( IsErrorAvailable() );                           // Unless \n, loop to get another char
 
-        outputErrors.push_back(line); // Either there's a full line in 'line', or we've run out of input. Either way, print it
+        outputErrors.push_back(line.ReplaceInvalid()); // Either there's a full line in 'line', or we've run out of input. Either way, print it
     }
 }
 

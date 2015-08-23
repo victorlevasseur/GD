@@ -21,14 +21,13 @@
 #include "GDCore/PlatformDefinition/Object.h"
 #include "GDCore/PlatformDefinition/InitialInstance.h"
 #include "GDCore/PlatformDefinition/InitialInstancesContainer.h"
-#include "GDCore/IDE/Dialogs/ChooseAutomatismTypeDialog.h"
+#include "GDCore/IDE/Dialogs/ChooseBehaviorTypeDialog.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasAssociatedEditor.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasTextDnd.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasOptions.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/GridSetupDialog.h"
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
-#include "GDCore/IDE/CommonBitmapManager.h"
 #include "GDCore/IDE/SkinHelper.h"
 #include "GDCore/Tools/Log.h"
 #include "GDCore/CommonTools.h"
@@ -229,7 +228,7 @@ LayoutEditorCanvas::LayoutEditorCanvas(wxWindow* parent, gd::Project & project_,
         deleteItem->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
 
         contextMenu.Append(ID_PROPMENU, _("Properties"));
-        contextMenu.Append(ID_AUTOMENU, _("Add an automatism to the object"));
+        contextMenu.Append(ID_AUTOMENU, _("Add a behavior to the object"));
         contextMenu.AppendSeparator();
         contextMenu.Append(ID_CREATEOBJECTMENU, _("Insert a new object"));
         contextMenu.AppendSeparator();
@@ -666,7 +665,7 @@ void LayoutEditorCanvas::OnAddAutoObjSelected(wxCommandEvent & event)
         }
     }
 
-    gd::ChooseAutomatismTypeDialog::ChooseAndAddAutomatismToObject(this, project,
+    gd::ChooseBehaviorTypeDialog::ChooseAndAddBehaviorToObject(this, project,
         object, &layout, globalObject);
 
     //Show the properties panel and ensure other editors are refreshed:
@@ -878,6 +877,7 @@ public:
     {
         gd::InitialInstance & instance = *instancePtr;
         if ( ignoreLockedInstances && instance.IsLocked() ) return;
+        if ( excludedLayers.find(instance.GetLayer()) != excludedLayers.end() ) return;
 
         sf::Vector2f size = editor.GetInitialInstanceSize(instance);
         sf::Vector2f origin = editor.GetInitialInstanceOrigin(instance);
@@ -890,13 +890,18 @@ public:
         }
     }
 
-    std::vector<InitialInstance*> & GetSelectedList() { return selectedList; };
-    InstancesInAreaPicker & IgnoreLockedInstances() { ignoreLockedInstances = true; return *this; };
+    std::vector<InitialInstance*> & GetSelectedList() { return selectedList; }
+    InstancesInAreaPicker & IgnoreLockedInstances() { ignoreLockedInstances = true; return *this; }
+    InstancesInAreaPicker & ExcludeLayer(const gd::String & layerName) { 
+        excludedLayers.insert(layerName);
+        return *this; 
+    }
 
 private:
     const LayoutEditorCanvas & editor;
     std::vector<InitialInstance*> selectedList; ///< This list will be filled with the instances that are into the selectionRectangle
     bool ignoreLockedInstances;
+    std::set<gd::String> excludedLayers;
 };
 
 void LayoutEditorCanvas::OnLeftUp(wxMouseEvent &)
@@ -967,6 +972,8 @@ void LayoutEditorCanvas::OnLeftUp(wxMouseEvent &)
 
         //Select the instances that are inside the selection rectangle
         InstancesInAreaPicker picker(*this);
+        for(auto hiddenLayer : gd::GetHiddenLayers(layout))
+            picker.ExcludeLayer(hiddenLayer);
         picker.IgnoreLockedInstances();
         instances.IterateOverInstances(picker);
 
@@ -1250,6 +1257,7 @@ public:
     {
         gd::InitialInstance & instance = *instancePtr;
         if ( pickLockedOnly != instance.IsLocked() ) return;
+        if ( excludedLayers.find(instance.GetLayer()) != excludedLayers.end() ) return;
 
         sf::Vector2f size = editor.GetInitialInstanceSize(instance);
         sf::Vector2f origin = editor.GetInitialInstanceOrigin(instance);
@@ -1269,6 +1277,7 @@ public:
     InitialInstance * GetSmallestInstanceUnderCursor() { return smallestInstance; };
 
     void PickLockedInstancesAndOnlyThem() { pickLockedOnly = true; }
+    void ExcludeLayer(const gd::String & layerName) { excludedLayers.insert(layerName); }
 
 private:
     const LayoutEditorCanvas & editor;
@@ -1277,11 +1286,15 @@ private:
     const double xPosition;
     const double yPosition;
     bool pickLockedOnly;
+    std::set<gd::String> excludedLayers;
 };
 
 InitialInstance * LayoutEditorCanvas::GetInitialInstanceAtPosition(double xPosition, double yPosition, bool pickOnlyLockedInstances)
 {
     SmallestInstanceUnderCursorPicker picker(*this, xPosition, yPosition);
+
+    for(auto hiddenLayer : gd::GetHiddenLayers(layout))
+        picker.ExcludeLayer(hiddenLayer);
     if ( pickOnlyLockedInstances ) picker.PickLockedInstancesAndOnlyThem();
     instances.IterateOverInstances(picker);
 

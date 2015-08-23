@@ -700,11 +700,11 @@ public:
      * \warning This class is not meant to be stored in a variable but used directly :
      * \code
      * gd::String str = u8"This is a sentence";
-     * if(str.Grapheme().find("is") != gd::String::npos)
+     * if(str.Grph().find("is") != gd::String::npos)
      *     std::cout << "Found \"is\"" << std::endl;
      * \endcode
      */
-    GraphemeInterface Grapheme();
+    GraphemeInterface Grph();
 
     /**
      * \brief Returns a interface that allows to manipulate this string with grapheme
@@ -714,11 +714,11 @@ public:
      * \warning This class is not meant to be stored in a variable but used directly :
      * \code
      * gd::String str = u8"This is a sentence";
-     * if(str.Grapheme().find("is") != gd::String::npos)
+     * if(str.Grph().find("is") != gd::String::npos)
      *     std::cout << "Found \"is\"" << std::endl;
      * \endcode
      */
-    ConstGraphemeInterface Grapheme() const;
+    ConstGraphemeInterface Grph() const;
 
 /**
  * \}

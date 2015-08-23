@@ -13,7 +13,7 @@
 #include <vector>
 #include "catch.hpp"
 #include "GDCore/String.h"
-#include "GDCore/GraphemeIterator.h"
+#include "GDCore/GraphemeInterface.h"
 #include <SFML/System/String.hpp>
 
 TEST_CASE( "Utf8 String", "[common][utf8]") {
@@ -258,7 +258,7 @@ TEST_CASE( "Utf8 String", "[common][utf8]") {
 	}
 }
 
-TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
+TEST_CASE( "Utf8 Grapheme clusters aware methods of gd::String", "[common][utf8][graphemeadapter]") {
 	SECTION("Iterators") {
 		gd::String str1 = u8"A simple string";
 		gd::String str2 = u8"Les graph\x65\xCC\x80mes ont march\x65\xCC\x81 !"; //Use the decomposed graphemes "è" and "é"
@@ -268,29 +268,29 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 		REQUIRE( str1.size() == 15 );
 		REQUIRE( str2.size() == 28 ); //There are 28 characters but e + grave accent and e + acute accent count as 2 characters each
 
-		REQUIRE( std::distance( gd::grapheme::GetIterator(str2, str2.begin()), gd::grapheme::GetIterator(str2, str2.end()) ) == 26 ); //The count is correct with GraphemeIterators
+		REQUIRE( str2.Grph().size() == 26 ); //The count is correct with GraphemeIterators
 
 		{
-			auto it = gd::grapheme::GetIterator(str2, str2.begin());
+			auto it = str2.Grph().begin();
 			std::advance(it, 9);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 9 );
 			++it;
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 11 );
 		}
 		{
-			auto it = gd::grapheme::GetIterator(str2, str2.begin());
+			auto it = str2.Grph().begin();
 			std::advance(it, 26);
-			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.end()) );
+			REQUIRE( it == str2.Grph().end() );
 			REQUIRE( it.base() == str2.end() );
 
 			std::advance(it, -25);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 1 );
 			--it;
-			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.begin()) );
+			REQUIRE( it == str2.Grph().begin() );
 			REQUIRE( it.base() == str2.begin() );
 		}
 		{
-			auto it = gd::grapheme::GetIterator(str2, str2.begin());
+			auto it = str2.Grph().begin();
 			REQUIRE( *it == "L" );
 			++it;
 			REQUIRE( *it == "e" );
@@ -343,22 +343,22 @@ TEST_CASE( "Utf8 String Grapheme Adapter", "[common][utf8][graphemeadapter]") {
 			++it;
 			REQUIRE( *it == "!" );
 			++it;
-			REQUIRE( it == gd::grapheme::GetIterator(str2, str2.end()) );
+			REQUIRE( it == str2.Grph().end() );
 		}
 
-		REQUIRE( gd::grapheme::FromGraphemePos(str2, 9) == 9 );
-		REQUIRE( gd::grapheme::FromCodepoint(str2, 9) == 9 );
+		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(9) == 9 );
+		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(9) == 9 );
 
-		REQUIRE( gd::grapheme::FromGraphemePos(str2, 10) == 11 ); //After the è
-		REQUIRE( gd::grapheme::FromCodepoint(str2, 11) == 10 );
+		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(10) == 11 ); //After the è
+		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(11) == 10 );
 
-		REQUIRE( gd::grapheme::FromGraphemePos(str2, 23) == 24 ); //After the è and just before the é
-		REQUIRE( gd::grapheme::FromCodepoint(str2, 24) == 23 );
+		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(23) == 24 ); //After the è and just before the é
+		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(24) == 23 );
 
-		REQUIRE( gd::grapheme::FromGraphemePos(str2, 24) == 26 ); //After the è and é
-		REQUIRE( gd::grapheme::FromCodepoint(str2, 26) == 24 );
+		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(24) == 26 ); //After the è and é
+		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(26) == 24 );
 
-		REQUIRE( gd::grapheme::FromGraphemePos(str2, 40) == (size_t)-1 );
-		REQUIRE( gd::grapheme::FromCodepoint(str2, 40) == (size_t)-1 );
+		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(40) == (size_t)-1 );
+		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(40) == (size_t)-1 );
 	}
 }

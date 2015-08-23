@@ -1,8 +1,6 @@
 template<class T>
-class GD_CORE_API GraphemeIterator : public std::iterator<std::bidirectional_iterator_tag, String::value_type, String::difference_type>
+class GD_CORE_API GraphemeIterator : public std::iterator<std::bidirectional_iterator_tag, value_type, difference_type>
 {
-    friend class GraphemeStringAdapter;
-
 public:
     GraphemeIterator() : strIt(), beginIt(), endIt() {};
     GraphemeIterator(T strIt, T beginIt, T endIt) : strIt(strIt), beginIt(beginIt), endIt(endIt) {};
@@ -10,7 +8,7 @@ public:
     template<class U> GraphemeIterator(const GraphemeIterator<U> &other) : strIt(other.strIt) {} //Convert from const_iterator to iterator
     GraphemeIterator<T>& operator=(const GraphemeIterator<T> &other) { strIt = other.strIt; beginIt = other.beginIt; endIt = other.endIt; return *this; }
 
-    gd::String operator*()
+    value_type operator*()
     {
         T it = strIt;
         String::value_type previousCodepoint = *it;
@@ -27,7 +25,7 @@ public:
 
         std::string grapheme(strIt.base(), it.base());
 
-        return gd::String(grapheme.c_str());
+        return value_type(grapheme.c_str());
     }
 
     GraphemeIterator<T>& operator++()

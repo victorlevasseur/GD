@@ -678,12 +678,12 @@ String::size_type String::FindCaseInsensitive( const String &search, size_type p
         return priv::GetPositionFromCaseFolded(*this, findPos);
 }
 
-GraphemeInterface String::Grapheme()
+GraphemeInterface String::Grph()
 {
     return GraphemeInterface(*this);
 }
 
-ConstGraphemeInterface String::Grapheme() const
+ConstGraphemeInterface String::Grph() const
 {
     return ConstGraphemeInterface(*this);
 }

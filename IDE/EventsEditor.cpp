@@ -1104,6 +1104,10 @@ void EventsEditor::OneventsPanelRightUp(wxMouseEvent& event)
 {
     HandleSelectionAfterClick(event.GetX(), event.GetY(), false /*Do not start editing a parameter*/);
 
+	if ( itemsAreas.IsOnItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()) )
+	{
+		PopupMenu(&eventTypesMenu, itemsAreas.GetAreaOfItemAt<gd::EventAdderItem>(event.GetX(), event.GetY()).GetBottomLeft());
+	}
     if ( itemsAreas.IsOnItemAt<gd::InstructionItem>(event.GetX(), event.GetY()) )
     {
         eventsContextMenu.Enable(deleteMenuItem, true);
@@ -1500,9 +1504,11 @@ void EventsEditor::AddCustomEventFromMenu(unsigned int menuID, gd::EventItem & p
 
 void EventsEditor::OnAddCustomEventFromMenuSelected(wxCommandEvent& event)
 {
-    std::vector< EventItem > eventsSelected = selection.GetAllSelectedEventsWithoutSubEvents();
-    if ( !eventsSelected.empty() )
-        AddCustomEventFromMenu(event.GetId(), eventsSelected[0]);
+	gd::EventAdderItem item = selection.GetHighlightedEventAdder();
+	gd::EventItem eventAccessor(item.event, item.eventsList, item.positionInList);
+
+    if ( item.event != nullptr && item.eventsList != nullptr )
+        AddCustomEventFromMenu(event.GetId(), eventAccessor);
     else
     {
         EventItem dummy;

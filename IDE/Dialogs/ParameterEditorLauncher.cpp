@@ -1,7 +1,7 @@
 /*
  * GDevelop IDE
  * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
- * This project is released under the GNU General Public License.
+ * This project is released under the GNU General Public License version 3.
  */
 #include "ParameterEditorLauncher.h"
 #include <vector>
@@ -41,7 +41,7 @@
 using namespace std;
 
 void ParameterEditorLauncher::LaunchEditor(wxWindow * parent, gd::Project & project, gd::Layout & layout,
-	const gd::ParameterMetadata & metadata, std::vector<wxTextCtrl * > & paramEdits, unsigned int paramIndex)
+	const gd::ParameterMetadata & metadata, std::vector<wxTextCtrl * > & paramEdits, std::size_t paramIndex)
 {
 	if (paramIndex >= paramEdits.size()) return;
 	wxTextCtrl * editCtrl = paramEdits.at(paramIndex);
@@ -207,16 +207,30 @@ void ParameterEditorLauncher::LaunchEditor(wxWindow * parent, gd::Project & proj
     }
     else if ( metadata.GetType() == "trueorfalse" )
     {
-        TrueOrFalse dialog(parent, _("Choose True or False to fill the parameter"), _("True or False"));
+        TrueOrFalse dialog(parent, _("Choose True or False for this parameter"), _("True or False"));
         if ( dialog.ShowModal() == 1 )
-            editCtrl->ChangeValue(_("True"));
+        {
+            gd::String result = _("True");
+            if (result != "True" && result != "Vrai") {
+                result = "True";
+            }
+
+            editCtrl->ChangeValue(result);
+        }
         else
             editCtrl->ChangeValue(_("False"));
     }
     else if ( metadata.GetType() == "yesorno" )
     {
-        if (wxMessageBox(_("Choose yes or no to fullfil parent parameter:"), _("Yes or no") ,wxYES_NO ) == wxYES)
-            editCtrl->ChangeValue(_("yes"));
+        if (wxMessageBox(_("Choose yes or no for this parameter:"), _("Yes or no") ,wxYES_NO ) == wxYES)
+        {
+            gd::String result = _("yes");
+            if (result != "yes" && result != "oui") {
+                result = "yes";
+            }
+
+            editCtrl->ChangeValue(result);
+        }
         else
             editCtrl->ChangeValue(_("no"));
 

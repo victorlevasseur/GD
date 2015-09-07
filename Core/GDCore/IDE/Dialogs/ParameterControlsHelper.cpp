@@ -31,7 +31,7 @@ const long ParameterControlsHelper::ID_TEXTARRAY = wxNewId();
 const long ParameterControlsHelper::ID_BUTTONARRAY = wxNewId();
 const long ParameterControlsHelper::ID_CHECKARRAY = wxNewId();
 
-void ParameterControlsHelper::UpdateControls(unsigned int count)
+void ParameterControlsHelper::UpdateControls(std::size_t count)
 {
     if (!sizer || !window) return;
 
@@ -84,7 +84,7 @@ void ParameterControlsHelper::UpdateControls(unsigned int count)
     window->Layout(); //Ensure widgets just added are properly rendered.
 }
 
-void ParameterControlsHelper::UpdateParameterContent(unsigned int i, const ParameterMetadata & metadata, gd::String content)
+void ParameterControlsHelper::UpdateParameterContent(std::size_t i, const ParameterMetadata & metadata, gd::String content)
 {
     if (i >= paramEdits.size()) return;
     paramMetadata[i] = metadata;
@@ -120,7 +120,8 @@ void ParameterControlsHelper::UpdateParameterContent(unsigned int i, const Param
     //Add defaults
     if (!metadata.IsOptional() && content.empty())
     {
-        if ( type == "expression" ) paramEdits.at(i)->SetValue("0");
+        if (!metadata.GetDefaultValue().empty()) paramEdits.at(i)->SetValue(metadata.GetDefaultValue());
+        else if ( type == "expression" ) paramEdits.at(i)->SetValue("0");
         else if ( type == "string" ) paramEdits.at(i)->SetValue("\"\"");
         else if ( type == "operator" ) paramEdits.at(i)->SetValue("=");
     }
@@ -131,7 +132,7 @@ void ParameterControlsHelper::OnOptionalCheckboxClick(wxCommandEvent& event)
     wxWindow * control = dynamic_cast<wxWindow*>(event.GetEventObject());
     if (!control) return;
 
-    unsigned int i = gd::String(control->GetName()).To<int>();
+    std::size_t i = gd::String(control->GetName()).To<std::size_t>();
     if (i >= paramCheckboxes.size()) return;
 
     bool enable = paramCheckboxes.at(i)->GetValue();
@@ -145,7 +146,7 @@ void ParameterControlsHelper::OnParameterBtClick(wxCommandEvent& event)
     wxWindow * control = dynamic_cast<wxWindow*>(event.GetEventObject());
     if (!control) return;
 
-    unsigned int i = gd::String(control->GetName()).To<int>();
+    std::size_t i = gd::String(control->GetName()).To<std::size_t>();
     if (i >= paramMetadata.size() || i >= paramEdits.size()) return;
     if (!editionCallback || !editionCallbackProject || !editionCallbackLayout) return;
 

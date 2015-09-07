@@ -104,6 +104,12 @@ bool Object::AddBehavior(Behavior * behavior)
 }
 
 #if defined(GD_IDE_ONLY)
+std::map<gd::String, gd::PropertyDescriptor> Object::GetProperties(gd::Project & project) const
+{
+    std::map<gd::String, gd::PropertyDescriptor> nothing;
+    return nothing;
+}
+
 gd::Behavior * Object::AddNewBehavior(gd::Project & project, const gd::String & type, const gd::String & name)
 {
     Behavior * behavior = project.GetCurrentPlatform().CreateBehavior(type);
@@ -153,24 +159,15 @@ void Object::UnserializeFrom(gd::Project & project, const SerializerElement & el
     //Name and type are already loaded.
     objectVariables.UnserializeFrom(element.GetChild("variables", 0, "Variables"));
 
-    //Compatibility with GD <= 4
-    auto renameOldType = [](gd::String name) {
-        gd::String oldWord = "Automatism";
-        while (name.find(oldWord) != gd::String::npos)
-            name = name.replace(name.find(oldWord), oldWord.size(), "Behavior");
-
-        return name;
-    };
-    //End of compatibility code
-
     //Compatibility with GD <= 3.3
     if (element.HasChild("Automatism"))
     {
-        for (unsigned int i = 0; i < element.GetChildrenCount("Automatism"); ++i)
+        for (std::size_t i = 0; i < element.GetChildrenCount("Automatism"); ++i)
         {
             SerializerElement & behaviorElement = element.GetChild("Automatism", i);
 
-            gd::String autoType = renameOldType(behaviorElement.GetStringAttribute("type", "", "Type"));
+            gd::String autoType = behaviorElement.GetStringAttribute("type", "", "Type")
+                .FindAndReplace("Automatism", "Behavior");
             gd::String autoName = behaviorElement.GetStringAttribute("name", "", "Name");
 
             Behavior* behavior = project.CreateBehavior(autoType);
@@ -181,7 +178,7 @@ void Object::UnserializeFrom(gd::Project & project, const SerializerElement & el
                 behaviors[behavior->GetName()] = behavior;
             }
             else
-                std::cout << "WARNING: Unknown behavior " << behaviorElement.GetStringAttribute("type") << std::endl;
+                std::cout << "WARNING: Unknown behavior " << autoType << std::endl;
         }
     }
     //End of compatibility code
@@ -189,11 +186,12 @@ void Object::UnserializeFrom(gd::Project & project, const SerializerElement & el
     {
         SerializerElement & behaviorsElement = element.GetChild("behaviors", 0, "automatisms");
         behaviorsElement.ConsiderAsArrayOf("behavior", "automatism");
-        for (unsigned int i = 0; i < behaviorsElement.GetChildrenCount(); ++i)
+        for (std::size_t i = 0; i < behaviorsElement.GetChildrenCount(); ++i)
         {
             SerializerElement & behaviorElement = behaviorsElement.GetChild(i);
 
-            gd::String autoType = renameOldType(behaviorElement.GetStringAttribute("type"));
+            gd::String autoType = behaviorElement.GetStringAttribute("type")
+                .FindAndReplace("Automatism", "Behavior"); //Compatibility with GD <= 4
             gd::String autoName = behaviorElement.GetStringAttribute("name");
 
             Behavior* behavior = project.CreateBehavior(autoType);
@@ -204,7 +202,7 @@ void Object::UnserializeFrom(gd::Project & project, const SerializerElement & el
                 behaviors[behavior->GetName()] = behavior;
             }
             else
-                std::cout << "WARNING: Unknown behavior " << behaviorElement.GetStringAttribute("type") << std::endl;
+                std::cout << "WARNING: Unknown behavior " << autoType << std::endl;
         }
     }
 
@@ -221,7 +219,7 @@ void Object::SerializeTo(SerializerElement & element) const
     SerializerElement & behaviorsElement = element.AddChild("behaviors");
     behaviorsElement.ConsiderAsArrayOf("behavior");
     std::vector < gd::String > allBehaviors = GetAllBehaviorNames();
-    for (unsigned int i = 0;i<allBehaviors.size();++i)
+    for (std::size_t i = 0;i<allBehaviors.size();++i)
     {
         SerializerElement & behaviorElement = behaviorsElement.AddChild("behavior");
 

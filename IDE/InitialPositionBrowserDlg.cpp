@@ -1,7 +1,7 @@
 /*
  * GDevelop IDE
  * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
- * This project is released under the GNU General Public License.
+ * This project is released under the GNU General Public License version 3.
  */
 #include "InitialPositionBrowserDlg.h"
 
@@ -102,7 +102,7 @@ public:
 private:
     const InitialPositionBrowserDlg & editor;
     const std::vector<InitialInstance*> & selectedInstance;
-    unsigned int i; ///< The index of the currently added item in the wxWidgets control.
+    std::size_t i; ///< The index of the currently added item in the wxWidgets control.
 };
 
 void InitialPositionBrowserDlg::Refresh()

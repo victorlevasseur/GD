@@ -72,7 +72,7 @@ gd::String GD_API ToLowerCase(const gd::String & str)
 /**
  * Expression function for getting a substring from a string
  */
-unsigned int GD_API StrLen(const gd::String & str)
+std::size_t GD_API StrLen(const gd::String & str)
 {
     return gd::grapheme::size(str);
 }
@@ -102,7 +102,7 @@ int GD_API StrRFind(const gd::String & str, const gd::String & findwhat)
 /**
  * Expression function for finding a string in another
  */
-int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, unsigned int start)
+int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, std::size_t start)
 {
     size_t pos = str.find(findwhat, start);
 
@@ -113,7 +113,7 @@ int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, unsi
 /**
  * Expression function for finding a string in another
  */
-int GD_API StrRFindFrom(const gd::String & str, const gd::String & findwhat, unsigned int start)
+int GD_API StrRFindFrom(const gd::String & str, const gd::String & findwhat, std::size_t start)
 {
     size_t pos = str.rfind(findwhat, start);
 

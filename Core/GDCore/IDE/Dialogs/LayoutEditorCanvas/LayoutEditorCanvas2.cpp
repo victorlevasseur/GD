@@ -54,7 +54,7 @@ void LayoutEditorCanvas::OnUpdate()
             if ( wxDirExists(wxFileName::FileName(project.GetProjectFile()).GetPath()))
                 wxSetWorkingDirectory(wxFileName::FileName(project.GetProjectFile()).GetPath()); //Resources loading stuff incoming: Switch current work dir.
 
-            for (unsigned int i = 0;i<project.imagesChanged.size();++i)
+            for (std::size_t i = 0;i<project.imagesChanged.size();++i)
                 project.GetImageManager()->ReloadImage(project.imagesChanged[i]);
 
             project.GetImageManager()->LoadPermanentImages();
@@ -254,7 +254,7 @@ void LayoutEditorCanvas::RenderEdittime()
     InstancesRenderer renderer(*this, GetInitialInstanceUnderCursor(), guiElementsShapes);
 
     //Render objects of each layer
-    for (unsigned int layerIndex =0;layerIndex<layout.GetLayersCount();++layerIndex)
+    for (std::size_t layerIndex =0;layerIndex<layout.GetLayersCount();++layerIndex)
     {
         if ( layout.GetLayer(layerIndex).GetVisibility() )
         {
@@ -309,7 +309,7 @@ void LayoutEditorCanvas::RenderEdittime()
         DrawSelectionRectangleGuiElement(guiElementsShapes, sf::FloatRect(rectangleOrigin, rectangleEnd-rectangleOrigin));
     }
 
-    for (unsigned int i = 0;i<guiElementsShapes.size();++i)
+    for (std::size_t i = 0;i<guiElementsShapes.size();++i)
     	draw(*guiElementsShapes[i]);
 
     if ( options.windowMask ) RenderWindowMask();
@@ -409,8 +409,8 @@ sf::Vector2f LayoutEditorCanvas::ConvertToWindowCoordinates(float x, float y, co
 void LayoutEditorCanvas::OnDeleteObjectSelected(wxCommandEvent & event)
 {
     std::vector<gd::InitialInstance*> instancesToDelete;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        instancesToDelete.push_back(it->first);
+    for (auto & it : selectedInstances)
+        instancesToDelete.push_back(it.first);
 
     DeleteInstances(instancesToDelete);
 
@@ -432,8 +432,8 @@ void LayoutEditorCanvas::OnCreateObjectSelected(wxCommandEvent & event)
     //Add a new object of selected type to objects list
     layout.InsertNewObject(project, chooseTypeDialog.GetSelectedObjectType(), name, layout.GetObjectsCount());
 
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->ObjectsUpdated();
+    for (auto & it : associatedEditors)
+        it->ObjectsUpdated();
 
     //Add it on the layout ( Use oldMouseX/Y as the cursor has moved since the right click )
     AddObject(name, oldMouseX, oldMouseY);
@@ -454,25 +454,25 @@ void LayoutEditorCanvas::OnCreateObjectSelected(wxCommandEvent & event)
 
 void LayoutEditorCanvas::OnLockSelected(wxCommandEvent & event)
 {
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        if ( it->first ) it->first->SetLocked();
+    for (auto & it : selectedInstances)
+        if (it.first) it.first->SetLocked();
 
     ClearSelection();
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::OnUnLockSelected(wxCommandEvent & event)
 {
     gd::InitialInstance * instance = GetInitialInstanceAtPosition(oldMouseX, oldMouseY, /*pickOnlyLockedInstances=*/true);
-    if ( instance )
+    if (instance)
     {
         instance->SetLocked(false);
 
         ClearSelection();
         SelectInstance(instance);
-        for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-            (*it)->InitialInstancesUpdated();
+        for (auto & it : associatedEditors)
+            it->InitialInstancesUpdated();
     }
 }
 
@@ -480,11 +480,11 @@ void LayoutEditorCanvas::OnCopySelected(wxCommandEvent & event)
 {
     vector < std::shared_ptr<gd::InitialInstance> > copiedPositions;
 
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    for(auto & it : selectedInstances)
     {
-        if ( it->first == NULL ) continue;
+        if (it.first == NULL) continue;
 
-        copiedPositions.push_back(std::shared_ptr<gd::InitialInstance>(it->first->Clone()));
+        copiedPositions.push_back(std::shared_ptr<gd::InitialInstance>(it.first->Clone()));
         copiedPositions.back()->SetX(copiedPositions.back()->GetX() - oldMouseX);
         copiedPositions.back()->SetY(copiedPositions.back()->GetY() - oldMouseY);
     }
@@ -496,11 +496,11 @@ void LayoutEditorCanvas::OnCutSelected(wxCommandEvent & event)
 {
     vector < std::shared_ptr<gd::InitialInstance> > copiedPositions;
 
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    for (auto & it : selectedInstances)
     {
-        if ( it->first == NULL ) continue;
+        if ( it.first == NULL ) continue;
 
-        copiedPositions.push_back(std::shared_ptr<gd::InitialInstance>(it->first->Clone()));
+        copiedPositions.push_back(std::shared_ptr<gd::InitialInstance>(it.first->Clone()));
         copiedPositions.back()->SetX(copiedPositions.back()->GetX() - oldMouseX);
         copiedPositions.back()->SetY(copiedPositions.back()->GetY() - oldMouseY);
     }
@@ -509,12 +509,12 @@ void LayoutEditorCanvas::OnCutSelected(wxCommandEvent & event)
 
     //Do not forget to remove the cut instances
     std::vector<gd::InitialInstance*> instancesToDelete;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        instancesToDelete.push_back(it->first);
+    for (auto & it : selectedInstances)
+        instancesToDelete.push_back(it.first);
 
     DeleteInstances(instancesToDelete);
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::OnPasteSelected(wxCommandEvent & event)
@@ -523,16 +523,16 @@ void LayoutEditorCanvas::OnPasteSelected(wxCommandEvent & event)
 
     vector < std::shared_ptr<gd::InitialInstance> > pastedInstances = gd::Clipboard::Get()->Gets();
 
-    for (unsigned int i =0;i<pastedInstances.size();++i)
+    for (auto & it : pastedInstances)
     {
-        gd::InitialInstance & instance = instances.InsertInitialInstance(*pastedInstances[i]->Clone());
+        gd::InitialInstance & instance = instances.InsertInitialInstance(*it->Clone());
         instance.SetX(instance.GetX()+oldMouseX);
         instance.SetY(instance.GetY()+oldMouseY);
     }
 
     ChangesMade();
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::OnPasteSpecialSelected(wxCommandEvent & event)
@@ -556,9 +556,9 @@ void LayoutEditorCanvas::OnPasteSpecialSelected(wxCommandEvent & event)
     if ( dialog.ShowModal() != 1 ) return;
 
     float angle = dialog.GetRotationIncrementation();
-    for (unsigned int i = 0;i<dialog.GetYCount();++i)
+    for (std::size_t i = 0;i<dialog.GetYCount();++i)
     {
-        for (unsigned int j = 0;j<dialog.GetXCount();++j)
+        for (std::size_t j = 0;j<dialog.GetXCount();++j)
         {
             gd::InitialInstance & insertedInstance = instances.InsertInitialInstance(*instance);
             insertedInstance.SetX(dialog.GetStartX()+dialog.GetXGap()*j);
@@ -570,8 +570,8 @@ void LayoutEditorCanvas::OnPasteSpecialSelected(wxCommandEvent & event)
     }
 
     ChangesMade();
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::EnsureVisible(const gd::InitialInstance & instance)
@@ -681,11 +681,9 @@ void LayoutEditorCanvas::UpdateSize()
         unsigned int height = parentControl->GetSize().GetHeight()- (hScrollbar ? hScrollbar->GetSize().GetHeight() : 0);
 
         double scaleFactor = GUIContentScaleFactor::Get();
-        width *= scaleFactor;
-        height *= scaleFactor;
 
         //Scene takes all the space available in edition mode.
-        Window::setSize(sf::Vector2u(width, height));
+        Window::setSize(sf::Vector2u(width * scaleFactor, height * scaleFactor));
         wxWindowBase::SetPosition(wxPoint(0,0));
         wxWindowBase::SetSize(width, height);
 
@@ -743,19 +741,19 @@ void LayoutEditorCanvas::UpdateScrollbars()
 
     if ( thumbY <= 0 || static_cast<int>(thumbY+getSize().y) >= vScrollbar->GetRange())
     {
-        int ajout = getSize().y;
-        vScrollbar->SetScrollbar(thumbY+ajout/2, getSize().y, vScrollbar->GetRange()+ajout, getSize().y);
+        int offset = getSize().y;
+        vScrollbar->SetScrollbar(thumbY+offset/2, getSize().y, vScrollbar->GetRange()+offset, getSize().y);
     }
 
     if ( thumbX <= 0 || static_cast<int>(thumbX+getSize().x) >= hScrollbar->GetRange())
     {
-        int ajout = getSize().x;
-        hScrollbar->SetScrollbar(thumbX+ajout/2, getSize().x, hScrollbar->GetRange()+ajout, getSize().x);
+        int offset = getSize().x;
+        hScrollbar->SetScrollbar(thumbX+offset/2, getSize().x, hScrollbar->GetRange()+offset, getSize().x);
     }
 }
 void LayoutEditorCanvas::UpdateViewAccordingToZoomFactor()
 {
-    editionView.setSize(GetClientSize().GetWidth()/options.zoomFactor, GetClientSize().GetHeight()/options.zoomFactor);
+    editionView.setSize(getSize().x/options.zoomFactor, getSize().y/options.zoomFactor);
 }
 
 void LayoutEditorCanvas::OnHelpBtClick( wxCommandEvent & event )

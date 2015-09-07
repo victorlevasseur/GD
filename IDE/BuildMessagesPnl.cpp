@@ -1,7 +1,7 @@
 /*
  * GDevelop IDE
  * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
- * This project is released under the GNU General Public License.
+ * This project is released under the GNU General Public License version 3.
  */
 
 #include "BuildMessagesPnl.h"
@@ -76,7 +76,7 @@ void BuildMessagesPnl::RefreshWith(gd::Project * game, std::vector < CompilerMes
     gameAssociatedWithErrors = game;
 
     messagesList->DeleteAllItems();
-    for (unsigned int i = 0; i<messages.size(); ++i)
+    for (std::size_t i = 0; i<messages.size(); ++i)
     {
         messagesList->InsertItem(i, messages[i].file);
         messagesList->SetItem(i, 1, messages[i].line != gd::String::npos ? gd::String::From(messages[i].line) : "");

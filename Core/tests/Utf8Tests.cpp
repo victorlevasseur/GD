@@ -256,6 +256,31 @@ TEST_CASE( "Utf8 String", "[common][utf8]") {
 		REQUIRE( str2.FindCaseInsensitive(u8"SS", 7) == 7 );
 		REQUIRE( str2.FindCaseInsensitive(u8"SS", 8) == 19 );
 	}
+
+	SECTION("find and replace") {
+		gd::String str1 = u8"Ich heiße GDevelop";
+		REQUIRE( str1.FindAndReplace(u8"heiße", "bin", false) == u8"Ich bin GDevelop");
+
+		gd::String str2 = u8"Ich heiße heiße GDevelop";
+		REQUIRE( str2.FindAndReplace(u8"heiße", "bin", false) == u8"Ich bin heiße GDevelop");
+		REQUIRE( str2.FindAndReplace(u8"heiße", "bin") == u8"Ich bin bin GDevelop");
+		
+		gd::String str3 = u8"Ich heiße GDevelop ß";
+		REQUIRE( str3.FindAndReplace(u8"ß", "SS") == u8"Ich heiSSe GDevelop SS");
+
+		gd::String str4 = "AAA";
+		REQUIRE( str4.FindAndReplace("A", "A", false) == "AAA");
+		REQUIRE( str4.FindAndReplace("A", "A") == "AAA");
+		REQUIRE( str4.FindAndReplace("A", "AA", false) == "AAAA");
+		REQUIRE( str4.FindAndReplace("A", "AA") == "AAAAAA");
+		REQUIRE( str4.FindAndReplace("AA", "a") == "aA");
+
+		gd::String str5 = u8"ßßß";
+		REQUIRE( str5.FindAndReplace(u8"ß", u8"ßß") == u8"ßßßßßß");
+		
+		gd::String str6 = u8"ßßß";
+		REQUIRE( str6.FindAndReplace(u8"ßß", u8"ß") == u8"ßß");
+	}
 }
 
 TEST_CASE( "Utf8 Grapheme clusters aware methods of gd::String", "[common][utf8][graphemeadapter]") {

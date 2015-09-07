@@ -187,8 +187,8 @@ public:
         openNodes.insert(&startNode);
 
         //A* algorithm main loop
-        unsigned int iterationCount = 0;
-        unsigned int maxIterationCount = startNode.estimateCost*maxComplexityFactor;
+        std::size_t iterationCount = 0;
+        std::size_t maxIterationCount = startNode.estimateCost*maxComplexityFactor;
         while (!openNodes.empty())
         {
             if (iterationCount++ > maxIterationCount) return false; //Make sure we do not search forever.
@@ -220,43 +220,6 @@ public:
     {
         return finalNode;
     }
-
-    #if 0
-    static void UnitTest()
-    {
-        {
-            ScenePathfindingObstaclesManager obstacles;
-            SearchContext ctx(obstacles, 0, 0);
-            ctx.ComputePathTo(0,0);
-        }
-        std::cout << "---" << std::endl;
-        {
-            ScenePathfindingObstaclesManager obstacles;
-            SearchContext ctx(obstacles, 0, 0);
-            ctx.ComputePathTo(1,0);
-        }
-        std::cout << "---" << std::endl;
-        {
-            ScenePathfindingObstaclesManager obstacles;
-            SearchContext ctx(obstacles, 0, 0);
-            ctx.ComputePathTo(0,1);
-        }
-        std::cout << "---" << std::endl;
-        {
-            ScenePathfindingObstaclesManager obstacles;
-            SearchContext ctx(obstacles, 0, 0);
-            ctx.ComputePathTo(1,1);
-        }
-        std::cout << "---" << std::endl;
-        {
-            ScenePathfindingObstaclesManager obstacles;
-            SearchContext ctx(obstacles, 3, 4);
-            ctx.ComputePathTo(12,9);
-        }
-        std::cout << "---" << std::endl;
-        std::cout << "End unit tests";
-    }
-    #endif
 
 private:
     /**
@@ -298,12 +261,12 @@ private:
              ++it)
         {
             RuntimeObject * obj = (*it)->GetObject();
-            int topLeftCellX = floor((obj->GetDrawableX()-rightBorder)/cellWidth);
-            int topLeftCellY = floor((obj->GetDrawableY()-bottomBorder)/cellHeight);
-            int bottomRightCellX = ceil((obj->GetDrawableX()+obj->GetWidth()+leftBorder)/cellWidth);
-            int bottomRightCellY = ceil((obj->GetDrawableY()+obj->GetHeight()+topBorder)/cellHeight);
-            if ( topLeftCellX <= pos.x && pos.x <= bottomRightCellX
-                && topLeftCellY <= pos.y && pos.y <= bottomRightCellY)
+            int topLeftCellX = floor((obj->GetDrawableX()-rightBorder)/(float)cellWidth);
+            int topLeftCellY = floor((obj->GetDrawableY()-bottomBorder)/(float)cellHeight);
+            int bottomRightCellX = ceil((obj->GetDrawableX()+obj->GetWidth()+leftBorder)/(float)cellWidth);
+            int bottomRightCellY = ceil((obj->GetDrawableY()+obj->GetHeight()+topBorder)/(float)cellHeight);
+            if ( topLeftCellX < pos.x && pos.x < bottomRightCellX
+                && topLeftCellY < pos.y && pos.y < bottomRightCellY)
             {
                 objectsOnCell = true;
                 if ( (*it)->IsImpassable() )
@@ -352,7 +315,12 @@ private:
             || neighbor.smallestCost > currentNode.smallestCost + (currentNode.cost+neighbor.cost)/2.0*factor)
         {
             if (neighbor.smallestCost != -1) //The node is already in the open list:
-                openNodes.erase(&neighbor);   //remove it as its estimate cost will be updated.
+            {
+                //remove it as its estimate cost will be updated.
+                auto it = openNodes.find(&neighbor);
+                if (it != openNodes.end()) // /!\ ALWAYS use an iterator with multiset::erase
+                    openNodes.erase(it);   //otherwise, other nodes which are equivalent get removed too.
+            }
 
             neighbor.smallestCost = currentNode.smallestCost + (currentNode.cost+neighbor.cost)/2.0*factor;
             neighbor.parent = &currentNode;
@@ -371,7 +339,7 @@ private:
     int startY; ///< The start Y position, in "world" coordinates (not in "node" coordinates!).
     DistanceFunPtr distanceFunction;
     bool allowsDiagonal; ///< True to allow diagonals when planning the path.
-    unsigned int maxComplexityFactor;
+    std::size_t maxComplexityFactor;
     float cellWidth;
     float cellHeight;
     float leftBorder;
@@ -459,7 +427,7 @@ void PathfindingBehavior::MoveTo(RuntimeScene & scene, float x, float y)
     pathFound = false;
 }
 
-void PathfindingBehavior::EnterSegment(unsigned int segmentNumber)
+void PathfindingBehavior::EnterSegment(std::size_t segmentNumber)
 {
     if ( path.empty() ) return;
 
@@ -528,17 +496,17 @@ void PathfindingBehavior::DoStepPostEvents(RuntimeScene & scene)
     }
 }
 
-float PathfindingBehavior::GetNodeX(unsigned int index) const
+float PathfindingBehavior::GetNodeX(std::size_t index) const
 {
     if (index<path.size()) return path[index].x;
     return 0;
 }
-float PathfindingBehavior::GetNodeY(unsigned int index) const
+float PathfindingBehavior::GetNodeY(std::size_t index) const
 {
     if (index<path.size()) return path[index].y;
     return 0;
 }
-unsigned int PathfindingBehavior::GetNextNodeIndex() const
+std::size_t PathfindingBehavior::GetNextNodeIndex() const
 {
     if (currentSegment+1 < path.size())
         return currentSegment+1;

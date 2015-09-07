@@ -142,8 +142,10 @@ void EventsRenderingHelper::SetFont(const wxFont & font_)
     wxMemoryDC dc;
     dc.SelectObject(fakeBmp);
     dc.SetFont(font);
+
     fontCharacterWidth = static_cast<float>(dc.GetTextExtent("abcdef").GetWidth())/6.0f;
-    fontCharacterHeight = dc.GetTextExtent("abcdef").GetHeight();
+    //Update height and ensure it's not too small
+    fontCharacterHeight = std::max(dc.GetTextExtent("abcdef").GetHeight(), 16);
 }
 
 int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions, wxDC & dc, int x, int y, int width, gd::BaseEvent * event,
@@ -181,7 +183,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     }
 
     //Draw each conditions
-    for ( unsigned int j = 0;j < conditions.size();j++ )
+    for ( std::size_t j = 0;j < conditions.size();j++ )
     {
         if ( j != 0 ) y += separationBetweenInstructions;
 
@@ -282,7 +284,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     }
 
     //Draw each actions
-    for ( unsigned int j = 0;j < actions.size();j++ )
+    for ( std::size_t j = 0;j < actions.size();j++ )
     {
         if ( j != 0 ) y += separationBetweenInstructions;
 
@@ -349,7 +351,7 @@ unsigned int EventsRenderingHelper::GetRenderedConditionsListHeight(const gd::In
     if ( conditions.empty() )
         return fontCharacterHeight;
 
-    for ( unsigned int j = 0;j < conditions.size();j++ )
+    for ( std::size_t j = 0;j < conditions.size();j++ )
     {
         if ( j != 0 ) y += separationBetweenInstructions;
 
@@ -382,7 +384,7 @@ unsigned int EventsRenderingHelper::GetRenderedActionsListHeight(const gd::Instr
         return fontCharacterHeight;
 
     //Draw each actions
-    for ( unsigned int j = 0;j < actions.size();j++ )
+    for ( std::size_t j = 0;j < actions.size();j++ )
     {
         if ( j != 0 ) y += separationBetweenInstructions;
 
@@ -411,7 +413,7 @@ int EventsRenderingHelper::DrawInstruction(gd::Instruction & instruction, const 
 
     wxPoint lastPos = point;
     //size_t alreadyWrittenCharCount = 0;
-    for (unsigned int i = 0;i<formattedStr.size();++i)
+    for (std::size_t i = 0;i<formattedStr.size();++i)
     {
         //Update font and properties
         dc.SetTextForeground(!event->IsDisabled() ? formattedStr[i].second.GetWxColor() : wxColour(160,160,160));
@@ -479,23 +481,10 @@ void EventsRenderingHelper::DrawNiceRectangle(wxDC & dc, const wxRect & rect) co
 
 gd::String EventsRenderingHelper::GetHTMLText(gd::String str)
 {
-    size_t pos = 0;
-    while ( str.find("&", pos) != string::npos)
-    {
-        str.replace( str.find( "&", pos), 1, "&amp;" );
-        pos = str.find( "&", pos)+1;
-    }
-
-    while ( str.find("<") != string::npos)
-        str.replace( str.find( "<" ), 1, "&lt;" );
-
-    while ( str.find(">") != string::npos)
-        str.replace( str.find( ">" ), 1, "&gt;" );
-
-    while ( str.find("\n") != string::npos)
-        str.replace( str.find( "\n" ), 1, "<br>" );
-
-    return str;
+    return str.FindAndReplace("&", "&amp;")
+        .FindAndReplace("<", "&lt;")
+        .FindAndReplace(">", "&gt;")
+        .FindAndReplace("\n", "<br>");
 }
 
 EventsRenderingHelper * EventsRenderingHelper::Get()

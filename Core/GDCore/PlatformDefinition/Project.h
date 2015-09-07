@@ -54,25 +54,35 @@ public:
     ///@{
 
     /**
-     * Change project name
+     * \brief Change project name
      */
     void SetName(const gd::String & name_) { name = name_; };
 
     /**
-     * Get project name
+     * \brief Get project name
      */
-    const gd::String & GetName() const {return name;}
+    const gd::String & GetName() const { return name; }
 
 #if defined(GD_IDE_ONLY)
     /**
-     * Must change the name of the project with the name passed as parameter.
+     * \brief Change the author of the project.
      */
     void SetAuthor(const gd::String & author_) { author = author_; };
 
     /**
-     * Return the name of the project.
+     * \brief Get project author name.
      */
-    const gd::String & GetAuthor() const {return author;}
+    const gd::String & GetAuthor() const { return author; }
+
+    /**
+     * \brief Change project package name.
+     */
+    void SetPackageName(const gd::String & packageName_) { packageName = packageName_; };
+
+    /**
+     * \brief Get project package name.
+     */
+    const gd::String & GetPackageName() const { return packageName; }
 
     /**
      * Called when project file has changed.
@@ -84,6 +94,18 @@ public:
      * \see gd::Project::SetProjectFile
      */
     const gd::String & GetProjectFile() const { return gameFile; }
+
+    /**
+     * Set that the project should be saved as a folder project.
+     * \param enable True to flag as a folder project, false to set it as single file project.
+     */
+    void SetFolderProject(bool enable = true) { folderProject = enable; }
+
+    /**
+     * Check if the project is saved as a folder project.
+     * \see gd::Project::SetFolderProject
+     */
+    bool IsFolderProject() const { return folderProject; }
 
     /**
      * Called when project file has changed.
@@ -302,17 +324,17 @@ public:
     /**
      * \brief Return a reference to the layout at position "index" in the layout list
      */
-    Layout & GetLayout(unsigned int index);
+    Layout & GetLayout(std::size_t index);
 
     /**
      * \brief Return a reference to the layout at position "index" in the layout list
      */
-    const Layout & GetLayout (unsigned int index) const;
+    const Layout & GetLayout (std::size_t index) const;
 
     /**
      * \brief Return the position of the layout called "name" in the layout list
      */
-    unsigned int GetLayoutPosition(const gd::String & name) const;
+    std::size_t GetLayoutPosition(const gd::String & name) const;
 
     #if defined(GD_IDE_ONLY)
     /**
@@ -320,18 +342,18 @@ public:
      *
      * Do nothing if indexes are not correct.
      */
-    void SwapLayouts(unsigned int first, unsigned int second);
+    void SwapLayouts(std::size_t first, std::size_t second);
     #endif
 
     /**
      * \brief Return the number of layouts.
      */
-    unsigned int GetLayoutsCount() const;
+    std::size_t GetLayoutsCount() const;
 
     /**
      * \brief Must add a new empty layout called "name" at the specified position in the layout list.
      */
-    gd::Layout & InsertNewLayout(const gd::String & name, unsigned int position);
+    gd::Layout & InsertNewLayout(const gd::String & name, std::size_t position);
 
     /**
      * \brief Must add a new layout constructed from the layout passed as parameter.
@@ -339,7 +361,7 @@ public:
      * \param layout The layout that must be copied and inserted into the project
      * \param position Insertion position. Even if the position is invalid, the layout must be inserted at the end of the layout list.
      */
-    gd::Layout & InsertLayout(const Layout & layout, unsigned int position);
+    gd::Layout & InsertLayout(const Layout & layout, std::size_t position);
 
     /**
      * Must delete layout named "name".
@@ -348,46 +370,12 @@ public:
 
     ///@}
 
-    /** \name Saving and loading
-     * Members functions related to saving and loading the project.
-     */
-    ///@{
-    #if !defined(EMSCRIPTEN)
-    /**
-     * \brief Load the project from a XML file.
-     */
-    bool LoadFromFile(const gd::String & filename);
-
-    #if defined(GD_IDE_ONLY)
-    /**
-     * \brief Load the project from a JSON file.
-     */
-    bool LoadFromJSONFile(const gd::String & filename);
-    #endif
-    #endif
-
     /**
      * \brief Unserialize the project from an element.
      */
     void UnserializeFrom(const SerializerElement & element);
 
     #if defined(GD_IDE_ONLY)
-    #if !defined(EMSCRIPTEN)
-    /**
-     * \brief Save the project to a XML file.
-     *
-     * "Dirty" flag is set to false when save is done.
-     */
-    bool SaveToFile(const gd::String & filename);
-
-    /**
-     * \brief Save the project to a JSON file.
-     *
-     * "Dirty" flag is set to false when save is done.
-     */
-    bool SaveToJSONFile(const gd::String & filename);
-    #endif
-
     /**
      * \brief Called to serialize the project to a TiXmlElement.
      *
@@ -397,13 +385,13 @@ public:
 
     /**
      * \brief Return true if the project is marked as being modified (The IDE or application
-     * using the project should ask for save the project if the project is closed).
+     * using the project should ask to save the project if the project is closed).
      */
     bool IsDirty() { return dirty; }
 
     /**
      * \brief Mark the project as being modified (The IDE or application
-     * using the project should ask for save the project if the project is closed).
+     * using the project should ask to save the project if the project is closed).
      */
     void SetDirty(bool enable = true) { dirty = enable; }
 
@@ -417,7 +405,6 @@ public:
      */
     unsigned int GetLastSaveGDMinorVersion() { return GDMinorVersion; };
     #endif
-    ///@}
 
     /** \name External events management
      * Members functions related to external events management.
@@ -442,34 +429,34 @@ public:
     /**
      * Return a reference to the external events at position "index" in the external events list
      */
-    ExternalEvents & GetExternalEvents(unsigned int index);
+    ExternalEvents & GetExternalEvents(std::size_t index);
 
     /**
      * Return a reference to the external events at position "index" in the external events list
      */
-    const ExternalEvents & GetExternalEvents (unsigned int index) const;
+    const ExternalEvents & GetExternalEvents (std::size_t index) const;
 
     /**
      * Return the position of the external events called "name" in the external events list
      */
-    unsigned int GetExternalEventsPosition(const gd::String & name) const;
+    std::size_t GetExternalEventsPosition(const gd::String & name) const;
 
     /**
      * \brief Swap the specified external events.
      *
      * Do nothing if indexes are not correct.
      */
-    void SwapExternalEvents(unsigned int first, unsigned int second);
+    void SwapExternalEvents(std::size_t first, std::size_t second);
 
     /**
      * Return the number of external events.
      */
-    unsigned int GetExternalEventsCount() const;
+    std::size_t GetExternalEventsCount() const;
 
     /**
      * Must add a new empty external events sheet called "name" at the specified position in the layout list.
      */
-    ExternalEvents & InsertNewExternalEvents(const gd::String & name, unsigned int position);
+    ExternalEvents & InsertNewExternalEvents(const gd::String & name, std::size_t position);
 
     /**
      * Must add a new external events sheet constructed from the layout passed as parameter.
@@ -477,7 +464,7 @@ public:
      * \param externalEvents The external events that must be copied and inserted into the project
      * \param position Insertion position. Even if the position is invalid, the external events must be inserted at the end of the external events list.
      */
-    void InsertExternalEvents(const ExternalEvents & externalEvents, unsigned int position);
+    void InsertExternalEvents(const ExternalEvents & externalEvents, std::size_t position);
 
     /**
      * Must delete external events named "name".
@@ -509,17 +496,17 @@ public:
     /**
      * Return a reference to the external layout at position "index" in the external layout list
      */
-    ExternalLayout & GetExternalLayout(unsigned int index);
+    ExternalLayout & GetExternalLayout(std::size_t index);
 
     /**
      * Return a reference to the external layout at position "index" in the external layout list
      */
-    const ExternalLayout & GetExternalLayout (unsigned int index) const;
+    const ExternalLayout & GetExternalLayout (std::size_t index) const;
 
     /**
      * Return the position of the external layout called "name" in the external layout list
      */
-    unsigned int GetExternalLayoutPosition(const gd::String & name) const;
+    std::size_t GetExternalLayoutPosition(const gd::String & name) const;
 
     #if defined(GD_IDE_ONLY)
     /**
@@ -527,18 +514,18 @@ public:
      *
      * Do nothing if indexes are not correct.
      */
-    void SwapExternalLayouts(unsigned int first, unsigned int second);
+    void SwapExternalLayouts(std::size_t first, std::size_t second);
     #endif
 
     /**
      * Return the number of external layout.
      */
-    unsigned int GetExternalLayoutsCount() const;
+    std::size_t GetExternalLayoutsCount() const;
 
     /**
      * Must add a new empty external layout called "name" at the specified position in the layout list.
      */
-    gd::ExternalLayout & InsertNewExternalLayout(const gd::String & name, unsigned int position);
+    gd::ExternalLayout & InsertNewExternalLayout(const gd::String & name, std::size_t position);
 
     /**
      * Must add a new external layout constructed from the layout passed as parameter.
@@ -546,7 +533,7 @@ public:
      * \param externalLayout The external layout that must be copied and inserted into the project
      * \param position Insertion position. Even if the position is invalid, the external layout must be inserted at the end of the external layout list.
      */
-    void InsertExternalLayout(const ExternalLayout & externalLayout, unsigned int position);
+    void InsertExternalLayout(const ExternalLayout & externalLayout, std::size_t position);
 
     /**
      * Must delete external layout named "name".
@@ -703,7 +690,7 @@ public:
     /**
      * Add a new source file the specified position in the external source files list.
      */
-    gd::SourceFile & InsertNewSourceFile(const gd::String & name, const gd::String & language, unsigned int position = -1);
+    gd::SourceFile & InsertNewSourceFile(const gd::String & name, const gd::String & language, std::size_t position = -1);
     #endif
     ///@}
 
@@ -748,6 +735,8 @@ private:
     std::vector < std::shared_ptr<gd::SourceFile> >   externalSourceFiles; ///< List of external source files used.
     std::vector<ObjectGroup>                            objectGroups; ///< Global objects groups
     gd::String                                         author; ///< Game author name
+    gd::String                                         packageName; ///< Game package name
+    bool                                                folderProject; ///< True if folder project, false if single file project.
     gd::String                                         gameFile; ///< File of the game
     gd::String                                         latestCompilationDirectory; ///< File of the game
     gd::Platform*                                       currentPlatform; ///< The platform being used to edit the project.

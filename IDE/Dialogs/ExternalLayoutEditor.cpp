@@ -1,7 +1,7 @@
 /*
  * GDevelop IDE
  * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
- * This project is released under the GNU General Public License.
+ * This project is released under the GNU General Public License version 3.
  */
 #include "ExternalLayoutEditor.h"
 
@@ -290,7 +290,7 @@ void ExternalLayoutEditor::OnparentSceneComboBoxDropDown(wxCommandEvent& event)
     parentSceneComboBox->Clear();
     parentSceneComboBox->Append(_("No layout"));
 
-    for (unsigned int i = 0;i<project.GetLayoutsCount();++i)
+    for (std::size_t i = 0;i<project.GetLayoutsCount();++i)
     	parentSceneComboBox->Append(project.GetLayout(i).GetName());
 }
 

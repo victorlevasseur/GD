@@ -35,7 +35,7 @@
 #include "GDJS/EventsCodeGenerator.h"
 #include "GDJS/Dialogs/ProjectExportDialog.h"
 #include "GDJS/Dialogs/CocoonJSUploadDialog.h"
-#include "GDJS/Dialogs/IntelXDKPackageDialog.h"
+#include "GDJS/Dialogs/CordovaPackageDialog.h"
 #undef CopyFile //Disable an annoying macro
 
 namespace gdjs
@@ -51,7 +51,7 @@ static void InsertUnique(std::vector<gd::String> & container, gd::String str)
 static void GenerateFontsDeclaration(gd::AbstractFileSystem & fs, const gd::String & outputDir, gd::String & css, gd::String & html)
 {
     std::vector<gd::String> ttfFiles = fs.ReadDir(outputDir, ".TTF");
-    for(unsigned int i = 0; i<ttfFiles.size();++i) {
+    for(std::size_t i = 0; i<ttfFiles.size();++i) {
         gd::String relativeFile = ttfFiles[i];
         fs.MakeRelative(relativeFile, outputDir);
         css += "@font-face{ font-family : \"gdjs_font_";
@@ -80,15 +80,11 @@ bool Exporter::ExportLayoutForPreview(gd::Project & project, gd::Layout & layout
 
     gd::Project exportedProject = project;
 
-    std::cout << "a" << std::endl;
-
     //Export resources (*before* generating events as some resources filenames may be updated)
     ExportResources(fs, exportedProject, exportDir);
-    std::cout << "a2" << std::endl;
     //Generate events code
     if ( !ExportEventsCode(exportedProject, fs.GetTempDir()+"/GDTemporaries/JSCodeTemp/", includesFiles) )
         return false;
-    std::cout << "b" << std::endl;
 
     //Export source files
     if ( !ExportExternalSourceFiles(exportedProject, fs.GetTempDir()+"/GDTemporaries/JSCodeTemp/", includesFiles) )
@@ -96,7 +92,6 @@ bool Exporter::ExportLayoutForPreview(gd::Project & project, gd::Layout & layout
         gd::LogError(_("Error during exporting! Unable to export source files:\n")+lastError);
         return false;
     }
-    std::cout << "c" << std::endl;
 
     //Strip the project (*after* generating events as the events may use stripped things (objects groups...))
     gd::ProjectStripper::StripProject(exportedProject);
@@ -111,7 +106,8 @@ bool Exporter::ExportLayoutForPreview(gd::Project & project, gd::Layout & layout
     ExportIncludesAndLibs(includesFiles, exportDir, false);
 
     //Create the index file
-    if ( !ExportStandardIndexFile(exportedProject, exportDir, includesFiles) ) return false;
+    if (!ExportIndexFile("./JsPlatform/Runtime/index.html", exportDir, includesFiles)) 
+        return false;
 
     return true;
 }
@@ -134,10 +130,9 @@ gd::String Exporter::ExportToJSON(gd::AbstractFileSystem &fs, const gd::Project 
     return "";
 }
 
-bool Exporter::ExportStandardIndexFile(gd::Project & project, gd::String exportDir, const std::vector<gd::String> & includesFiles, gd::String additionalSpec)
+bool Exporter::ExportIndexFile(gd::String source, gd::String exportDir, const std::vector<gd::String> & includesFiles, gd::String additionalSpec)
 {
-    //Open the index.html template
-    gd::String str = fs.ReadFile("./JsPlatform/Runtime/index.html");
+    gd::String str = fs.ReadFile(source);
 
     //Generate custom declarations for font resources
     gd::String customCss;
@@ -145,11 +140,11 @@ bool Exporter::ExportStandardIndexFile(gd::Project & project, gd::String exportD
     GenerateFontsDeclaration(fs, exportDir, customCss, customHtml);
 
     //Generate the file
-    if ( !CompleteIndexFile(str, customCss, customHtml, exportDir, includesFiles, additionalSpec) )
+    if (!CompleteIndexFile(str, customCss, customHtml, exportDir, includesFiles, additionalSpec))
         return false;
 
     //Write the index.html file
-    if ( !fs.WriteToFile(exportDir+"/index.html", str) )
+    if (!fs.WriteToFile(exportDir + "/index.html", str))
     {
         lastError = "Unable to write index file.";
         return false;
@@ -158,137 +153,44 @@ bool Exporter::ExportStandardIndexFile(gd::Project & project, gd::String exportD
     return true;
 }
 
-bool Exporter::ExportIntelXDKIndexFile(gd::Project & project, gd::String exportDir, const std::vector<gd::String> & includesFiles, gd::String additionalSpec)
+bool Exporter::ExportCordovaConfigFile(const gd::Project & project, gd::String exportDir)
 {
-    #if !defined(GD_NO_WX_GUI)
+    gd::String str = fs.ReadFile("./JsPlatform/Runtime/Cordova/config.xml")
+        .FindAndReplace("GDJS_PROJECTNAME", project.GetName())
+        .FindAndReplace("GDJS_PACKAGENAME", project.GetPackageName())
+        .FindAndReplace("GDJS_ORIENTATION", "default");
+    
+    if (!fs.WriteToFile(exportDir + "/config.xml", str))
     {
-        //Open the index.html template
-        gd::String str = fs.ReadFile("./JsPlatform/Runtime/CordovaIndex.html");
-
-        //Generate custom declarations for font resources
-        gd::String customCss;
-        gd::String customHtml;
-        GenerateFontsDeclaration(fs, exportDir, customCss, customHtml);
-
-        //Generate the file
-        if ( !CompleteIndexFile(str, customCss, customHtml, exportDir, includesFiles, additionalSpec) )
-            return false;
-
-        //Write the index.html file
-        if ( !fs.WriteToFile(exportDir+"/index.html", str) )
-        {
-            lastError = "Unable to write index file.";
-            return false;
-        }
+        lastError = "Unable to write configuration file.";
+        return false;
     }
-    {
-        //Open the XDK project file template
-        gd::String str = fs.ReadFile("./JsPlatform/Runtime/XDKProject.xdk");
-
-        //Complete the project file
-        gd::String nowTimeStamp = gd::String::From(wxDateTime::Now().GetTicks()) +
-            "000"; //Beware, timestamp is in ms.
-        size_t pos = str.find("\"GDJS_LAST_MODIFIED\"");
-        if ( pos < str.length() )
-            str = str.replace(pos, 20, nowTimeStamp);
-        else
-        {
-            std::cout << "Unable to find \"GDJS_LAST_MODIFIED\" in the project file." << std::endl;
-            lastError = "Unable to find \"GDJS_LAST_MODIFIED\" in the project file.";
-            return false;
-        }
-        pos = str.find("\"GDJS_CREATION\"");
-        if ( pos < str.length() )
-            str = str.replace(pos, 15, nowTimeStamp);
-        else
-        {
-            std::cout << "Unable to find \"GDJS_CREATION\" in the project file." << std::endl;
-            lastError = "Unable to find \"GDJS_CREATION\" in the project file.";
-            return false;
-        }
-
-        //Write the file
-        if (!fs.WriteToFile(exportDir+"/XDKProject.xdk", str))
-        {
-            lastError = "Unable to write the intel XDK project file.";
-            return false;
-        }
-    }
-    {
-        if ( !fs.CopyFile("./JsPlatform/Runtime/XDKProject.xdke", exportDir+"/XDKProject.xdke") )
-        {
-            lastError = "Unable to write the intel XDK second project file.";
-            return false;
-        }
-    }
-    #else
-        std::cout << "BAD USE: ExportIntelXDKIndexFile is not available." << std::endl;
-    #endif
 
     return true;
 }
 
 bool Exporter::CompleteIndexFile(gd::String & str, gd::String customCss, gd::String customHtml, gd::String exportDir, const std::vector<gd::String> & includesFiles, gd::String additionalSpec)
 {
-    size_t pos = str.find("/* GDJS_CUSTOM_STYLE */");
-    if ( pos < str.length() )
-        str = str.replace(pos, 23, customCss);
-    else
-    {
-        std::cout << "Unable to find /* GDJS_CUSTOM_STYLE */ in index file." << std::endl;
-        lastError = "Unable to find /* GDJS_CUSTOM_STYLE */ in index file.";
-        return false;
-    }
+    if (additionalSpec.empty()) additionalSpec = "{}";
 
-    pos = str.find("<!-- GDJS_CUSTOM_HTML -->");
-    if ( pos < str.length() )
-        str = str.replace(pos, 25, customHtml);
-    else
+    gd::String codeFilesIncludes;
+    for (std::vector<gd::String>::const_iterator it = includesFiles.begin(); it != includesFiles.end(); ++it)
     {
-        std::cout << "Unable to find <!-- GDJS_CUSTOM_HTML --> in index file." << std::endl;
-        lastError = "Unable to find <!-- GDJS_CUSTOM_HTML --> in index file.";
-        return false;
-    }
-
-    pos = str.find("<!-- GDJS_CODE_FILES -->");
-    if ( pos < str.length() )
-    {
-        gd::String codeFilesIncludes;
-        for (std::vector<gd::String>::const_iterator it = includesFiles.begin(); it != includesFiles.end(); ++it)
+        if ( !fs.FileExists(exportDir + "/" + *it) )
         {
-            if ( !fs.FileExists(exportDir+"/"+*it) )
-            {
-                std::cout << "Warning: Unable to found " << exportDir+"/"+*it << "." << std::endl;
-                continue;
-            }
-
-            gd::String relativeFile = exportDir+"/"+*it;
-            fs.MakeRelative(relativeFile, exportDir);
-            codeFilesIncludes += "\t<script src=\""+relativeFile+"\"></script>\n";
+            std::cout << "Warning: Unable to found " << exportDir+"/"+*it << "." << std::endl;
+            continue;
         }
 
-        str = str.replace(pos, 24, codeFilesIncludes);
-    }
-    else
-    {
-        std::cout << "Unable to find <!-- GDJS_CODE_FILES --> in index file." << std::endl;
-        lastError = "Unable to find <!-- GDJS_CODE_FILES --> in index file.";
-        return false;
+        gd::String relativeFile = exportDir+"/"+*it;
+        fs.MakeRelative(relativeFile, exportDir);
+        codeFilesIncludes += "\t<script src=\""+relativeFile+"\"></script>\n";
     }
 
-    pos = str.find("{}/*GDJS_ADDITIONAL_SPEC*/");
-    if ( pos < str.length() )
-    {
-        if (additionalSpec.empty()) additionalSpec = "{}";
-
-        str = str.replace(pos, 26, additionalSpec);
-    }
-    else
-    {
-        std::cout << "Unable to find {}/*GDJS_ADDITIONAL_SPEC*/ in index file." << std::endl;
-        lastError = "Unable to find {}/*GDJS_ADDITIONAL_SPEC*/ in index file.";
-        return false;
-    }
+    str = str.FindAndReplace("/* GDJS_CUSTOM_STYLE */", customCss)
+        .FindAndReplace("<!-- GDJS_CUSTOM_HTML -->", customHtml)
+        .FindAndReplace("<!-- GDJS_CODE_FILES -->", codeFilesIncludes)
+        .FindAndReplace("{}/*GDJS_ADDITIONAL_SPEC*/", additionalSpec);
 
     return true;
 }
@@ -331,7 +233,7 @@ bool Exporter::ExportEventsCode(gd::Project & project, gd::String outputDir, std
     InsertUnique(includesFiles, "stringtools.js");
     InsertUnique(includesFiles, "windowtools.js");
 
-    for (unsigned int i = 0;i<project.GetLayoutsCount();++i)
+    for (std::size_t i = 0;i<project.GetLayoutsCount();++i)
     {
         std::set<gd::String> eventsIncludes;
         gd::Layout & exportedLayout = project.GetLayout(i);
@@ -359,7 +261,7 @@ bool Exporter::ExportEventsCode(gd::Project & project, gd::String outputDir, std
 bool Exporter::ExportExternalSourceFiles(gd::Project & project, gd::String outputDir, std::vector<gd::String> & includesFiles)
 {
     const std::vector < std::shared_ptr<gd::SourceFile> > & allFiles = project.GetAllSourceFiles();
-    for (unsigned int i = 0;i<allFiles.size();++i)
+    for (std::size_t i = 0;i<allFiles.size();++i)
     {
         if (allFiles[i] == std::shared_ptr<gd::SourceFile>() ) continue;
         if (allFiles[i]->GetLanguage() != "Javascript" ) continue;
@@ -486,20 +388,20 @@ void Exporter::ShowProjectExportDialog(gd::Project & project)
     if ( dialog.ShowModal() != 1 ) return;
 
     bool exportForCocoonJS = dialog.GetExportType() == ProjectExportDialog::CocoonJS;
-    bool exportForIntelXDK = dialog.GetExportType() == ProjectExportDialog::IntelXDK;
+    bool exportForCordova = dialog.GetExportType() == ProjectExportDialog::Cordova;
 
     ExportWholeProject(project, dialog.GetExportDir(), dialog.RequestMinify(),
-        exportForCocoonJS, exportForIntelXDK);
+        exportForCocoonJS, exportForCordova);
     #else
     gd::LogError("BAD USE: Exporter::ShowProjectExportDialog is not available.");
     #endif
 }
 
 bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
-    bool minify, bool exportForCocoonJS, bool exportForIntelXDK)
+    bool minify, bool exportForCocoonJS, bool exportForCordova)
 {
-    bool exportToZipFile = exportForCocoonJS;
-
+    auto exportProject = [this, &project, &minify, 
+        &exportForCocoonJS, &exportForCordova](gd::String exportDir)
     {
         #if !defined(GD_NO_WX_GUI)
         wxProgressDialog progressDialog(_("Export in progress ( 1/2 )"), _("Exporting the project..."));
@@ -520,7 +422,7 @@ bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
 
         gd::Project exportedProject = project;
 
-        //Export the resources ( before generating events as some resources filenames may be updated )
+        //Export the resources (before generating events as some resources filenames may be updated)
         #if !defined(GD_NO_WX_GUI)
         ExportResources(fs, exportedProject, exportDir, &progressDialog);
         #else
@@ -569,18 +471,19 @@ bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
         //Copy all dependencies and the index (or metadata) file.
         gd::String additionalSpec = exportForCocoonJS ? "{forceFullscreen:true}" : "";
         ExportIncludesAndLibs(includesFiles, exportDir, minify);
-        bool indexFile = false;
-        if (exportForIntelXDK) indexFile = ExportIntelXDKIndexFile(exportedProject, exportDir, includesFiles, additionalSpec);
-        else indexFile = ExportStandardIndexFile(exportedProject, exportDir, includesFiles, additionalSpec);
-
-        if ( !indexFile)
+        
+        gd::String source = exportForCordova ? 
+            "./JsPlatform/Runtime/Cordova/www/index.html" :
+            "./JsPlatform/Runtime/index.html";
+        
+        if (!ExportIndexFile(source, exportDir, includesFiles, additionalSpec))
         {
-            gd::LogError(_("Error during export:\n")+lastError);
+            gd::LogError(_("Error during export:\n") + lastError);
             return false;
         }
 
         //Exporting for online upload requires to zip the whole game.
-        if ( exportToZipFile )
+        if (exportForCocoonJS)
         {
             #if !defined(GD_NO_WX_GUI)
             progressDialog.Update(90, _("Creating the zip file..."));
@@ -592,7 +495,7 @@ bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
             wxString zipTempName = fs.GetTempDir()+"/GDTemporaries/zipped_"+gd::String::From(&project)+".zip";
             wxFFileOutputStream out(zipTempName);
             wxZipOutputStream zip(out);
-            for(unsigned int i = 0; i < files.size(); ++i)
+            for(std::size_t i = 0; i < files.size(); ++i)
             {
                 wxFileName filename(files[i]);
                 filename.MakeRelativeTo(exportDir);
@@ -618,6 +521,22 @@ bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
             gd::LogError("BAD USE: Trying to export to a zip file, but this feature is not available when wxWidgets support is disabled.");
             #endif
         }
+
+        return true;
+    };
+
+    if (exportForCordova) 
+    {
+        //Prepare the export directory
+        fs.MkDir(exportDir);
+        if (!ExportCordovaConfigFile(project, exportDir))
+            return false;
+
+        if (!exportProject(exportDir + "/www"))
+            return false;
+    } else {
+        if (!exportProject(exportDir))
+            return false;
     }
 
     //Finished!
@@ -627,9 +546,9 @@ bool Exporter::ExportWholeProject(gd::Project & project, gd::String exportDir,
         CocoonJSUploadDialog uploadDialog(NULL, exportDir+wxString(wxFileName::GetPathSeparator())+"packaged_game.zip");
         uploadDialog.ShowModal();
     }
-    else if ( exportForIntelXDK )
+    else if ( exportForCordova )
     {
-        IntelXDKPackageDialog packageDialog(NULL, exportDir);
+        CordovaPackageDialog packageDialog(NULL, exportDir);
         packageDialog.ShowModal();
     }
     else

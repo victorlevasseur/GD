@@ -19,7 +19,7 @@ bool EventItem::operator==(const gd::EventItem & other) const
     return (event == other.event && eventsList == other.eventsList && positionInList == other.positionInList);
 }
 
-EventItem::EventItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, unsigned int positionInList_ ) :
+EventItem::EventItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, std::size_t positionInList_ ) :
     event(event_),
     eventsList(eventsList_),
     positionInList(positionInList_)
@@ -40,7 +40,7 @@ bool gd::InstructionItem::operator==(const gd::InstructionItem & other) const
     return (instruction == other.instruction && isCondition == other.isCondition && instructionList == other.instructionList && positionInList == other.positionInList && event == other.event);
 }
 
-InstructionItem::InstructionItem(gd::Instruction * instruction_, bool isCondition_, gd::InstructionsList* instructionList_, unsigned int positionInList_, gd::BaseEvent * event_ ) :
+InstructionItem::InstructionItem(gd::Instruction * instruction_, bool isCondition_, gd::InstructionsList* instructionList_, std::size_t positionInList_, gd::BaseEvent * event_ ) :
     instruction(instruction_),
     isCondition(isCondition_),
     instructionList(instructionList_),

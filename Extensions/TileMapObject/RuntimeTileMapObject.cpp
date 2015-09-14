@@ -43,7 +43,6 @@ RuntimeTileMapObject::RuntimeTileMapObject(RuntimeScene & scene, const gd::Objec
 
     //Load the tileset and generate the vertex array
     tileSet.Get().LoadResources(*(scene.game));
-    tileSet.Get().Generate(); //We don't need wxBitmaps
     vertexArray = TileMapExtension::GenerateVertexArray(tileSet.Get(), tileMap.Get());
     hitboxes = TileMapExtension::GenerateHitboxes(tileSet.Get(), tileMap.Get());
 }
@@ -119,17 +118,17 @@ void RuntimeTileMapObject::OnPositionChanged()
 }
 
 #ifdef GD_IDE_ONLY
-void RuntimeTileMapObject::GetPropertyForDebugger(unsigned int propertyNb, gd::String & name, gd::String & value) const
+void RuntimeTileMapObject::GetPropertyForDebugger(std::size_t propertyNb, gd::String & name, gd::String & value) const
 {
 
 }
 
-bool RuntimeTileMapObject::ChangeProperty(unsigned int propertyNb, gd::String newValue)
+bool RuntimeTileMapObject::ChangeProperty(std::size_t propertyNb, gd::String newValue)
 {
     return true;
 }
 
-unsigned int RuntimeTileMapObject::GetNumberOfProperties() const
+std::size_t RuntimeTileMapObject::GetNumberOfProperties() const
 {
     return 0;
 }
@@ -162,7 +161,7 @@ float RuntimeTileMapObject::GetMapHeight() const
 
 void RuntimeTileMapObject::SetMapSize(int width, int height)
 {
-    if(width < 0 || height < 0 || (GetMapWidth() == width && GetMapHeight() == height)) //Avoid changing the size if the same 
+    if(width < 0 || height < 0 || (GetMapWidth() == width && GetMapHeight() == height)) //Avoid changing the size if the same
         return;
 
     tileMap.Get().SetSize(width, height);
@@ -214,7 +213,6 @@ void RuntimeTileMapObject::ChangeTexture(const gd::String &textureName, RuntimeS
 {
     tileSet.Get().textureName = textureName;
     tileSet.Get().LoadResources(*(scene.game));
-    tileSet.Get().Generate();
     needGeneration = true;
 }
 

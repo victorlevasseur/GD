@@ -45,7 +45,7 @@ struct GD_CORE_API EventsEditorItem
  */
 struct GD_CORE_API EventItem : public EventsEditorItem
 {
-    EventItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, unsigned int positionInList_ );
+    EventItem(std::shared_ptr<gd::BaseEvent> event_, gd::EventsList * eventsList_, std::size_t positionInList_ );
     EventItem();
     virtual ~EventItem() {};
 
@@ -53,7 +53,7 @@ struct GD_CORE_API EventItem : public EventsEditorItem
 
     std::shared_ptr<gd::BaseEvent> event;
     gd::EventsList * eventsList;
-    unsigned int positionInList;
+    std::size_t positionInList;
 };
 
 /**
@@ -65,7 +65,7 @@ struct GD_CORE_API InstructionItem : public EventsEditorItem
     /**
      * Use this constructor to declare the instruction, the list it belongs to and its position in this list.
      */
-    InstructionItem(gd::Instruction * instruction_, bool isCondition, gd::InstructionsList* instructionList_, unsigned int positionInList_, gd::BaseEvent * event );
+    InstructionItem(gd::Instruction * instruction_, bool isCondition, gd::InstructionsList* instructionList_, std::size_t positionInList_, gd::BaseEvent * event );
     InstructionItem();
     virtual ~InstructionItem() {};
 
@@ -74,7 +74,7 @@ struct GD_CORE_API InstructionItem : public EventsEditorItem
     gd::Instruction * instruction;
     bool isCondition;
     gd::InstructionsList* instructionList;
-    unsigned int positionInList;
+    std::size_t positionInList;
     gd::BaseEvent * event;
 };
 
@@ -269,7 +269,7 @@ namespace std
         {
             return (std::hash<gd::BaseEvent*>()(item.event.get())) ^
                    (std::hash<gd::EventsList*>()(item.eventsList) << 1) ^
-                   (std::hash<unsigned int>()(item.positionInList) << 2);
+                   (std::hash<std::size_t>()(item.positionInList) << 2);
         }
     };
 
@@ -280,7 +280,7 @@ namespace std
         {
             return (std::hash<gd::Instruction*>()(item.instruction)) ^
                    (std::hash<gd::InstructionsList*>()(item.instructionList) << 1) ^
-                   (std::hash<unsigned int>()(item.positionInList) << 2) ^
+                   (std::hash<std::size_t>()(item.positionInList) << 2) ^
                    (std::hash<gd::BaseEvent*>()(item.event) << 3) ^
                    (std::hash<bool>()(item.isCondition) << 4);
         }

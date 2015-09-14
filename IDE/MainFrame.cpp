@@ -1,7 +1,7 @@
 /*
  * GDevelop IDE
  * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
- * This project is released under the GNU General Public License.
+ * This project is released under the GNU General Public License version 3.
  */
 
 #include <iostream>
@@ -40,6 +40,7 @@
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
 #include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/ProjectFileWriter.h"
 #include "GDCore/IDE/ProjectExporter.h"
 #include "GDCore/IDE/PlatformManager.h"
 #include "GDCore/CommonTools.h"
@@ -79,6 +80,7 @@ const long MainFrame::toBeDeletedMenuItem = wxNewId();
 const long MainFrame::ID_MENUITEM26 = wxNewId();
 const long MainFrame::ID_MENUITEM12 = wxNewId();
 const long MainFrame::ID_MENUITEM13 = wxNewId();
+const long MainFrame::ID_MENUITEM8 = wxNewId();
 const long MainFrame::ID_MENUITEM16 = wxNewId();
 const long MainFrame::ID_MENUITEM19 = wxNewId();
 const long MainFrame::ID_MENUITEM17 = wxNewId();
@@ -200,6 +202,9 @@ MainFrame::MainFrame( wxWindow* parent ) :
     MenuItem7 = new wxMenuItem((&fileMenu), ID_MENUITEM13, _("Save as..."), wxEmptyString, wxITEM_NORMAL);
     MenuItem7->SetBitmap(gd::SkinHelper::GetIcon("saveas", 16));
     fileMenu.Append(MenuItem7);
+    MenuItem5 = new wxMenuItem((&fileMenu), ID_MENUITEM8, _("Save as folder project"), wxEmptyString, wxITEM_NORMAL);
+    MenuItem5->SetBitmap(gd::SkinHelper::GetIcon("open", 16));
+    fileMenu.Append(MenuItem5);
     MenuItem12 = new wxMenuItem((&fileMenu), ID_MENUITEM16, _("Save all\tCtrl+Shift+S"), wxEmptyString, wxITEM_NORMAL);
     MenuItem12->SetBitmap(gd::SkinHelper::GetIcon("save_all", 16));
     fileMenu.Append(MenuItem12);
@@ -255,6 +260,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     Connect(ID_MENUITEM10,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnOpenExampleSelected);
     Connect(ID_MENUITEM12,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnMenuSaveSelected);
     Connect(ID_MENUITEM13,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnMenuSaveAsSelected);
+    Connect(ID_MENUITEM8,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnMenuSaveAsFolderSelected);
     Connect(ID_MENUITEM16,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnMenuSaveAllSelected);
     Connect(ID_MENUITEM19,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnCloseCurrentProjectSelected);
     Connect(ID_MENUITEM17,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MainFrame::OnMenuPrefSelected);
@@ -291,7 +297,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     #endif
 
     //Update the file menu with exporting items
-    for (unsigned int i = 0;i<gd::PlatformManager::Get()->GetAllPlatforms().size();++i)
+    for (std::size_t i = 0;i<gd::PlatformManager::Get()->GetAllPlatforms().size();++i)
     {
         std::shared_ptr<gd::ProjectExporter> exporter = gd::PlatformManager::Get()->GetAllPlatforms()[i]->GetProjectExporter();
         if ( exporter != std::shared_ptr<gd::ProjectExporter>()
@@ -299,7 +305,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
         {
             long id = wxNewId();
 
-            fileMenu.Insert(10, id, exporter->GetProjectExportButtonLabel());
+            fileMenu.Insert(11, id, exporter->GetProjectExportButtonLabel());
             Connect( id, wxEVT_COMMAND_MENU_SELECTED, ( wxObjectEventFunction )&MainFrame::OnMenuCompilationSelected );
             idToPlatformExportMenuMap[id] = gd::PlatformManager::Get()->GetAllPlatforms()[i].get();
         }
@@ -487,7 +493,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     //Construct the lightweight wrapper used by editors to access to the main frame.
     mainFrameWrapper = gd::MainFrameWrapper(ribbon, ribbonSceneEditorButtonBar, this, &m_mgr, editorsNotebook, infoBar, &scenesLockingShortcuts, wxGetCwd());
     mainFrameWrapper.AddControlToBeDisabledOnPreview(projectManager);
-    for (unsigned int i = 0;i<controlsToBeDisabledOnPreview.size();++i) mainFrameWrapper.AddControlToBeDisabledOnPreview(controlsToBeDisabledOnPreview[i]);
+    for (std::size_t i = 0;i<controlsToBeDisabledOnPreview.size();++i) mainFrameWrapper.AddControlToBeDisabledOnPreview(controlsToBeDisabledOnPreview[i]);
 
     SetSize(900,740);
     Center();
@@ -513,7 +519,7 @@ MainFrame::~MainFrame()
 
 /** Change current project
   */
-void MainFrame::SetCurrentGame(unsigned int i, bool refreshProjectManager)
+void MainFrame::SetCurrentGame(std::size_t i, bool refreshProjectManager)
 {
     projectCurrentlyEdited = i;
     if ( i >= games.size())
@@ -574,7 +580,7 @@ void MainFrame::OnRibbonCppToolsClicked(wxRibbonButtonBarEvent& evt)
  */
 void MainFrame::OnRibbonStartPageClicked(wxRibbonButtonBarEvent& evt)
 {
-    for (unsigned int i = 0;i<editorsNotebook->GetPageCount();++i)
+    for (std::size_t i = 0;i<editorsNotebook->GetPageCount();++i)
     {
     	if ( dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(i)) != NULL )
     	{
@@ -596,7 +602,7 @@ void MainFrame::UpdateOpenedProjectsLogFile()
     if ( !projectsLogFile.IsOpened() ) return;
     projectsLogFile.Clear();
 
-    for(unsigned int i = 0;i<games.size();++i)
+    for(std::size_t i = 0;i<games.size();++i)
         projectsLogFile.AddLine(games[i]->GetProjectFile());
 
     projectsLogFile.Write();
@@ -608,7 +614,7 @@ void MainFrame::UpdateOpenedProjectsLogFile()
  */
 void MainFrame::OnClose( wxCloseEvent& event )
 {
-    for(unsigned int i = 0;i<games.size();++i) {
+    for(std::size_t i = 0;i<games.size();++i) {
         if ( games[i]->IsDirty() ) {
             wxString fullMessage = wxString::Format(wxString(_("Project \"%s\" has been changed.\n\n")), games[i]->GetName().ToWxString());
             fullMessage += wxString::Format(wxString(_("Do you want to save it in %s?")), games[i]->GetProjectFile().ToWxString());
@@ -803,14 +809,14 @@ void MainFrame::PrepareAutosave()
  */
 void MainFrame::OnautoSaveTimerTrigger(wxTimerEvent& event)
 {
-    for (unsigned int i = 0;i<games.size();++i)
+    for (std::size_t i = 0;i<games.size();++i)
     {
         wxFileName filename(games[i]->GetProjectFile());
         if (games[i]->GetProjectFile().empty()) continue;
         if (!filename.IsFileWritable()) continue;
 
         wxString autosaveFilename = filename.GetPath() + "/" + filename.GetName()+".gdg.autosave";
-        if ( !games[i]->SaveToFile(autosaveFilename) )
+        if (!gd::ProjectFileWriter::SaveToFile(*games[i], autosaveFilename, true))
             gd::LogStatus( _("Autosave failed!") );
     }
 }

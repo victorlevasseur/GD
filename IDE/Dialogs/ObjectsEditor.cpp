@@ -26,11 +26,13 @@
 #include "GDCore/IDE/Dialogs/ChooseVariableDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseBehaviorTypeDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectTypeDialog.h"
+#include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
 #include "GDCore/IDE/Dialogs/ObjectListDialogsHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
 #include "GDCore/IDE/SkinHelper.h"
 #include "GDCore/IDE/Clipboard.h"
+#include "GDCore/IDE/NewNameGenerator.h"
 #include "GDCore/IDE/EventsRefactorer.h"
 #include "GDCore/IDE/ObjectOrGroupFinder.h"
 #include "GDCore/PlatformDefinition/Platform.h"
@@ -95,7 +97,7 @@ namespace
                     //Add the object in the group
                     std::cout << "Adding " << objectName << " to group" << std::endl;
                     group->AddObject(objectName);
-                    for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+                    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupEdited(
                             project, data->GetString() == "GlobalGroup" ? NULL : &layout, group->GetName()
                             );
@@ -120,16 +122,13 @@ namespace
 
                 std::vector<gd::ObjectGroup> & objectsGroups = layout.GetObjectGroups();
 
-                gd::String name = text + "Group";
-                for (unsigned int i = 2;
-                    std::find_if( objectsGroups.begin(), objectsGroups.end(), std::bind2nd(gd::GroupHasTheSameName(), name))
+                gd::String name = gd::NewNameGenerator::Generate(text + "Group", [&objectsGroups](const gd::String & name){
+                    return std::find_if(objectsGroups.begin(), objectsGroups.end(), std::bind2nd(gd::GroupHasTheSameName(), name))
                         != objectsGroups.end();
-                    ++i)
-                    name = text + "Group" + gd::String::From(i);
+                });
 
-                newGroup.SetName( name );
-
-                objectsGroups.push_back( newGroup );
+                newGroup.SetName(name);
+                objectsGroups.push_back(newGroup);
 
                 //Add the group item
                 wxTreeItemId itemAdded = treeCtrl->AppendItem( groupsRootItem, name, 1 );
@@ -141,7 +140,7 @@ namespace
                 treeCtrl->SetItemData(objectItem, new gd::TreeItemStringData("ObjectInGroup"));
 
                 //Notify the game of the new group
-                for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+                for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                     project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, &layout, name);
                 gd::LogStatus( _( "The group was correctly added." ) );
 
@@ -643,7 +642,7 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
         {
             gd::EventsRefactorer::RenameObjectInEvents(project.GetCurrentPlatform(), project, layout, layout.GetEvents(), oldName, newName);
             layout.GetInitialInstances().RenameInstancesOfObject(oldName, newName);
-            for (unsigned int g = 0;g<layout.GetObjectGroups().size();++g)
+            for (std::size_t g = 0;g<layout.GetObjectGroups().size();++g)
             {
                 if ( layout.GetObjectGroups()[g].Find(oldName))
                 {
@@ -655,7 +654,7 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
         }
         else if ( globalObject ) //Change the object name in all layouts
         {
-            for (unsigned int g = 0;g<project.GetObjectGroups().size();++g)
+            for (std::size_t g = 0;g<project.GetObjectGroups().size();++g)
             {
                 if ( project.GetObjectGroups()[g].Find(oldName))
                 {
@@ -664,14 +663,14 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
                 }
             }
 
-            for (unsigned int i = 0;i<project.GetLayoutsCount();++i)
+            for (std::size_t i = 0;i<project.GetLayoutsCount();++i)
             {
                 gd::Layout & layout = project.GetLayout(i);
                 if ( layout.HasObjectNamed(oldName) ) continue;
 
                 gd::EventsRefactorer::RenameObjectInEvents(project.GetCurrentPlatform(), project, layout, layout.GetEvents(), oldName, newName);
                 layout.GetInitialInstances().RenameInstancesOfObject(oldName, newName);
-                for (unsigned int g = 0;g<layout.GetObjectGroups().size();++g)
+                for (std::size_t g = 0;g<layout.GetObjectGroups().size();++g)
                 {
                     if ( layout.GetObjectGroups()[g].Find(oldName))
                     {
@@ -691,7 +690,7 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
             UpdateGroup(groupItem);
         }
 
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectRenamed(project, globalObject ? NULL : &layout, objects.GetObject(newName), oldName);
     }
     // Rename a group
@@ -724,7 +723,7 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
                 gd::EventsRefactorer::RenameObjectInEvents(project.GetCurrentPlatform(), project, layout, layout.GetEvents(), oldName, newName);
             else
             {
-                for (unsigned int i = 0;i<project.GetLayoutsCount();++i)
+                for (std::size_t i = 0;i<project.GetLayoutsCount();++i)
                 {
                     gd::Layout & layout = project.GetLayout(i);
                     if (std::find_if( layout.GetObjectGroups().begin(),
@@ -736,7 +735,7 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
                 }
             }
 
-            for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+            for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                 project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupRenamed(project, globalGroup ? NULL : &layout, newName, oldName);
         }
     }
@@ -841,22 +840,31 @@ void ObjectsEditor::OnMenuEditObjectSelected(wxCommandEvent& event)
         gd::Object * object = GetSelectedObject();
         if ( !object ) return;
 
-        object->EditObject(this, project, mainFrameWrapper);
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
-            project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectEdited(project, globalObject ? NULL : &layout, *object);
+        auto properties = object->GetProperties(project);
+        if ( properties.empty() || properties.find("PLEASE_ALSO_SHOW_EDIT_BUTTON_THANKS") != properties.end() ) {
 
-        project.SetDirty();
+            //Open object editor
+            object->EditObject(this, project, mainFrameWrapper);
+            for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
+                project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectEdited(project, globalObject ? NULL : &layout, *object);
 
-        listsHelper.MakeObjectItem(objectsList, lastSelectedItem, *object, globalObject);
+            project.SetDirty();
 
-        //Reload resources : Do not forget to switch the working directory.
-        wxString oldWorkingDir = wxGetCwd();
-        if ( wxDirExists(wxFileName::FileName(project.GetProjectFile()).GetPath()))
-            wxSetWorkingDirectory(wxFileName::FileName(project.GetProjectFile()).GetPath());
+            listsHelper.MakeObjectItem(objectsList, lastSelectedItem, *object, globalObject);
 
-        object->LoadResources(project, layout);
+            //Reload resources : Do not forget to switch the working directory.
+            wxString oldWorkingDir = wxGetCwd();
+            if ( wxDirExists(wxFileName::FileName(project.GetProjectFile()).GetPath()))
+                wxSetWorkingDirectory(wxFileName::FileName(project.GetProjectFile()).GetPath());
 
-        wxSetWorkingDirectory(oldWorkingDir);
+            object->LoadResources(project, layout);
+
+            wxSetWorkingDirectory(oldWorkingDir);
+        } else {
+            //No object editor: open properties panel
+            wxCommandEvent useless;
+            OnMenuPropertiesSelected(useless);
+        }
     }
     //Group clicked?
     else if ( data && (data->GetString() == "GlobalGroup" || data->GetString() == "LayoutGroup") )
@@ -869,11 +877,11 @@ void ObjectsEditor::OnMenuEditObjectSelected(wxCommandEvent& event)
 
         ChooseObjectDialog dialog(this, project, layout, /*canSelectGroup=*/false, "", /*multipleSelection=*/true);
         if (dialog.ShowModal() == 1) { //Add objects to the group
-            for(unsigned int i = 0;i < dialog.GetChosenObjects().size();++i)
+            for(std::size_t i = 0;i < dialog.GetChosenObjects().size();++i)
                 group->AddObject(dialog.GetChosenObjects()[i]);
         }
 
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupEdited(project, globalGroup ? NULL : &layout, group->GetName());
 
         listsHelper.MakeGroupItem(objectsList, lastSelectedItem, *group, globalGroup);
@@ -904,9 +912,9 @@ void ObjectsEditor::OnAddObjectSelected(wxCommandEvent& event)
     gd::ObjectOrGroupFinder nameChecker(project, &layout);
 
     //Find a new unique name for the object
-    gd::String name = _("NewObject");
-    for (unsigned int i = 2; nameChecker.HasObjectOrGroupNamed(name)!=gd::ObjectOrGroupFinder::No ;++i)
-        name = _("NewObject")+gd::String::From(i);
+    gd::String name = gd::NewNameGenerator::Generate(_("NewObject"), [&nameChecker](const gd::String & name) {
+        return nameChecker.HasObjectOrGroupNamed(name) != gd::ObjectOrGroupFinder::No;
+    });
 
     //Add a new object of selected type to objects list
     gd::Object & object = layout.InsertNewObject(project, chooseTypeDialog.GetSelectedObjectType(),
@@ -922,7 +930,7 @@ void ObjectsEditor::OnAddObjectSelected(wxCommandEvent& event)
 
     listsHelper.MakeObjectItem(objectsList, itemAdded, object, false);
 
-    for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectAdded(project, &layout, object);
 
     objectsList->EditLabel(itemAdded);
@@ -940,14 +948,11 @@ void ObjectsEditor::OnAddGroupSelected(wxCommandEvent& event)
 
     gd::ObjectOrGroupFinder nameChecker(project, &layout);
 
-    gd::String name = _("NewGroup");
-    for (unsigned int i = 2;
-        nameChecker.HasObjectOrGroupNamed(name) != gd::ObjectOrGroupFinder::No;
-        ++i)
-        name = _("NewGroup")+gd::String::From(i);
+    gd::String name = gd::NewNameGenerator::Generate(_("NewGroup"), [&nameChecker](const gd::String & name) {
+        return nameChecker.HasObjectOrGroupNamed(name) != gd::ObjectOrGroupFinder::No;
+    });
 
-    newGroup.SetName( name );
-
+    newGroup.SetName(name);
     objectsGroups.push_back( newGroup );
 
     wxTreeItemId itemAdded;
@@ -959,7 +964,7 @@ void ObjectsEditor::OnAddGroupSelected(wxCommandEvent& event)
 
     objectsList->SetItemData( itemAdded, new gd::TreeItemStringData("LayoutGroup") );
 
-    for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, &layout, name);
     gd::LogStatus( _( "The group was correctly added." ) );
 
@@ -977,7 +982,7 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
 
     //Detect if only group's sub-objects have been selected (to avoid showing the next question)
     int objectsInGroupCount = 0;
-    for(unsigned int i = 0;i<selection.GetCount();++i)
+    for(std::size_t i = 0;i<selection.GetCount();++i)
     {
         if (!selection[i].IsOk()) continue;
         gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(selection[i]));
@@ -1000,7 +1005,7 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
     }
 
     //Removing objects
-    for (unsigned int i = 0;i<selection.GetCount();++i)
+    for (std::size_t i = 0;i<selection.GetCount();++i)
     {
         if (!selection[i].IsOk()) continue;
         gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(selection[i]));
@@ -1025,7 +1030,7 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
                     if ( answer == wxYES )
                     {
                         gd::EventsRefactorer::RemoveObjectInEvents(project.GetCurrentPlatform(), project, layout, layout.GetEvents(), objectName);
-                        for (unsigned int g = 0;g<layout.GetObjectGroups().size();++g)
+                        for (std::size_t g = 0;g<layout.GetObjectGroups().size();++g)
                         {
                             if ( layout.GetObjectGroups()[g].Find(objectName)) layout.GetObjectGroups()[g].RemoveObject(objectName);
                         }
@@ -1061,7 +1066,7 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
                     ;//TODO
             }
 
-            for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+            for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                 project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupDeleted(project, globalGroup ? NULL : &layout, groupName);
         }
         else if( data->GetString() == "ObjectInGroup")
@@ -1103,9 +1108,9 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
     }
 
     //Call the notifiers
-    for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectsDeleted(project, &layout, objectsDeleted);
-    for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectsDeleted(project, NULL, gObjectsDeleted);
 }
 
@@ -1122,7 +1127,7 @@ void ObjectsEditor::OnMoveupSelected(wxCommandEvent& event)
     {
         bool globalObject = data->GetString() == "GlobalObject";
         gd::ClassWithObjects & objects = !globalObject ? static_cast<gd::ClassWithObjects&>(layout) : project;
-        unsigned int index = objects.GetObjectPosition(name);
+        std::size_t index = objects.GetObjectPosition(name);
 
         if ( index >= objects.GetObjectsCount() )
             return;
@@ -1148,7 +1153,7 @@ void ObjectsEditor::OnMoveDownSelected(wxCommandEvent& event)
     {
         bool globalObject = data->GetString() == "GlobalObject";
         gd::ClassWithObjects & objects = !globalObject ? static_cast<gd::ClassWithObjects&>(layout) : project;
-        unsigned int index = objects.GetObjectPosition(name);
+        std::size_t index = objects.GetObjectPosition(name);
 
         if ( index >= objects.GetObjectsCount() )
             return;
@@ -1235,7 +1240,7 @@ void ObjectsEditor::OnCutSelected(wxCommandEvent& event)
 
         std::vector<gd::String> objectsDeleted;
         objectsDeleted.push_back(name);
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectsDeleted(project, globalObject ? NULL : &layout, objectsDeleted);
     }
     else if ( data->GetString() == "GlobalGroup" || data->GetString() == "LayoutGroup" )
@@ -1251,7 +1256,7 @@ void ObjectsEditor::OnCutSelected(wxCommandEvent& event)
         gd::Clipboard::Get()->ForgetObject();
 
         RemoveGroup(name, objectsGroups);
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupDeleted(project, globalGroup ? NULL : &layout, name);
     }
 
@@ -1273,23 +1278,14 @@ void ObjectsEditor::OnPasteSelected(wxCommandEvent& event)
 
         //Add a new object of selected type to objects list
         gd::Object * object = clipboard->GetObject()->Clone();
-
-        gd::String name = object->GetName();
-
-        //Add a number to the new name if necessary
-        if ( nameChecker.HasObjectOrGroupNamed(name, globalObject /* Only search other layouts if it's a global object */) != gd::ObjectOrGroupFinder::No )
-        {
-            name =  _( "CopyOf" ) + object->GetName();
-            for (unsigned int i = 2;nameChecker.HasObjectOrGroupNamed(name, globalObject /* Only search other layouts if it's a global object */)!=gd::ObjectOrGroupFinder::No;++i)
-                name = _("CopyOf")+ object->GetName()+gd::String::From(i);
-        }
-
-        //Name the object
-        object->SetName( name );
+        object->SetName(gd::NewNameGenerator::Generate(object->GetName(), _("CopyOf"), [&nameChecker, globalObject](const gd::String & name) {
+            return nameChecker.HasObjectOrGroupNamed(
+                name, globalObject /* Only search other layouts if it's a global object */) != gd::ObjectOrGroupFinder::No;
+        }));
 
         //Add it to the list
         objects.InsertObject(*object, objects.GetObjectsCount());
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectAdded(project, globalObject ? NULL : &layout, *object);
     }
     else if ( clipboard->HasObjectGroup())
@@ -1300,19 +1296,12 @@ void ObjectsEditor::OnPasteSelected(wxCommandEvent& event)
 
         gd::ObjectGroup groupPasted = clipboard->GetObjectGroup();
 
-        gd::String name = groupPasted.GetName();
-
-        //Add a number to the new name if necessary
-        if ( nameChecker.HasObjectOrGroupNamed(name, globalGroup /* Only search other layouts if it's a global object */) != gd::ObjectOrGroupFinder::No )
-        {
-            name =  _( "CopyOf" ) + name;
-            for (unsigned int i = 2;nameChecker.HasObjectOrGroupNamed(name, globalGroup /* Only search other layouts if it's a global object */)!=gd::ObjectOrGroupFinder::No;++i)
-                name = _("CopyOf")+ groupPasted.GetName()+gd::String::From(i);
-        }
-        groupPasted.SetName(name);
+        groupPasted.SetName(gd::NewNameGenerator::Generate(groupPasted.GetName(), _("CopyOf"), [&nameChecker, globalGroup](const gd::String & name) {
+            return nameChecker.HasObjectOrGroupNamed(name, globalGroup /* Only search other layouts if it's a global object */) != gd::ObjectOrGroupFinder::No;
+        }));
         objectsGroups.push_back( groupPasted );
 
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, globalGroup ? NULL : &layout,  groupPasted.GetName());
     }
 
@@ -1358,7 +1347,7 @@ void ObjectsEditor::OnSetGlobalSelected(wxCommandEvent& event)
 
         std::vector<gd::String> removedObject;
         removedObject.push_back(objectName);
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         {
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectsDeleted(project, &layout, removedObject);
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectAdded(project, NULL, project.GetObject(objectName));
@@ -1400,7 +1389,7 @@ void ObjectsEditor::OnSetGlobalSelected(wxCommandEvent& event)
         project.GetObjectGroups().push_back(*group);
         RemoveGroup(groupName, layout.GetObjectGroups());
 
-        for ( unsigned int j = 0; j < project.GetUsedPlatforms().size();++j)
+        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
         {
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupDeleted(project, &layout, groupName);
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, NULL, groupName);

@@ -37,9 +37,33 @@ gd::String GD_API StrAt(const gd::String & str, size_t pos )
 }
 
 /**
+ * Expression function for getting a character from its codepoint
+ */
+gd::String GD_API FromCodePoint(int32_t codepoint)
+{
+    return gd::String::FromUTF32( std::u32string( 1, static_cast<char32_t>(codepoint) ) );
+}
+
+/**
+ * Expression function for getting the uppercased version of a string
+ */
+gd::String GD_API ToUpperCase(const gd::String & str)
+{
+    return str.UpperCase();
+}
+
+/**
+ * Expression function for getting the uppercased version of a string
+ */
+gd::String GD_API ToLowerCase(const gd::String & str)
+{
+    return str.LowerCase();
+}
+
+/**
  * Expression function for getting a substring from a string
  */
-unsigned int GD_API StrLen(const gd::String & str)
+std::size_t GD_API StrLen(const gd::String & str)
 {
     return str.size();
 }
@@ -69,7 +93,7 @@ int GD_API StrRFind(const gd::String & str, const gd::String & findwhat)
 /**
  * Expression function for finding a string in another
  */
-int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, unsigned int start)
+int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, std::size_t start)
 {
     size_t pos = str.find(findwhat, start);
 
@@ -80,7 +104,7 @@ int GD_API StrFindFrom(const gd::String & str, const gd::String & findwhat, unsi
 /**
  * Expression function for finding a string in another
  */
-int GD_API StrRFindFrom(const gd::String & str, const gd::String & findwhat, unsigned int start)
+int GD_API StrRFindFrom(const gd::String & str, const gd::String & findwhat, std::size_t start)
 {
     size_t pos = str.rfind(findwhat, start);
 

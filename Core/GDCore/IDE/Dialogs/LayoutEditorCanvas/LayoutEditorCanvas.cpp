@@ -272,7 +272,7 @@ LayoutEditorCanvas::LayoutEditorCanvas(wxWindow* parent, gd::Project & project_,
     }
 
     //Initialize previewers
-    for (unsigned int i = 0;i<project.GetUsedPlatforms().size();++i)
+    for (std::size_t i = 0;i<project.GetUsedPlatforms().size();++i)
     {
         std::shared_ptr<gd::LayoutEditorPreviewer> previewer = project.GetUsedPlatforms()[i]->GetLayoutPreviewer(*this);
         previewers[project.GetUsedPlatforms()[i]->GetName()] = previewer;
@@ -386,21 +386,21 @@ void LayoutEditorCanvas::OnGuiElementPressed(const gd::LayoutEditorCanvasGuiElem
 
         resizeOriginalWidths.clear();
         resizeOriginalHeights.clear();
-        for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+        for (auto & it : selectedInstances)
         {
-            it->second.x = it->first->GetX(); it->second.y = it->first->GetY();
+            it.second.x = it.first->GetX(); it.second.y = it.first->GetY();
 
-            if ( it->first->HasCustomSize() ) {
-                resizeOriginalWidths[it->first] = it->first->GetCustomWidth();
-                resizeOriginalHeights[it->first] = it->first->GetCustomHeight();
+            if ( it.first->HasCustomSize() ) {
+                resizeOriginalWidths[it.first] = it.first->GetCustomWidth();
+                resizeOriginalHeights[it.first] = it.first->GetCustomHeight();
             }
             else {
-                gd::Object * associatedObject = GetObjectLinkedToInitialInstance(*(it->first));
+                gd::Object * associatedObject = GetObjectLinkedToInitialInstance(*(it.first));
                 if ( associatedObject )
                 {
-                    sf::Vector2f size = associatedObject->GetInitialInstanceDefaultSize(*(it->first), project, layout);
-                    resizeOriginalWidths[it->first] = size.x;
-                    resizeOriginalHeights[it->first] = size.y;
+                    sf::Vector2f size = associatedObject->GetInitialInstanceDefaultSize(*(it.first), project, layout);
+                    resizeOriginalWidths[it.first] = size.x;
+                    resizeOriginalHeights[it.first] = size.y;
                 }
             }
         }
@@ -466,8 +466,8 @@ void LayoutEditorCanvas::OnPreviewBtClick( wxCommandEvent & event )
     //Note: Working directory is changed later, just before loading the layout
     mainFrameWrapper.LockShortcuts(this);
     mainFrameWrapper.DisableControlsForScenePreviewing();
-    for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->Enable(false);
+    for (auto & it : associatedEditors)
+        it->Enable(false);
 
     wxSetWorkingDirectory(mainFrameWrapper.GetIDEWorkingDirectory());
     RecreateRibbonToolbar();
@@ -501,8 +501,8 @@ void LayoutEditorCanvas::OnEditionBtClick( wxCommandEvent & event )
 
     mainFrameWrapper.UnLockShortcuts(this);
     mainFrameWrapper.EnableControlsAfterScenePreviewing();
-    for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->Enable();
+    for (auto & it : associatedEditors)
+        it->Enable();
 
     RecreateRibbonToolbar();
     hScrollbar->Show(true);
@@ -570,11 +570,11 @@ void LayoutEditorCanvas::UpdateContextMenu()
     if ( selectedInstances.empty() ) return;
 
     //Can we send the objects on a higher layer ?
-    unsigned int lowestLayer = layout.GetLayersCount()-1;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    std::size_t lowestLayer = layout.GetLayersCount()-1;
+    for (auto & it : selectedInstances)
     {
-        if (it->first == NULL) continue;
-        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it->first->GetLayer()));
+        if (it.first == NULL) continue;
+        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it.first->GetLayer()));
     }
 
     contextMenu.FindItem(ID_LAYERUPMENU)->Enable(false);
@@ -587,11 +587,11 @@ void LayoutEditorCanvas::UpdateContextMenu()
     }
 
     //Can we send the objects on a lower layer ?
-    unsigned int highestLayer = 0;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    std::size_t highestLayer = 0;
+    for (auto & it : selectedInstances)
     {
-        if (it->first == NULL) continue;
-        highestLayer = std::max(highestLayer, layout.GetLayerPosition(it->first->GetLayer()));
+        if (it.first == NULL) continue;
+        highestLayer = std::max(highestLayer, layout.GetLayerPosition(it.first->GetLayer()));
     }
 
     contextMenu.FindItem(ID_LAYERDOWNMENU)->Enable(false);
@@ -607,11 +607,11 @@ void LayoutEditorCanvas::UpdateContextMenu()
 
 void LayoutEditorCanvas::OnLayerUpSelected(wxCommandEvent & event)
 {
-    unsigned int lowestLayer = layout.GetLayersCount()-1;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    std::size_t lowestLayer = layout.GetLayersCount()-1;
+    for (auto & it : selectedInstances)
     {
-        if (it->first == NULL) continue;
-        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it->first->GetLayer()));
+        if (it.first == NULL) continue;
+        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it.first->GetLayer()));
     }
 
     if ( lowestLayer+1 < layout.GetLayersCount() ) SendSelectionToLayer(layout.GetLayer(lowestLayer+1).GetName());
@@ -619,11 +619,11 @@ void LayoutEditorCanvas::OnLayerUpSelected(wxCommandEvent & event)
 
 void LayoutEditorCanvas::OnLayerDownSelected(wxCommandEvent & event)
 {
-    unsigned int highestLayer = 0;
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    std::size_t highestLayer = 0;
+    for (auto & it : selectedInstances)
     {
-        if (it->first == NULL) continue;
-        highestLayer = std::max(highestLayer, layout.GetLayerPosition(it->first->GetLayer()));
+        if (it.first == NULL) continue;
+        highestLayer = std::max(highestLayer, layout.GetLayerPosition(it.first->GetLayer()));
     }
 
     if ( highestLayer >= 1 ) SendSelectionToLayer(layout.GetLayer(highestLayer-1).GetName());
@@ -631,16 +631,16 @@ void LayoutEditorCanvas::OnLayerDownSelected(wxCommandEvent & event)
 
 void LayoutEditorCanvas::SendSelectionToLayer(const gd::String & newLayerName)
 {
-    for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+    for (auto & it : selectedInstances)
     {
-        if (it->first == NULL) continue;
+        if (it.first == NULL) continue;
 
-        it->first->SetLayer(newLayerName);
+        it.first->SetLayer(newLayerName);
     }
 
     ChangesMade();
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::OnPropObjSelected(wxCommandEvent & event)
@@ -656,7 +656,7 @@ void LayoutEditorCanvas::OnAddAutoObjSelected(wxCommandEvent & event)
 
     gd::Object * object = GetObjectLinkedToInitialInstance(*selection[0]);
     bool globalObject = false;
-    for (unsigned int i = 0;i<project.GetObjectsCount();++i)
+    for (std::size_t i = 0;i<project.GetObjectsCount();++i)
     {
         if ( &project.GetObject(i) == object )
         {
@@ -672,8 +672,8 @@ void LayoutEditorCanvas::OnAddAutoObjSelected(wxCommandEvent & event)
     parentAuiManager->GetPane("PROPERTIES").Show();
     parentAuiManager->Update();
 
-    for (std::set<gd::LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->InitialInstancesUpdated();
+    for (auto & it : associatedEditors)
+        it->InitialInstancesUpdated();
 }
 
 void LayoutEditorCanvas::AddObject(const gd::String & objectName)
@@ -733,7 +733,7 @@ void LayoutEditorCanvas::OnLeftDown( wxMouseEvent &event )
     double mouseY = GetMouseYOnLayout();
 
     //Check if there is a click on a gui element inside the layout
-    for (unsigned int i = 0;i<guiElements.size();++i)
+    for (std::size_t i = 0;i<guiElements.size();++i)
     {
         if ( guiElements[i].area.Contains(wxPoint(sf::Mouse::getPosition(*this).x, sf::Mouse::getPosition(*this).y)) )
         {
@@ -768,7 +768,7 @@ void LayoutEditorCanvas::OnLeftDown( wxMouseEvent &event )
             if (!isMovingInstance && ctrlPressed) //Clone objects
             {
                 std::vector < InitialInstance* > selection = GetSelection();
-                for (unsigned int i = 0;i<selection.size();++i)
+                for (std::size_t i = 0;i<selection.size();++i)
                     instances.InsertInitialInstance(*selection[i]);
 
                 for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
@@ -828,8 +828,8 @@ void LayoutEditorCanvas::OnRightUp( wxMouseEvent &event )
 void LayoutEditorCanvas::ClearSelection()
 {
     selectedInstances.clear();
-    for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->DeselectedAllInitialInstance();
+    for (auto & it : associatedEditors)
+        it->DeselectedAllInitialInstance();
 }
 
 void LayoutEditorCanvas::SelectInstance(InitialInstance * instance)
@@ -837,8 +837,8 @@ void LayoutEditorCanvas::SelectInstance(InitialInstance * instance)
     if ( !instance ) return;
 
     selectedInstances[instance] = wxRealPoint(instance->GetX(), instance->GetY());
-    for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->SelectedInitialInstance(*instance);
+    for (auto & it : associatedEditors)
+        it->SelectedInitialInstance(*instance);
 }
 
 void LayoutEditorCanvas::UnselectInstance(InitialInstance * instance)
@@ -846,13 +846,13 @@ void LayoutEditorCanvas::UnselectInstance(InitialInstance * instance)
     if ( !instance ) return;
 
     selectedInstances.erase(instance);
-    for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-        (*it)->DeselectedInitialInstance(*instance);
+    for (auto & it : associatedEditors)
+        it->DeselectedInitialInstance(*instance);
 }
 
 void LayoutEditorCanvas::DeleteInstances(std::vector<InitialInstance *> instancesToDelete)
 {
-    for (unsigned int i = 0;i<instancesToDelete.size();++i)
+    for (std::size_t i = 0;i<instancesToDelete.size();++i)
     {
         if (instancesToDelete[i] == NULL ) continue;
 
@@ -892,9 +892,9 @@ public:
 
     std::vector<InitialInstance*> & GetSelectedList() { return selectedList; }
     InstancesInAreaPicker & IgnoreLockedInstances() { ignoreLockedInstances = true; return *this; }
-    InstancesInAreaPicker & ExcludeLayer(const gd::String & layerName) { 
+    InstancesInAreaPicker & ExcludeLayer(const gd::String & layerName) {
         excludedLayers.insert(layerName);
-        return *this; 
+        return *this;
     }
 
 private:
@@ -914,16 +914,17 @@ void LayoutEditorCanvas::OnLeftUp(wxMouseEvent &)
 
         if ( currentDraggableBt.substr(0, 6) == "resize" ) //Handle the release of resize buttons here ( as the mouse if not necessarily on the button so OnGuiButtonReleased is not called )
         {
-            for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
-                it->second.x = it->first->GetX(); it->second.y = it->first->GetY();
+                it.second.x = it.first->GetX();
+                it.second.y = it.first->GetY();
             }
         }
         return;
     }
 
     //Check if there is a click released on a gui element inside the layout
-    for (unsigned int i = 0;i<guiElements.size();++i)
+    for (std::size_t i = 0;i<guiElements.size();++i)
     {
         if ( guiElements[i].area.Contains(wxPoint(sf::Mouse::getPosition(*this).x, sf::Mouse::getPosition(*this).y)) )
         {
@@ -935,28 +936,29 @@ void LayoutEditorCanvas::OnLeftUp(wxMouseEvent &)
     if ( isMovingInstance )
     {
         bool changesMade = false;
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+        for (auto & it : selectedInstances)
         {
             //Update the member containing the "start" position of the instances.
-            if (it->second.x != it->first->GetX() || it->second.y != it->first->GetY() )
+            if (it.second.x != it.first->GetX() || it.second.y != it.first->GetY())
             {
-                it->second.x = it->first->GetX(); it->second.y = it->first->GetY();
+                it.second.x = it.first->GetX();
+                it.second.y = it.first->GetY();
                 changesMade = true;
             }
         }
 
-        if ( changesMade )
+        if (changesMade)
         {
             ChangesMade();
 
-            for (std::set<LayoutEditorCanvasAssociatedEditor*>::iterator it = associatedEditors.begin();it !=associatedEditors.end();++it)
-                (*it)->InitialInstancesUpdated();
+            for (auto & it : associatedEditors)
+                it->InitialInstancesUpdated();
         }
         isMovingInstance = false;
     }
 
     //Select object thanks to the selection area
-    if ( isSelecting )
+    if (isSelecting)
     {
         //Be sure that the selection rectangle origin is on the top left
         if ( selectionRectangle.GetWidth() < 0 )
@@ -977,7 +979,7 @@ void LayoutEditorCanvas::OnLeftUp(wxMouseEvent &)
         picker.IgnoreLockedInstances();
         instances.IterateOverInstances(picker);
 
-        for ( unsigned int i = 0; i<picker.GetSelectedList().size();++i)
+        for ( std::size_t i = 0; i<picker.GetSelectedList().size();++i)
             SelectInstance(picker.GetSelectedList()[i]);
 
         isSelecting = false;
@@ -988,61 +990,95 @@ void LayoutEditorCanvas::OnMotion(wxMouseEvent &)
 {
     if (!editing) return;
 
+    auto preserveWidthRatio = [this](gd::InitialInstance * instance) {
+        auto ratio = resizeOriginalHeights[instance] / resizeOriginalWidths[instance];
+        instance->SetCustomWidth(instance->GetCustomHeight() / ratio);
+    };
+    auto preserveHeightRatio = [this](gd::InitialInstance * instance) {
+        auto ratio = resizeOriginalHeights[instance] / resizeOriginalWidths[instance];
+        instance->SetCustomHeight(instance->GetCustomWidth() * ratio);
+    };
+    auto ensureHasCustomHeight = [this](gd::InitialInstance * instance) {
+        if (instance->HasCustomSize()) return;
+        instance->SetHasCustomSize(true);
+        instance->SetCustomHeight(resizeOriginalHeights[instance]);
+    };
+    auto ensureHasCustomWidth = [this](gd::InitialInstance * instance) {
+        if (instance->HasCustomSize()) return;
+        instance->SetHasCustomSize(true);
+        instance->SetCustomWidth(resizeOriginalWidths[instance]);
+    };
+    auto snapCoordinates = [this](double & x, double & y) {
+        if (!options.grid || !options.snap) return;
+
+        x = gd::Round((x-options.gridOffsetX) / options.gridWidth) * options.gridWidth + options.gridOffsetX;
+        y = gd::Round((y-options.gridOffsetY) / options.gridHeight) * options.gridHeight + options.gridOffsetY;
+    };
+    auto snapWidth = [this](double width) {
+        if (!options.grid || !options.snap) return width;
+        return (double)gd::Round(width / options.gridWidth) * options.gridWidth;
+    };
+    auto snapHeight = [this](double height) {
+        if (!options.grid || !options.snap) return height;
+        return (double)gd::Round(height / options.gridHeight) * options.gridWidth;
+    };
+
     //First check if we're using a resize button
     if ( currentDraggableBt.substr(0,6) == "resize")
     {
+        auto mouseX = GetMouseXOnLayout();
+        auto mouseY = GetMouseYOnLayout();
+
         if ( currentDraggableBt == "resizeRight" || currentDraggableBt == "resizeRightUp" || currentDraggableBt == "resizeRightDown" )
         {
-            for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
-                if (resizeOriginalWidths[it->first]+GetMouseXOnLayout()-resizeMouseStartPosition.x < 0) continue;
+                auto newWidth = snapWidth(resizeOriginalWidths[it.first] + mouseX - resizeMouseStartPosition.x);
+                if (newWidth < 0) continue;
 
-                if ( !it->first->HasCustomSize() ) {
-                    it->first->SetHasCustomSize(true);
-                    it->first->SetCustomHeight(resizeOriginalHeights[it->first]);
-                }
-                it->first->SetCustomWidth(resizeOriginalWidths[it->first]+GetMouseXOnLayout()-resizeMouseStartPosition.x);
+                ensureHasCustomHeight(it.first);
+                it.first->SetCustomWidth(newWidth);
+                if (shiftPressed) preserveHeightRatio(it.first);
             }
         }
         if ( currentDraggableBt == "resizeDown" || currentDraggableBt == "resizeRightDown" || currentDraggableBt == "resizeLeftDown" )
         {
-            for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
-                if ( resizeOriginalHeights[it->first]+GetMouseYOnLayout()-resizeMouseStartPosition.y < 0 ) continue;
+                auto newHeight = snapHeight(resizeOriginalHeights[it.first] + mouseY - resizeMouseStartPosition.y);
+                if (newHeight < 0) continue;
 
-                if ( !it->first->HasCustomSize() ) {
-                    it->first->SetHasCustomSize(true);
-                    it->first->SetCustomWidth(resizeOriginalWidths[it->first]);
-                }
-                it->first->SetCustomHeight(resizeOriginalHeights[it->first]+GetMouseYOnLayout()-resizeMouseStartPosition.y);
+                ensureHasCustomWidth(it.first);
+                it.first->SetCustomHeight(newHeight);
+                if (shiftPressed) preserveWidthRatio(it.first);
             }
         }
         if ( currentDraggableBt == "resizeLeft" || currentDraggableBt == "resizeLeftUp" || currentDraggableBt == "resizeLeftDown" )
         {
-            for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
-                if (resizeOriginalWidths[it->first]-GetMouseXOnLayout()+resizeMouseStartPosition.x < 0) continue;
+                auto newWidth = snapWidth(resizeOriginalWidths[it.first] - mouseX + resizeMouseStartPosition.x);
+                if (newWidth < 0) continue;
 
-                if ( !it->first->HasCustomSize() ) {
-                    it->first->SetHasCustomSize(true);
-                    it->first->SetCustomHeight(resizeOriginalHeights[it->first]);
-                }
-                it->first->SetCustomWidth(resizeOriginalWidths[it->first]-GetMouseXOnLayout()+resizeMouseStartPosition.x);
-                it->first->SetX(it->second.x+GetMouseXOnLayout()-resizeMouseStartPosition.x);
+                ensureHasCustomHeight(it.first);
+                it.first->SetCustomWidth(newWidth);
+                it.first->SetX(it.second.x + mouseX - resizeMouseStartPosition.x);
+
+                if (shiftPressed) preserveHeightRatio(it.first);
             }
         }
         if ( currentDraggableBt == "resizeUp" || currentDraggableBt == "resizeLeftUp" || currentDraggableBt == "resizeRightUp" )
         {
-            for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
-                if ( resizeOriginalHeights[it->first]-GetMouseYOnLayout()+resizeMouseStartPosition.y < 0 ) continue;
+                auto newHeight = snapHeight(resizeOriginalHeights[it.first] - mouseY + resizeMouseStartPosition.y);
+                if (newHeight < 0) continue;
 
-                if ( !it->first->HasCustomSize() ) {
-                    it->first->SetHasCustomSize(true);
-                    it->first->SetCustomWidth(resizeOriginalWidths[it->first]);
-                }
-                it->first->SetCustomHeight(resizeOriginalHeights[it->first]-GetMouseYOnLayout()+resizeMouseStartPosition.y);
-                it->first->SetY(it->second.y+GetMouseYOnLayout()-resizeMouseStartPosition.y);
+                ensureHasCustomWidth(it.first);
+                it.first->SetCustomHeight(newHeight);
+                it.first->SetY(it.second.y + mouseY - resizeMouseStartPosition.y);
+
+                if (shiftPressed) preserveWidthRatio(it.first);
             }
         }
 
@@ -1050,10 +1086,11 @@ void LayoutEditorCanvas::OnMotion(wxMouseEvent &)
     }
     else if (currentDraggableBt == "angle") //Check if we are dragging a angle button
     {
-        for ( std::map <gd::InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+        for ( auto & it : selectedInstances)
         {
             float newAngle = atan2(sf::Mouse::getPosition(*this).y-angleButtonCenter.y, sf::Mouse::getPosition(*this).x-angleButtonCenter.x)*180/3.14159;
-            it->first->SetAngle(newAngle);
+            if (shiftPressed) newAngle = gd::Round(newAngle / 15.0) * 15.0;
+            it.first->SetAngle(newAngle);
         }
 
         UpdateMouseResizeCursor(currentDraggableBt);
@@ -1076,7 +1113,7 @@ void LayoutEditorCanvas::OnMotion(wxMouseEvent &)
 
         //Check if there is a gui element hovered inside the layout
         bool hoveringSomething = false;
-        for (unsigned int i = 0;i<guiElements.size();++i)
+        for (std::size_t i = 0;i<guiElements.size();++i)
         {
             if ( guiElements[i].area.Contains(wxPoint(sf::Mouse::getPosition(*this).x, sf::Mouse::getPosition(*this).y)) ) {
                 OnGuiElementHovered(guiElements[i]);
@@ -1091,24 +1128,19 @@ void LayoutEditorCanvas::OnMotion(wxMouseEvent &)
         if ( isMovingInstance )
         {
             //Get the displacement of the cursor
-            float deltaX = mouseX - oldMouseX;
-            float deltaY = mouseY - oldMouseY;
+            double deltaX = mouseX - oldMouseX;
+            double deltaY = mouseY - oldMouseY;
 
-            for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
+            for (auto & it : selectedInstances)
             {
                 //Compute new position
-                float newX = it->second.x + deltaX;
-                float newY = it->second.y + deltaY;
-
-                if ( options.grid && options.snap )
-                {
-                    newX = std::floor((newX-options.gridOffsetX)/options.gridWidth +0.5)*options.gridWidth + options.gridOffsetX;
-                    newY = std::floor((newY-options.gridOffsetY)/options.gridHeight+0.5)*options.gridHeight + options.gridOffsetY;
-                }
+                double newX = it.second.x + deltaX;
+                double newY = it.second.y + deltaY;
+                snapCoordinates(newX, newY);
 
                 //Move the initial instance
-                it->first->SetX(newX);
-                it->first->SetY(newY);
+                it.first->SetX(newX);
+                it.first->SetY(newY);
             }
         }
         if ( isSelecting )
@@ -1165,8 +1197,8 @@ void LayoutEditorCanvas::OnKey( wxKeyEvent& evt )
     if ( evt.GetKeyCode() == WXK_DELETE || evt.GetKeyCode() == WXK_BACK )
     {
         std::vector<InitialInstance*> instancesToDelete;
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-            instancesToDelete.push_back(it->first);
+        for (auto & it : selectedInstances)
+            instancesToDelete.push_back(it.first);
 
         DeleteInstances(instancesToDelete);
 
@@ -1176,34 +1208,30 @@ void LayoutEditorCanvas::OnKey( wxKeyEvent& evt )
     }
     else if ( evt.GetKeyCode() == WXK_DOWN )
     {
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        {
-            it->first->SetY(it->first->GetY()+1);
-        }
+        for (auto & it : selectedInstances)
+            it.first->SetY(it.first->GetY()+1);
+
         eventIsOnlyForMe = true;
     }
     else if ( evt.GetKeyCode() == WXK_UP )
     {
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        {
-            it->first->SetY(it->first->GetY()-1);
-        }
+        for (auto & it : selectedInstances)
+            it.first->SetY(it.first->GetY()-1);
+
         eventIsOnlyForMe = true;
     }
     else if ( evt.GetKeyCode() == WXK_RIGHT )
     {
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        {
-            it->first->SetX(it->first->GetX()+1);
-        }
+        for (auto & it : selectedInstances)
+            it.first->SetX(it.first->GetX()+1);
+
         eventIsOnlyForMe = true;
     }
     else if ( evt.GetKeyCode() == WXK_LEFT )
     {
-        for ( std::map <InitialInstance*, wxRealPoint >::iterator it = selectedInstances.begin();it!=selectedInstances.end();++it)
-        {
-            it->first->SetX(it->first->GetX()-1);
-        }
+        for (auto & it : selectedInstances)
+            it.first->SetX(it.first->GetX()-1);
+
         eventIsOnlyForMe = true;
     }
 
@@ -1354,9 +1382,9 @@ void LayoutEditorCanvas::OnUndoBtClick( wxCommandEvent & event )
     Undo();
 }
 
-void LayoutEditorCanvas::Undo(unsigned int times)
+void LayoutEditorCanvas::Undo(std::size_t times)
 {
-    for (unsigned int i = 0;i<times;++i)
+    for (std::size_t i = 0;i<times;++i)
     {
         if ( history.empty() ) return;
 
@@ -1377,9 +1405,9 @@ void LayoutEditorCanvas::OnClearHistorySelected(wxCommandEvent& event)
     redoHistory.clear();
 }
 
-void LayoutEditorCanvas::Redo( unsigned int times )
+void LayoutEditorCanvas::Redo( std::size_t times )
 {
-    for (unsigned int i = 0;i<times;++i)
+    for (std::size_t i = 0;i<times;++i)
     {
         if ( redoHistory.empty() ) return;
 
@@ -1487,9 +1515,9 @@ void LayoutEditorCanvas::ReloadResources()
     if ( wxDirExists(wxFileName::FileName(project.GetProjectFile()).GetPath()))
         wxSetWorkingDirectory(wxFileName::FileName(project.GetProjectFile()).GetPath());
 
-    for (unsigned int i = 0;i<layout.GetObjectsCount();++i)
+    for (std::size_t i = 0;i<layout.GetObjectsCount();++i)
         layout.GetObject(i).LoadResources(project, layout);
-    for (unsigned int i = 0;i<project.GetObjectsCount();++i)
+    for (std::size_t i = 0;i<project.GetObjectsCount();++i)
         project.GetObject(i).LoadResources(project, layout);
 
     wxSetWorkingDirectory(mainFrameWrapper.GetIDEWorkingDirectory());

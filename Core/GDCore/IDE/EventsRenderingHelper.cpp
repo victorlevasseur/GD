@@ -166,7 +166,6 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
     dc.DrawRectangle(rect);
 
     InstructionListItem item(/**isCondition=*/true, &conditions, event);
-    areas.AddItem(rect, item);
 
     if ( conditions.empty() )
     {
@@ -282,6 +281,7 @@ int EventsRenderingHelper::DrawConditionsList(gd::InstructionsList & conditions,
         dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
     }
 
+    areas.AddItem(rect, item);
     return y+addInstructionButtonHeight-initialYPosition;
 }
 
@@ -301,7 +301,6 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
     dc.DrawRectangle(rect);
 
     InstructionListItem item(/**isCondition=*/false, &actions, event);
-    areas.AddItem(rect, item);
 
     if ( actions.empty() )
     {
@@ -409,7 +408,7 @@ int EventsRenderingHelper::DrawActionsList(gd::InstructionsList & actions, wxDC 
         dc.DrawRectangle(x, y, width, addInstructionButtonHeight);
     }
 
-
+    areas.AddItem(rect, item);
     return y+instructionsListPadding+addInstructionButtonHeight-initialYPosition;
 }
 

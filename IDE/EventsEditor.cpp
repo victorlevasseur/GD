@@ -642,7 +642,10 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
             {
                 dc.SetPen(gd::EventsRenderingHelper::Get()->GetSelectedRectangleOutlinePen());
                 dc.SetBrush(gd::EventsRenderingHelper::Get()->GetSelectedRectangleFillBrush());
-                dc.DrawRectangle(0,y-2,eventsPanel->GetSize().x,height+4);
+                dc.DrawRectangle(0,
+					y-gd::EventsRenderingHelper::Get()->separationBetweenEvents/2,
+					eventsPanel->GetSize().x,
+					height+gd::EventsRenderingHelper::Get()->separationBetweenEvents);
             }
 
             if (profilingActivated && events[i].IsExecutable())
@@ -704,7 +707,10 @@ unsigned int EventsEditor::DrawEvents(wxDC & dc, gd::EventsList & events, int x,
             }
 
             //Registering event in items which are displayed
-            wxRect eventArea(0,y,eventsPanel->GetSize().x,height);
+            wxRect eventArea(0,
+				y-gd::EventsRenderingHelper::Get()->separationBetweenEvents/2,
+				eventsPanel->GetSize().x,
+				height+gd::EventsRenderingHelper::Get()->separationBetweenEvents);
             itemsAreas.AddItem( eventArea, eventAccessor );
         }
 

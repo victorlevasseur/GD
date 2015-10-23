@@ -289,7 +289,8 @@ gdjs.RuntimeObject.prototype.rotateTowardAngle = function(angle, speed, runtimeS
     var angularDiff = gdjs.evtTools.common.angleDifference(this.getAngle(), angle);
     var diffWasPositive = angularDiff >= 0;
 
-    var newAngle = this.getAngle() + (diffWasPositive ? -1.0 : 1.0) * speed * runtimeScene.getElapsedTime()/1000;
+    var newAngle = this.getAngle() + (diffWasPositive ? -1.0 : 1.0)
+        * speed * runtimeScene.getTimeManager().getElapsedTime() / 1000;
     if (gdjs.evtTools.common.angleDifference(newAngle, angle) > 0 ^ diffWasPositive)
         newAngle = angle;
     this.setAngle(newAngle);
@@ -299,7 +300,8 @@ gdjs.RuntimeObject.prototype.rotateTowardAngle = function(angle, speed, runtimeS
 };
 
 gdjs.RuntimeObject.prototype.rotate = function(speed, runtimeScene) {
-    this.setAngle(this.getAngle()+speed*runtimeScene.getElapsedTime()/1000);
+    this.setAngle(this.getAngle() +
+        speed * runtimeScene.getTimeManager().getElapsedTime() / 1000);
 };
 
 /**
@@ -766,8 +768,8 @@ gdjs.RuntimeObject.prototype.getAABB = function() {
 gdjs.RuntimeObject.prototype.updateAABB = function() {
     this.aabb.min[0] = this.getDrawableX();
     this.aabb.min[1] = this.getDrawableY();
-    this.aabb.max[0] = this.getDrawableX()+this.getWidth();
-    this.aabb.max[1] = this.getDrawableY()+this.getHeight();
+    this.aabb.max[0] = this.aabb.min[0] + this.getWidth();
+    this.aabb.max[1] = this.aabb.min[1] + this.getHeight();
 };
 
 //Behaviors:

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include <wx/msgdlg.h>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 
 using namespace std;
@@ -98,7 +98,7 @@ void ChoixClavier::OnButton1Click(wxCommandEvent& event)
 
 void ChoixClavier::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/events_editor/parameters");
 }
 
 void ChoixClavier::OnPanel1KeyDown1(wxKeyEvent& event)

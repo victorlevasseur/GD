@@ -6,9 +6,9 @@
 
 #include "../TextObject.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 
 TextObjectEditor::TextObjectEditor(wxWindow *parent, gd::Project &game, TextObject &object, gd::MainFrameWrapper &mainFrameWrapper)
@@ -167,5 +167,5 @@ void TextObjectEditor::OnChangeFontButton(wxCommandEvent& event)
 
 void TextObjectEditor::OnHelpBtClicked(wxHyperlinkEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/gdevelop/documentation/manual/built_text"));
+    gd::HelpFileAccess::Get()->OpenPage("gdevelop/documentation/manual/built_text");
 }

@@ -10,8 +10,8 @@ This project is released under the MIT License.
 #include <set>
 #include "TopDownMovementBehavior.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/BuiltinExtensions/MathematicalTools.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Extensions/Builtin/MathematicalTools.h"
+#include "GDCpp/Project/Layout.h"
 #include "GDCpp/Serialization/SerializerElement.h"
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/RuntimeObject.h"
@@ -94,7 +94,7 @@ void TopDownMovementBehavior::DoStepPreEvents(RuntimeScene & scene)
     }
 
     //Update the speed of the object
-    float timeDelta = static_cast<double>(scene.GetElapsedTime())/1000000.0;
+    float timeDelta = static_cast<double>(scene.GetTimeManager().GetElapsedTime())/1000000.0;
     if (direction != -1)
     {
         directionInRad = static_cast<float>(direction)*gd::Pi()/4.0;

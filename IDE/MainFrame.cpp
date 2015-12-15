@@ -34,12 +34,13 @@
 
 #include "MainFrame.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCore/Project/ExternalLayout.h"
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasAssociatedEditor.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/ProjectFileWriter.h"
 #include "GDCore/IDE/ProjectExporter.h"
 #include "GDCore/IDE/PlatformManager.h"
@@ -58,6 +59,7 @@
 #include "BuildToolsPnl.h"
 #include "Preferences.h"
 #include "ExternalEventsEditor.h"
+#include "Dialogs/ExternalLayoutEditor.h"
 #include "mp3ogg.h"
 #include "ImportImage.h"
 #include "Dialogs/StartHerePage.h"
@@ -129,10 +131,8 @@ MainFrame::MainFrame( wxWindow* parent ) :
     ribbonSceneEditorButtonBar(NULL),
     buildToolsPnl(NULL),
     mainFrameWrapper(NULL, NULL, this, NULL, NULL, NULL, &scenesLockingShortcuts, wxGetCwd()),
-    startPage(NULL),
     projectManager(NULL)
 {
-
     //(*Initialize(MainFrame)
     wxBoxSizer* ribbonSizer;
     wxMenuItem* MenuItem1;
@@ -296,6 +296,11 @@ MainFrame::MainFrame( wxWindow* parent ) :
     helpMenu.Delete(MenuItem21); //(useful when GD is distributed on a system managing updates by itself).
     #endif
 
+    editorsManager.SetNotebook(editorsNotebook);
+    editorsManager.ShouldDisplayPrefix([this]() {
+        return games.size() > 1;
+    });
+
     //Update the file menu with exporting items
     for (std::size_t i = 0;i<gd::PlatformManager::Get()->GetAllPlatforms().size();++i)
     {
@@ -446,8 +451,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     RealizeRibbonCustomButtons();
 
     //Create start page
-    startPage = new StartHerePage(editorsNotebook, *this);
-    editorsNotebook->AddPage(startPage, _("Start page"));
+    editorsManager.AddPage(new StartHerePage(editorsNotebook, *this));
 
     //Create project manager
     projectManager = new ProjectManager(this, *this);
@@ -580,17 +584,10 @@ void MainFrame::OnRibbonCppToolsClicked(wxRibbonButtonBarEvent& evt)
  */
 void MainFrame::OnRibbonStartPageClicked(wxRibbonButtonBarEvent& evt)
 {
-    for (std::size_t i = 0;i<editorsNotebook->GetPageCount();++i)
-    {
-    	if ( dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(i)) != NULL )
-    	{
-    	    editorsNotebook->SetSelection(i);
-    	    return;
-    	}
-    }
+    if (editorsManager.SelectStartHerePage())
+        return;
 
-    startPage = new StartHerePage(this, *this);
-    editorsNotebook->AddPage(startPage, _("Start page"), true);
+    editorsManager.AddPage(new StartHerePage(this, *this), "", true);
 }
 
 void MainFrame::UpdateOpenedProjectsLogFile()
@@ -676,6 +673,11 @@ void MainFrame::OnNotebook1PageChanged(wxAuiNotebookEvent& event)
     {
         externalEventsEditorPtr->ForceRefreshRibbonAndConnect();
         LogFileManager::Get()->WriteToLogFile("Switched to the editor of external events \""+externalEventsEditorPtr->events.GetName()+"\"");
+    }
+    else if ( ExternalLayoutEditor * externalLayoutEditorPtr = dynamic_cast<ExternalLayoutEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
+    {
+        externalLayoutEditorPtr->ForceRefreshRibbonAndConnect();
+        LogFileManager::Get()->WriteToLogFile("Switched to the editor of external layout \""+externalLayoutEditorPtr->GetExternalLayout().GetName()+"\"");
     }
 }
 
@@ -767,9 +769,7 @@ void MainFrame::RealizeRibbonCustomButtons()
 
 void MainFrame::OneditorsNotebookPageClose(wxAuiNotebookEvent& event)
 {
-    if ( dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(event.GetSelection())) != NULL )
-        startPage = NULL;
-    else if ( CodeEditor * editor = dynamic_cast<CodeEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
+    if ( CodeEditor * editor = dynamic_cast<CodeEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
     {
         if ( !editor->QueryClose() )
             event.Veto();
@@ -978,7 +978,21 @@ void MainFrame::OnMenuPrefSelected( wxCommandEvent& event )
 
 void MainFrame::RefreshNews()
 {
-    startPage->RefreshNewsUsingUpdateChecker();
+    if (GetStartPage()) GetStartPage()->RefreshNewsUsingUpdateChecker();
+}
+
+StartHerePage* MainFrame::GetStartPage()
+{
+    int page = editorsManager.GetPageOfStartHerePage();
+    if (page != -1)
+    {
+        if (StartHerePage* startPage = dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(page)))
+        {
+            return startPage;
+        }
+    }
+
+    return NULL;
 }
 
 void MainFrame::OnMenuItem23Selected(wxCommandEvent& event)

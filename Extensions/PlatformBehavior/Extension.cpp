@@ -5,7 +5,7 @@ Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "PlatformerObjectBehavior.h"
 #include "PlatformBehavior.h"
@@ -84,7 +84,7 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 
         aut.AddCondition("IsFalling",
                        _("Is falling"),
-                       _("Check if the object is falling.\nNote that the object can be flagged as jumping and falling at the same time: At the end of a jump, the fall speed becomes higher that the jump speed."),
+                       _("Check if the object is falling.\nNote that the object can be flagged as jumping and falling at the same time: at the end of a jump, the fall speed becomes higher that the jump speed."),
                        _("_PARAM0_ is falling"),
                        _(""),
                        "CppPlatform/Extensions/platformerobjecticon24.png",

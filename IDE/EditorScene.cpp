@@ -22,10 +22,10 @@
 #include <wx/ribbon/buttonbar.h>
 #include <wx/ribbon/toolbar.h>
 
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/LayersEditorPanel.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
 #include "MainFrame.h"
@@ -34,8 +34,8 @@
 #include "EventsEditor.h"
 #include "Dialogs/LayoutEditorPropertiesPnl.h"
 
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Project.h"
 
 //(*IdInit(EditorScene)
 const long EditorScene::ID_SCROLLBAR3 = wxNewId();
@@ -149,7 +149,7 @@ mainFrameWrapper(mainFrameWrapper_)
     gd::SkinHelper::ApplyCurrentSkin(m_mgr);
     gd::SkinHelper::ApplyCurrentSkin(*notebook, true);
 
-    mainFrameWrapper.GetRibbon()->SetActivePage(2);
+    mainFrameWrapper.SetRibbonPage(_("Scene"));
     layoutEditorCanvas->ConnectEvents();
 
     //Load the saved perspective and make sure titles are translated
@@ -186,12 +186,12 @@ void EditorScene::ForceRefreshRibbonAndConnect()
     {
         layoutEditorCanvas->RecreateRibbonToolbar();
         layoutEditorCanvas->EnableIdleEvents();
-        mainFrameWrapper.GetRibbon()->SetActivePage(2);
+        mainFrameWrapper.SetRibbonPage(_("Scene"));
         layoutEditorCanvas->ConnectEvents();
     }
     else if ( notebook->GetPageText(notebook->GetSelection()) == _("Events") )
     {
-        mainFrameWrapper.GetRibbon()->SetActivePage(3);
+        mainFrameWrapper.SetRibbonPage(_("Events"));
         layoutEditorCanvas->EnableIdleEvents(false);
         eventsEditor->ConnectEvents();
     }
@@ -223,7 +223,7 @@ void EditorScene::OnnotebookPageChanging(wxAuiNotebookEvent& event)
 
 void EditorScene::OnsceneCanvasSetFocus(wxFocusEvent& event)
 {
-    mainFrameWrapper.GetRibbon()->SetActivePage(2);
+    mainFrameWrapper.SetRibbonPage(_("Scene"));
     layoutEditorCanvas->ConnectEvents();
 }
 

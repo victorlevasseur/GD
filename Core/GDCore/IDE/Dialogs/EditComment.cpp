@@ -8,7 +8,7 @@
 #include <wx/string.h>
 //*)
 #include <wx/colordlg.h>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Events/Event.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 
@@ -147,7 +147,7 @@ void EditComment::OnAnnulerBtClick(wxCommandEvent& event)
 
 void EditComment::OnAideBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/comment_events"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/comment_events");
 }
 void EditComment::OntxtColorBtClick(wxCommandEvent& event)
 {

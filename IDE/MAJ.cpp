@@ -29,7 +29,7 @@
 #include "GDCore/Tools/Locale/LocaleManager.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "UpdateChecker.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 //(*IdInit(MAJ)
 const long MAJ::ID_STATICTEXT2 = wxNewId();
@@ -263,7 +263,7 @@ void MAJ::OndownloadAndInstallBtClick(wxCommandEvent& event)
 
 void MAJ::OnHelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/update"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/update");
 }
 
 #endif

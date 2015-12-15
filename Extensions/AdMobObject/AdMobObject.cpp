@@ -6,16 +6,16 @@ This project is released under the MIT License.
 */
 
 #include <SFML/Graphics.hpp>
-#include "GDCpp/Object.h"
+#include "GDCpp/Project/Object.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCpp/ImageManager.h"
 #include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/Position.h"
+#include "GDCpp/Project/InitialInstance.h"
 #include "GDCpp/CommonTools.h"
 #include "AdMobObject.h"
 
 #if defined(GD_IDE_ONLY)
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
 #endif
 
@@ -45,7 +45,7 @@ std::map<gd::String, gd::PropertyDescriptor> AdMobObject::GetProperties(gd::Proj
     properties[_("Overlap game")].SetValue(overlap ? "true" : "false").SetType("Boolean");
     properties[_("Show banner on startup")].SetValue(showOnStartup ? "true" : "false").SetType("Boolean");
     properties[_("Banner position")].SetValue(
-        position == "Top" ? _("Top of the screen") : _("Bottom of the screen"))
+        position == "Bottom" ? _("Bottom of the screen") : _("Top of the screen"))
         .SetType("Choice")
         .AddExtraInfo(_("Top of the screen"))
         .AddExtraInfo(_("Bottom of the screen"));

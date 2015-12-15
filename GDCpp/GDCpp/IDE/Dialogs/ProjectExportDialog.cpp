@@ -29,11 +29,11 @@
 #include <iostream>
 #include <fstream>
 
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/wxTools/ShowFolder.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/ExternalEvents.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 #include "GDCpp/IDE/FullProjectCompiler.h"
@@ -240,7 +240,7 @@ void ProjectExportDialog::OnCompilBtClick( wxCommandEvent& event )
 
 void ProjectExportDialog::OnAideBtClick( wxCommandEvent& event )
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/distribution/compilation"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/distribution/compilation");
 }
 
 void ProjectExportDialog::OnbrowseBtClick(wxCommandEvent& event)

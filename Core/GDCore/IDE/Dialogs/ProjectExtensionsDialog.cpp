@@ -28,11 +28,11 @@
 #include <wx/imaglist.h>
 #include "GDCore/Tools/Log.h"
 
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/IDE/PlatformManager.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/HelpFileAccess.h"
@@ -396,7 +396,7 @@ void ProjectExtensionsDialog::OnFermerBtClick(wxCommandEvent& event)
 
 void ProjectExtensionsDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/extensions"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/extensions");
 }
 
 void ProjectExtensionsDialog::OnResize(wxSizeEvent& event)

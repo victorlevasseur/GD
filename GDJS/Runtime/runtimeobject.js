@@ -33,6 +33,7 @@ gdjs.RuntimeObject = function(runtimeScene, objectData)
     this.layer = "";
     this.livingOnScene = true;
     this.id = runtimeScene.createNewUniqueId();
+    this._runtimeScene = runtimeScene; //This could/should be avoided.
 
     //Hit boxes:
     if ( this._defaultHitBoxes === undefined ) {
@@ -138,6 +139,22 @@ gdjs.RuntimeObject.prototype.deleteFromScene = function(runtimeScene) {
  * @param runtimeScene The RuntimeScene owning the object.
  */
 gdjs.RuntimeObject.prototype.onDeletedFromScene = function(runtimeScene) {
+    var theLayer = runtimeScene.getLayer(this.layer);
+    this.exposePIXIDisplayObject(function(displayObject) {
+        theLayer.removePIXIContainerChild(displayObject);
+    });
+};
+
+//Rendering:
+
+/**
+ * Called with a callback function that should be called for
+ * each PIXI.DisplayObject used by the object
+ *
+ * @method exposePIXIDisplayObject
+ * @param cb The callback to be called with a PIXI.DisplayObject
+ */
+gdjs.RuntimeObject.prototype.exposePIXIDisplayObject = function(cb) {
 };
 
 //Common properties:
@@ -272,7 +289,8 @@ gdjs.RuntimeObject.prototype.rotateTowardAngle = function(angle, speed, runtimeS
     var angularDiff = gdjs.evtTools.common.angleDifference(this.getAngle(), angle);
     var diffWasPositive = angularDiff >= 0;
 
-    var newAngle = this.getAngle() + (diffWasPositive ? -1.0 : 1.0) * speed * runtimeScene.getElapsedTime()/1000;
+    var newAngle = this.getAngle() + (diffWasPositive ? -1.0 : 1.0)
+        * speed * runtimeScene.getTimeManager().getElapsedTime() / 1000;
     if (gdjs.evtTools.common.angleDifference(newAngle, angle) > 0 ^ diffWasPositive)
         newAngle = angle;
     this.setAngle(newAngle);
@@ -282,27 +300,8 @@ gdjs.RuntimeObject.prototype.rotateTowardAngle = function(angle, speed, runtimeS
 };
 
 gdjs.RuntimeObject.prototype.rotate = function(speed, runtimeScene) {
-    this.setAngle(this.getAngle()+speed*runtimeScene.getElapsedTime()/1000);
-};
-
-/**
- * Set the Z order of the object.
- *
- * @method setZOrder
- * @param z {Number} The new Z order position of the object
- */
-gdjs.RuntimeObject.prototype.setZOrder = function(z) {
-    this.zOrder = z;
-};
-
-/**
- * Get the Z order of the object.
- *
- * @method getZOrder
- * @return {Number} The Z order of the object
- */
-gdjs.RuntimeObject.prototype.getZOrder = function() {
-    return this.zOrder;
+    this.setAngle(this.getAngle() +
+        speed * runtimeScene.getTimeManager().getElapsedTime() / 1000);
 };
 
 /**
@@ -335,7 +334,15 @@ gdjs.RuntimeObject.prototype.getAngle = function() {
  * @return {String} The new layer of the object
  */
 gdjs.RuntimeObject.prototype.setLayer = function(layer) {
+    if (layer === this.layer) return;
     this.layer = layer;
+
+    var theLayer = this._runtimeScene.getLayer(this.layer);
+    var that = this;
+    this.exposePIXIDisplayObject(function (displayObject) {
+        theLayer.removePIXIContainerChild(displayObject);
+        theLayer.addChildToPIXIContainer(displayObject, that.zOrder);
+    });
 };
 
 /**
@@ -357,6 +364,33 @@ gdjs.RuntimeObject.prototype.getLayer = function() {
  */
 gdjs.RuntimeObject.prototype.isOnLayer = function(layer) {
     return this.layer === layer;
+};
+
+
+/**
+ * Set the Z order of the object.
+ *
+ * @method setZOrder
+ * @param z {Number} The new Z order position of the object
+ */
+gdjs.RuntimeObject.prototype.setZOrder = function(z) {
+    if ( z === this.zOrder ) return;
+    this.zOrder = z;
+
+    var theLayer = this._runtimeScene.getLayer(this.layer);
+    this.exposePIXIDisplayObject(function(displayObject) {
+        theLayer.changePIXIContainerChildZOrder(displayObject, z);
+    });
+};
+
+/**
+ * Get the Z order of the object.
+ *
+ * @method getZOrder
+ * @return {Number} The Z order of the object
+ */
+gdjs.RuntimeObject.prototype.getZOrder = function() {
+    return this.zOrder;
 };
 
 /**
@@ -453,6 +487,7 @@ gdjs.RuntimeObject.prototype.hasVariable = function(name) {
  * @param enable {Boolean} Set it to true to hide the object, false to show it.
  */
 gdjs.RuntimeObject.prototype.hide = function(enable) {
+    if (enable === undefined) enable = true;
     this.hidden = enable;
 };
 
@@ -733,8 +768,8 @@ gdjs.RuntimeObject.prototype.getAABB = function() {
 gdjs.RuntimeObject.prototype.updateAABB = function() {
     this.aabb.min[0] = this.getDrawableX();
     this.aabb.min[1] = this.getDrawableY();
-    this.aabb.max[0] = this.getDrawableX()+this.getWidth();
-    this.aabb.max[1] = this.getDrawableY()+this.getHeight();
+    this.aabb.max[0] = this.aabb.min[0] + this.getWidth();
+    this.aabb.max[1] = this.aabb.min[1] + this.getHeight();
 };
 
 //Behaviors:
@@ -1016,13 +1051,6 @@ gdjs.RuntimeObject.collisionTest = function(obj1, obj2) {
 
     if ( Math.sqrt(x*x+y*y) > obj1BoundingRadius + obj2BoundingRadius )
         return false;
-
-    //Or if in circle are colliding
-    var obj1MinEdge = Math.min(o1w, o1h)/2.0;
-    var obj2MinEdge = Math.min(o2w, o2h)/2.0;
-
-    if ( x*x+y*y < obj1MinEdge*obj1MinEdge+2*obj1MinEdge*obj2MinEdge+obj2MinEdge*obj2MinEdge )
-        return true;
 
     //Do a real check if necessary.
     var hitBoxes1 = obj1.getHitBoxes();

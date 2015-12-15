@@ -8,7 +8,8 @@
  * The runtimeScene object represents a scene being played and rendered in the browser in a canvas.
  *
  * @class RuntimeScene
- * @param PixiRenderer The PIXI.Renderer to be used
+ * @param {gdjs.RuntimeGame} runtimeGame The game associated to this scene.
+ * @param {PIXI.WebGLRenderer|PIXI.CanvasRenderer} pixiRenderer The renderer to be used
  */
 gdjs.RuntimeScene = function(runtimeGame, pixiRenderer)
 {
@@ -18,24 +19,17 @@ gdjs.RuntimeScene = function(runtimeGame, pixiRenderer)
     this._objects = new Hashtable(); //Contains the objects data stored in the project
     this._objectsCtor = new Hashtable();
     this._layers = new Hashtable();
-    this._timers = new Hashtable();
 	this._initialBehaviorSharedData = new Hashtable();
     this._pixiRenderer = pixiRenderer;
     this._pixiContainer = new PIXI.Container(); //The Container meant to contains all pixi objects of the scene.
-    this._latestFrameDate = new Date();
     this._variables = new gdjs.VariablesContainer();
     this._runtimeGame = runtimeGame;
     this._lastId = 0;
-    this._elapsedTime = 0;
-    this._timeScale = 1;
-    this._timeFromStart = 0;
-    this._firstFrame = true;
 	this._name = "";
-    this._soundManager = new gdjs.SoundManager();
+    this._timeManager = new gdjs.TimeManager();
     this._gameStopRequested = false;
     this._requestedScene = "";
     this._isLoaded = false; // True if loadFromScene was called and the scene is being played.
-    this.layers = this._layers;
     this._allInstancesList = []; //An array used to create a list of all instance when necessary ( see _constructListOfAllInstances )
     this._instancesRemoved = []; //The instances removed from the scene and waiting to be sent to the cache.
 
@@ -71,7 +65,6 @@ gdjs.RuntimeScene.prototype.loadFromScene = function(sceneData) {
 	//Setup main properties
 	document.title = sceneData.title;
 	this._name = sceneData.name;
-	this._firstFrame = true;
 	this.setBackgroundColor(parseInt(sceneData.r, 10),
 			parseInt(sceneData.v, 10),
 			parseInt(sceneData.b, 10));
@@ -137,7 +130,11 @@ gdjs.RuntimeScene.prototype.loadFromScene = function(sceneData) {
 		gdjs.callbacksRuntimeSceneLoaded[i](this);
 	}
 
+	if (sceneData.stopSoundsOnStartup && this._runtimeGame)
+		this._runtimeGame.getSoundManager().clearAll();
+
     this._isLoaded = true;
+	this._timeManager.reset();
 };
 
 gdjs.RuntimeScene.prototype.unloadScene = function() {
@@ -197,13 +194,12 @@ gdjs.RuntimeScene.prototype.setEventsFunction = function(func) {
  */
 gdjs.RuntimeScene.prototype.renderAndStep = function() {
 	this._requestedChange = gdjs.RuntimeScene.CONTINUE;
-	this._updateTime();
+	this._timeManager.update(this._runtimeGame.getMinimalFramerate());
 	this._updateObjectsPreEvents();
 	this._eventsFunction(this, this._eventsContext);
 	this._updateObjects();
+	this._updateObjectsVisibility();
 	this.render();
-
-	this._firstFrame = false;
 
 	return !!this.getRequestedChange();
 };
@@ -221,23 +217,66 @@ gdjs.RuntimeScene.prototype.render = function() {
 };
 
 /**
- * Called when rendering to do all times related tasks.
- * @method _updateTime
+ * Called to update visibility of PIXI.DisplayObject of objects
+ * rendered on the scene.
+ *
+ * Visibility is set to false if object is hidden, or if
+ * object is too far from the camera of its layer ("culling").
+ * @method _updateObjectsVisibility
  * @private
  */
-gdjs.RuntimeScene.prototype._updateTime = function() {
-	//Compute the elapsed time since last frame
-	this._elapsedTime = Date.now() - this._latestFrameDate;
-	this._latestFrameDate = Date.now();
-	this._elapsedTime = Math.min(this._elapsedTime, 1000/this._runtimeGame.getMinimalFramerate());
-	this._elapsedTime *= this._timeScale;
-
-	//Update timers and others members
-	var timers = this._timers.values();
-	for ( var i = 0, len = timers.length;i<len;++i) {
-		timers[i].updateTime(this._elapsedTime);
+gdjs.RuntimeScene.prototype._updateObjectsVisibility = function() {
+	function hide(displayObject) {
+		displayObject.visible = false;
 	}
-	this._timeFromStart += this._elapsedTime;
+
+	function show(displayObject) {
+		displayObject.visible = true;
+	}
+
+	if (this._timeManager.isFirstFrame()) {
+		this._constructListOfAllInstances();
+		for( var i = 0, len = this._allInstancesList.length;i<len;++i) {
+			var object = this._allInstancesList[i];
+
+			object.exposePIXIDisplayObject(object.isHidden() ? hide : show);
+		}
+
+		return;
+	} else {
+		//After first frame, optimise rendering by setting only objects
+		//near camera as visible.
+		var allLayers = this._layers.entries();
+		var layersCameraCoordinates = {};
+		for(var i = 0;i < allLayers.length;++i) {
+			var theLayer = allLayers[i][1];
+			layersCameraCoordinates[allLayers[i][0]] =
+				[theLayer.getCameraX() - theLayer.getCameraWidth(),
+				 theLayer.getCameraY() - theLayer.getCameraHeight(),
+				 theLayer.getCameraX() + theLayer.getCameraWidth(),
+				 theLayer.getCameraY() + theLayer.getCameraHeight()];
+		}
+
+		this._constructListOfAllInstances();
+		for( var i = 0, len = this._allInstancesList.length;i<len;++i) {
+			var object = this._allInstancesList[i];
+			var cameraCoords = layersCameraCoordinates[object.getLayer()];
+
+			if (!cameraCoords) continue;
+
+			if (object.isHidden()) {
+				object.exposePIXIDisplayObject(hide);
+			} else {
+				var aabb = object.getAABB();
+				if (aabb.min[0] > cameraCoords[2] || aabb.min[1] > cameraCoords[3] ||
+					aabb.max[0] < cameraCoords[0] || aabb.max[1] < cameraCoords[1]) {
+					object.exposePIXIDisplayObject(hide);
+				} else {
+					object.exposePIXIDisplayObject(show);
+				}
+			}
+		}
+	}
 };
 
 /**
@@ -317,8 +356,9 @@ gdjs.RuntimeScene.prototype._updateObjects = function() {
 	//It is *mandatory* to create and iterate on a external list of all objects, as the behaviors
 	//may delete the objects.
 	this._constructListOfAllInstances();
+	var elapsedTimeInSeconds = this._timeManager.getElapsedTime() / 1000;
 	for( var i = 0, len = this._allInstancesList.length;i<len;++i) {
-		this._allInstancesList[i].updateTime(this._elapsedTime/1000);
+		this._allInstancesList[i].updateTime(elapsedTimeInSeconds);
 		this._allInstancesList[i].stepBehaviorsPostEvents(this);
 	}
 
@@ -350,15 +390,16 @@ gdjs.RuntimeScene.prototype.getName = function() {
 gdjs.RuntimeScene.prototype.updateObjectsForces = function() {
 	var allObjectsLists = this._instances.entries();
 
+	var elapsedTimeInSeconds = this._timeManager.getElapsedTime() / 1000;
 	for( var i = 0, len = allObjectsLists.length;i<len;++i) {
 		for( var j = 0, listLen = allObjectsLists[i][1].length;j<listLen;++j) {
 			var obj = allObjectsLists[i][1][j];
 			if ( !obj.hasNoForces() ) {
 				var averageForce = obj.getAverageForce();
 
-				obj.setX(obj.getX() + averageForce.getX()*this._elapsedTime/1000);
-				obj.setY(obj.getY() + averageForce.getY()*this._elapsedTime/1000);
-				obj.updateForces(this._elapsedTime/1000);
+				obj.setX(obj.getX() + averageForce.getX() * elapsedTimeInSeconds);
+				obj.setY(obj.getY() + averageForce.getY() * elapsedTimeInSeconds);
+				obj.updateForces(elapsedTimeInSeconds);
 			}
 		}
 	}
@@ -459,14 +500,6 @@ gdjs.RuntimeScene.prototype.markObjectForDeletion = function(obj) {
 };
 
 /**
- * Return the time elapsed since the last frame, in milliseconds.
- * @method getElapsedTime
- */
-gdjs.RuntimeScene.prototype.getElapsedTime = function() {
-	return this._elapsedTime;
-};
-
-/**
  * Create an identifier for a new object of the scene.
  * @method createNewUniqueId
  */
@@ -532,57 +565,20 @@ gdjs.RuntimeScene.prototype.hasLayer = function(name) {
 	return this._layers.containsKey(name);
 };
 
-gdjs.RuntimeScene.prototype.addTimer = function(name) {
-	this._timers.put(name, new gdjs.Timer(name));
-};
-
-gdjs.RuntimeScene.prototype.hasTimer = function(name) {
-	return this._timers.containsKey(name);
-};
-
-gdjs.RuntimeScene.prototype.getTimer = function(name) {
-	return this._timers.get(name);
-};
-
-gdjs.RuntimeScene.prototype.removeTimer = function(name) {
-	if ( this._timers.containsKey(name) ) this._timers.remove(name);
-};
-
-gdjs.RuntimeScene.prototype.getTimeFromStart = function() {
-	return this._timeFromStart;
+/**
+ * Get the TimeManager of the scene.
+ * @return The gdjs.TimeManager of the scene.
+ */
+gdjs.RuntimeScene.prototype.getTimeManager = function() {
+	return this._timeManager;
 };
 
 /**
- * Get the soundManager of the scene.
- * @return The soundManager of the scene.
+ * Shortcut to get the SoundManager of the game.
+ * @return The gdjs.SoundManager of the game.
  */
 gdjs.RuntimeScene.prototype.getSoundManager = function() {
-	return this._soundManager;
-};
-
-/**
- * Return true if the scene is rendering its first frame.
- * @method isFirstFrame
- */
-gdjs.RuntimeScene.prototype.isFirstFrame = function() {
-	return this._firstFrame;
-};
-
-/**
- * Set the time scale of the scene
- * @method setTimeScale
- * @param timeScale {Number} The new time scale (must be positive).
- */
-gdjs.RuntimeScene.prototype.setTimeScale = function(timeScale) {
-	if ( timeScale >= 0 ) this._timeScale = timeScale;
-};
-
-/**
- * Get the time scale of the scene
- * @method getTimeScale
- */
-gdjs.RuntimeScene.prototype.getTimeScale = function() {
-	return this._timeScale;
+	return this._runtimeGame.getSoundManager();
 };
 
 //The flags to describe the change request by a scene:

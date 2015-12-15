@@ -22,8 +22,8 @@
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 #include "GDCore/Tools/Locale/LocaleManager.h"
-#include "GDCore/IDE/InstructionSentenceFormatter.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
+#include "GDCore/IDE/Events/InstructionSentenceFormatter.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
 #include "LogFileManager.h"
 #include <wx/listctrl.h>
 #include "GDCpp/IDE/CodeCompiler.h"
@@ -1503,7 +1503,7 @@ void Preferences::OnInactifColor2PnlRightUp( wxMouseEvent& event )
 
 void Preferences::OnAideBtClick( wxCommandEvent& event )
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation")); //TODO
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation"); //TODO
 }
 
 void Preferences::OnBrowseDossierTempBtClick( wxCommandEvent& event )

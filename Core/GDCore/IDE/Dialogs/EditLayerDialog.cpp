@@ -14,7 +14,7 @@
 #include <wx/string.h>
 //*)
 #include "GDCore/Tools/Log.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 
@@ -425,7 +425,7 @@ void EditLayerDialog::OndeleteCameraBtClick(wxCommandEvent& event)
 
 void EditLayerDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/editors/scene_editor/edit_layer"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/editors/scene_editor/edit_layer");
 }
 
 }

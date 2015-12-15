@@ -12,6 +12,7 @@
 #include "GDCore/Tools/Localization.h"
 //(*InternalHeaders(ResourcesEditor)
 #include <wx/bitmap.h>
+#include <wx/intl.h>
 #include <wx/image.h>
 #include <wx/string.h>
 //*)
@@ -35,17 +36,17 @@
 #include <wx/ribbon/buttonbar.h>
 #include <wx/ribbon/gallery.h>
 #include <wx/ribbon/toolbar.h>
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/ResourcesManager.h"
-#include "GDCore/IDE/ProjectResourcesAdder.h"
-#include "GDCore/IDE/ImagesUsedInventorizer.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/ResourcesManager.h"
+#include "GDCore/IDE/Project/ProjectResourcesAdder.h"
+#include "GDCore/IDE/Project/ImagesUsedInventorizer.h"
 #include "GDCore/IDE/Dialogs/ResourceLibraryDialog.h"
 #include "GDCore/IDE/wxTools/FileProperty.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 #include "GDCore/Tools/Log.h"
@@ -69,15 +70,18 @@ const long ResourcesEditor::ID_PROPGRID = wxNewId();
 const long ResourcesEditor::ID_PANEL2 = wxNewId();
 const long ResourcesEditor::idMenuMod = wxNewId();
 const long ResourcesEditor::idMenuAjouter = wxNewId();
+const long ResourcesEditor::idMenuAddAudio = wxNewId();
 const long ResourcesEditor::idMenuDel = wxNewId();
 const long ResourcesEditor::ID_MENUITEM9 = wxNewId();
 const long ResourcesEditor::idMoveUp = wxNewId();
 const long ResourcesEditor::idMoveDown = wxNewId();
 const long ResourcesEditor::ID_MENUITEM1 = wxNewId();
+const long ResourcesEditor::ID_MENUITEM10 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM2 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM3 = wxNewId();
-const long ResourcesEditor::ID_MENUITEM5 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM6 = wxNewId();
+const long ResourcesEditor::ID_MENUITEM11 = wxNewId();
+const long ResourcesEditor::ID_MENUITEM5 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM4 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM7 = wxNewId();
 const long ResourcesEditor::ID_MENUITEM8 = wxNewId();
@@ -143,9 +147,9 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     corePanel->SetSizer(FlexGridSizer3);
     FlexGridSizer3->Fit(corePanel);
     FlexGridSizer3->SetSizeHints(corePanel);
-    AuiManager1->AddPane(corePanel, wxAuiPaneInfo().Name(_T("corePane")).Caption(_("Pane caption")).CaptionVisible(false).CloseButton(false).Center());
+    AuiManager1->AddPane(corePanel, wxAuiPaneInfo().Name(_T("corePane")).DefaultPane().Caption(_("Pane caption")).CaptionVisible(false).CloseButton(false).Center());
     previewPanel = new wxPanel(this, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL, _T("ID_PANEL3"));
-    AuiManager1->AddPane(previewPanel, wxAuiPaneInfo().Name(_T("previewPane")).Caption(_("Preview")).CaptionVisible().Right());
+    AuiManager1->AddPane(previewPanel, wxAuiPaneInfo().Name(_T("previewPane")).DefaultPane().Caption(_("Preview")).CaptionVisible().Right());
     propertiesPanel = new wxPanel(this, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     FlexGridSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
     FlexGridSizer1->AddGrowableCol(0);
@@ -155,7 +159,7 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     propertiesPanel->SetSizer(FlexGridSizer1);
     FlexGridSizer1->Fit(propertiesPanel);
     FlexGridSizer1->SetSizeHints(propertiesPanel);
-    AuiManager1->AddPane(propertiesPanel, wxAuiPaneInfo().Name(_T("propertiesPane")).Caption(_("Properties")).CaptionVisible().Position(1).Right());
+    AuiManager1->AddPane(propertiesPanel, wxAuiPaneInfo().Name(_T("propertiesPane")).DefaultPane().Caption(_("Properties")).CaptionVisible().Position(1).Right());
     AuiManager1->Update();
     MenuItem3 = new wxMenuItem((&ContextMenu), idMenuMod, _("Rename\tF2"), wxEmptyString, wxITEM_NORMAL);
     MenuItem3->SetBitmap(gd::SkinHelper::GetIcon("rename", 16));
@@ -164,7 +168,10 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     MenuItem1 = new wxMenuItem((&ContextMenu), idMenuAjouter, _("Add an image"), wxEmptyString, wxITEM_NORMAL);
     MenuItem1->SetBitmap(gd::SkinHelper::GetIcon("add", 16));
     ContextMenu.Append(MenuItem1);
-    deleteImageItem = new wxMenuItem((&ContextMenu), idMenuDel, _("Delete the image\tDEL"), wxEmptyString, wxITEM_NORMAL);
+    MenuItem4 = new wxMenuItem((&ContextMenu), idMenuAddAudio, _("Add a sound/music"), wxEmptyString, wxITEM_NORMAL);
+    ContextMenu.Append(MenuItem4);
+    ContextMenu.AppendSeparator();
+    deleteImageItem = new wxMenuItem((&ContextMenu), idMenuDel, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
     deleteImageItem->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
     ContextMenu.Append(deleteImageItem);
     MenuItem14 = new wxMenuItem((&ContextMenu), ID_MENUITEM9, _("Remove from folder only"), wxEmptyString, wxITEM_NORMAL);
@@ -179,6 +186,8 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     MenuItem2 = new wxMenuItem((&emptyMenu), ID_MENUITEM1, _("Add an image"), wxEmptyString, wxITEM_NORMAL);
     MenuItem2->SetBitmap(gd::SkinHelper::GetIcon("add", 16));
     emptyMenu.Append(MenuItem2);
+    MenuItem15 = new wxMenuItem((&emptyMenu), ID_MENUITEM10, _("Add a sound/music"), wxEmptyString, wxITEM_NORMAL);
+    emptyMenu.Append(MenuItem15);
     emptyMenu.AppendSeparator();
     MenuItem6 = new wxMenuItem((&emptyMenu), ID_MENUITEM2, _("Add a folder"), wxEmptyString, wxITEM_NORMAL);
     MenuItem6->SetBitmap(wxBitmap(wxImage(_T("res/foldericon.png"))));
@@ -186,13 +195,16 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     MenuItem9 = new wxMenuItem((&folderMenu), ID_MENUITEM3, _("Rename\tF2"), wxEmptyString, wxITEM_NORMAL);
     MenuItem9->SetBitmap(gd::SkinHelper::GetIcon("rename", 16));
     folderMenu.Append(MenuItem9);
-    MenuItem13 = new wxMenuItem((&folderMenu), ID_MENUITEM5, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
-    MenuItem13->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
-    folderMenu.Append(MenuItem13);
     folderMenu.AppendSeparator();
     MenuItem10 = new wxMenuItem((&folderMenu), ID_MENUITEM6, _("Add an image"), wxEmptyString, wxITEM_NORMAL);
     MenuItem10->SetBitmap(gd::SkinHelper::GetIcon("add", 16));
     folderMenu.Append(MenuItem10);
+    MenuItem16 = new wxMenuItem((&folderMenu), ID_MENUITEM11, _("Add a sound/music"), wxEmptyString, wxITEM_NORMAL);
+    folderMenu.Append(MenuItem16);
+    folderMenu.AppendSeparator();
+    MenuItem13 = new wxMenuItem((&folderMenu), ID_MENUITEM5, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
+    MenuItem13->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
+    folderMenu.Append(MenuItem13);
     folderMenu.AppendSeparator();
     MenuItem5 = new wxMenuItem((&folderMenu), ID_MENUITEM4, _("Add a folder"), wxEmptyString, wxITEM_NORMAL);
     MenuItem5->SetBitmap(wxBitmap(wxImage(_T("res/foldericon.png"))));
@@ -219,15 +231,18 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     previewPanel->Connect(wxEVT_SIZE,(wxObjectEventFunction)&ResourcesEditor::OnpreviewPanelResize,0,this);
     Connect(idMenuMod,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnModNameImageBtClick);
     Connect(idMenuAjouter,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddImageBtClick);
+    Connect(idMenuAddAudio,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddAudioSelected);
     Connect(idMenuDel,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnDelImageBtClick);
     Connect(ID_MENUITEM9,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnremoveFolderOnlySelected);
     Connect(idMoveUp,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnMoveUpSelected);
     Connect(idMoveDown,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnMoveDownSelected);
     Connect(ID_MENUITEM1,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddImageBtClick);
+    Connect(ID_MENUITEM10,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddAudioSelected);
     Connect(ID_MENUITEM2,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddFolderSelected);
     Connect(ID_MENUITEM3,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnModNameImageBtClick);
-    Connect(ID_MENUITEM5,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnDelImageBtClick);
     Connect(ID_MENUITEM6,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddImageBtClick);
+    Connect(ID_MENUITEM11,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddAudioSelected);
+    Connect(ID_MENUITEM5,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnDelImageBtClick);
     Connect(ID_MENUITEM4,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnAddFolderSelected);
     Connect(ID_MENUITEM7,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnMoveUpSelected);
     Connect(ID_MENUITEM8,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ResourcesEditor::OnMoveDownSelected);
@@ -348,29 +363,45 @@ wxTreeItemId ResourcesEditor::GetSelectedFolderItem()
  */
 void ResourcesEditor::OnAddImageBtClick( wxCommandEvent& event )
 {
-    wxFileDialog FileDialog( this, _("Choose one or more images to add"), "", "", _("Supported image files|*.jpg;*.png|All files|*.*"), wxFD_MULTIPLE|wxFD_PREVIEW );
+    wxFileDialog fileDialog( this, _("Choose one or more images to add"), "", "", _("Supported image files|*.jpg;*.png|All files|*.*"), wxFD_MULTIPLE|wxFD_PREVIEW );
+    if ( fileDialog.ShowModal() != wxID_OK ) return;
 
-    if ( FileDialog.ShowModal() == wxID_OK )
-    {
-        gd::LogStatus( _( "Adding images" ) );
+    gd::LogStatus( _( "Adding images" ) );
 
-        wxArrayString files;
-        FileDialog.GetPaths( files );
-        gd::String imageNonAjoutees;
+    wxArrayString files;
+    fileDialog.GetPaths( files );
+    gd::String imageNonAjoutees;
 
-        //Add each image to images list and to folder if any
-        std::vector < gd::String > filenames;
-        for ( std::size_t i = 0; i < files.GetCount();++i )
-            filenames.push_back(files[i]);
+    std::vector < gd::String > filenames;
+    for ( std::size_t i = 0; i < files.GetCount();++i )
+        filenames.push_back(files[i]);
 
-        AddResources(filenames);
-
-        gd::LogStatus( _( "Resources successfully added" ) );
-    }
-
+    AddResources(filenames, "image");
+    gd::LogStatus( _( "Resources successfully added" ) );
 }
 
-std::vector<gd::String> ResourcesEditor::CopyAndAddResources(std::vector<gd::String> filenames, const gd::String & destinationDirStr)
+void ResourcesEditor::OnAddAudioSelected(wxCommandEvent& event)
+{
+    wxFileDialog fileDialog( this, _("Choose one or more audio files to add"), "", "", _("Supported audio files|*.ogg;*.mp3;*.wav|All files|*.*"), wxFD_MULTIPLE|wxFD_PREVIEW );
+    if ( fileDialog.ShowModal() != wxID_OK ) return;
+
+    gd::LogStatus( _( "Adding audio files" ) );
+
+    wxArrayString files;
+    fileDialog.GetPaths( files );
+    gd::String imageNonAjoutees;
+
+    std::vector < gd::String > filenames;
+    for ( std::size_t i = 0; i < files.GetCount();++i )
+        filenames.push_back(files[i]);
+
+    AddResources(filenames, "audio");
+    gd::LogStatus( _( "Resources successfully added" ) );
+}
+
+
+std::vector<gd::String> ResourcesEditor::CopyAndAddResources(std::vector<gd::String> filenames,
+    const gd::String & destinationDirStr, const gd::String & kind)
 {
     if ( !project.GetProjectFile().empty() ) //If game is not saved, we keep absolute filenames and do not copy resources.
     {
@@ -392,10 +423,10 @@ std::vector<gd::String> ResourcesEditor::CopyAndAddResources(std::vector<gd::Str
         }
     }
 
-    return AddResources(filenames);
+    return AddResources(filenames, kind);
 }
 
-std::vector<gd::String> ResourcesEditor::AddResources(const std::vector<gd::String> & filenames)
+std::vector<gd::String> ResourcesEditor::AddResources(const std::vector<gd::String> & filenames, const gd::String & kind)
 {
     std::vector<gd::String> resourceNames;
     gd::String alreadyExistingResources;
@@ -423,7 +454,7 @@ std::vector<gd::String> ResourcesEditor::AddResources(const std::vector<gd::Stri
         gd::LogStatus( _( "Adding " ) + name );
 
         //Add to all images
-        if ( project.GetResourcesManager().AddResource(name, file.GetFullPath()) )
+        if ( project.GetResourcesManager().AddResource(name, file.GetFullPath(), kind) )
         {
             for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                 project.GetUsedPlatforms()[j]->GetChangesNotifier().OnResourceModified(project, name);
@@ -945,7 +976,7 @@ void ResourcesEditor::Refresh()
 void ResourcesEditor::OnDeleteUnusedFiles( wxCommandEvent& event )
 {
     std::vector<gd::String> unusedImages =
-        gd::ProjectResourcesAdder::GetAllUselessResources(project);
+        gd::ProjectResourcesAdder::GetAllUselessImages(project);
 
     //Construct corresponding wxArrayString with unused images
     wxArrayString imagesNotUsed;
@@ -986,7 +1017,7 @@ void ResourcesEditor::OnShowPropertyGridBtClick( wxCommandEvent& event )
 
 void ResourcesEditor::OnAideBtClick( wxCommandEvent& event )
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_image"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_image");
 }
 
 void ResourcesEditor::OnresourcesTreeItemActivated(wxTreeEvent& event)
@@ -1217,7 +1248,7 @@ void ResourcesEditor::ForceRefreshRibbonAndConnect()
 {
     if ( useRibbon )
     {
-        mainFrameWrapper.GetRibbon()->SetActivePage(1);
+        mainFrameWrapper.SetRibbonPage(_("Images bank"));
         ConnectEvents();
     }
 }

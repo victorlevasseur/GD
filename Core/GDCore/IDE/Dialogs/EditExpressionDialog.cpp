@@ -22,21 +22,21 @@
 #include <wx/bitmap.h>
 #include <wx/settings.h>
 #include <wx/textdlg.h>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
-#include "GDCore/IDE/ExpressionsCorrectnessTesting.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
+#include "GDCore/IDE/Events/ExpressionsCorrectnessTesting.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseLayerDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseVariableDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseBehaviorDialog.h"
 #include "GDCore/IDE/Dialogs/AdvancedEntryDialog.h"
 #include "GDCore/IDE/wxTools/TreeItemExpressionMetadata.h"
-#include "GDCore/Events/ExpressionMetadata.h"
+#include "GDCore/Extensions/Metadata/ExpressionMetadata.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 #include "EditExpressionDialog.h"
@@ -971,7 +971,7 @@ void EditExpressionDialog::OnButton17Click(wxCommandEvent& event)
 
 void EditExpressionDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_expr"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_expr");
 }
 
 }

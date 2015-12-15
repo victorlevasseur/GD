@@ -15,9 +15,9 @@
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 #include "GDCore/CommonTools.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/Dialogs/EditStrExpressionDialog.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 namespace gd { class Layout; }
 
@@ -148,5 +148,5 @@ void ChoiceFile::OnbrowseBtClick(wxCommandEvent& event)
 
 void ChoiceFile::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("gevelop/documentation/manual/events_editor/parameters");
 }

@@ -50,9 +50,9 @@ public:
     virtual ~MainFrameWrapper() {};
 
     /**
-     * Return the pointer to the ribbon of the IDE.
+     * Change the current page of the ribbon.
      */
-    wxRibbonBar * GetRibbon() const { return ribbon; };
+    void SetRibbonPage(wxString pageName);
 
     /**
      * Return the pointer to the Scene ribbon's wxRibbonButtonBar of the main editor.
@@ -86,11 +86,6 @@ public:
      * Get pointer to the IDE infobar.
      */
     wxInfoBar * GetInfoBar() const { return infoBar; };
-
-    /**
-     * Return a pointer to the notebook holding editors
-     */
-    wxAuiNotebook * GetEditorsNotebook() { return editorsNotebook; }
 
     /**
      * Return the working directory of the IDE. ( i.e. IDE executable directory )

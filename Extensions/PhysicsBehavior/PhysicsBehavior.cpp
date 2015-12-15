@@ -14,8 +14,8 @@ This project is released under the MIT License.
 #include "PhysicsBehaviorEditor.h"
 #include "GDCpp/CommonTools.h"
 #include "GDCpp/RuntimeObject.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Project/Project.h"
+#include "GDCpp/Project/Layout.h"
 #include "RuntimeScenePhysicsDatas.h"
 
 #undef GetObject
@@ -68,7 +68,8 @@ void PhysicsBehavior::DoStepPreEvents(RuntimeScene & scene)
 
     if ( !runtimeScenesPhysicsDatas->stepped ) //Simulate the world, once at each frame
     {
-        runtimeScenesPhysicsDatas->StepWorld(static_cast<double>(scene.GetElapsedTime())/1000000.0, 6, 10);
+        runtimeScenesPhysicsDatas->StepWorld(static_cast<double>(scene.GetTimeManager().GetElapsedTime())
+            / 1000000.0, 6, 10);
         runtimeScenesPhysicsDatas->stepped = true;
     }
 

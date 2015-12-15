@@ -12,9 +12,9 @@ This project is released under the MIT License.
 #include <vector>
 #include <algorithm>
 
-#include "GDCpp/Object.h"
+#include "GDCpp/Project/Object.h"
 #include "GDCpp/RuntimeScene.h"
-#include "GDCpp/Variable.h"
+#include "GDCpp/Project/Variable.h"
 
 //Windows build uses native windows-dialogs
 #if defined(WINDOWS)
@@ -55,7 +55,7 @@ void GD_EXTENSION_API ShowMessageBox( RuntimeScene & scene, const gd::String & m
     msgBox.wait_until_closed();
     #endif
 
-    scene.NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
+    scene.GetTimeManager().NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
 }
 
 /**
@@ -96,7 +96,7 @@ void GD_EXTENSION_API ShowOpenFile( RuntimeScene & scene, gd::Variable & variabl
     result = gd::String::FromLocale(strResult);
     #endif
 
-    scene.NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
+    scene.GetTimeManager().NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
 
     //Update the variable
     variable.SetString(result);
@@ -123,7 +123,7 @@ void GD_EXTENSION_API ShowYesNoMsgBox( RuntimeScene & scene, gd::Variable & vari
     dialog.wait_until_closed();
     #endif
 
-    scene.NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
+    scene.GetTimeManager().NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
 
     //Update the variable
     variable.SetString(result); //Can only be "yes" or "no", no need to encode in UTF8
@@ -441,7 +441,7 @@ bool GD_EXTENSION_API ShowTextInput( RuntimeScene & scene, gd::Variable & variab
     result = gd::String::FromLocale(strResult); //Convert from locale
     #endif
 
-    scene.NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
+    scene.GetTimeManager().NotifyPauseWasMade(timeSpent.getElapsedTime().asMicroseconds());//Don't take the time spent in this function in account.
 
     //Update the variable
     variable.SetString(result);

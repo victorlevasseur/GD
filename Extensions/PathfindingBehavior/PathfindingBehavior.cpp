@@ -13,8 +13,8 @@ This project is released under the MIT License.
 #include "PathfindingObstacleBehavior.h"
 #include "ScenePathfindingObstaclesManager.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/BuiltinExtensions/MathematicalTools.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Extensions/Builtin/MathematicalTools.h"
+#include "GDCpp/Project/Layout.h"
 #include "GDCpp/Serialization/SerializerElement.h"
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/RuntimeObject.h"
@@ -458,7 +458,7 @@ void PathfindingBehavior::DoStepPreEvents(RuntimeScene & scene)
     if (path.empty() || reachedEnd) return;
 
     //Update the speed of the object
-    float timeDelta = static_cast<double>(scene.GetElapsedTime())/1000000.0;
+    float timeDelta = static_cast<double>(scene.GetTimeManager().GetElapsedTime()) / 1000000.0;
     speed += acceleration*timeDelta;
     if ( speed > maxSpeed ) speed = maxSpeed;
     angularSpeed = angularMaxSpeed; //No acceleration for angular speed for now

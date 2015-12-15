@@ -10,7 +10,7 @@ This project is released under the MIT License.
 #include "PlatformBehavior.h"
 #include "ScenePlatformObjectsManager.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Project/Layout.h"
 #include "GDCpp/Serialization/SerializerElement.h"
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/RuntimeObject.h"
@@ -88,7 +88,7 @@ void PlatformerObjectBehavior::DoStepPreEvents(RuntimeScene & scene)
 
     if ( !sceneManager ) return;
 
-    double timeDelta = static_cast<double>(scene.GetElapsedTime())/1000000.0;
+    double timeDelta = static_cast<double>(scene.GetTimeManager().GetElapsedTime()) / 1000000.0;
 
     //0.1) Get the player input:
 
@@ -132,7 +132,7 @@ void PlatformerObjectBehavior::DoStepPreEvents(RuntimeScene & scene)
     //0.2) Track changes in object size
 
     //Stick the object to the floor if its height has changed.
-    if ( trackSize && isOnFloor && oldHeight != object->GetHeight() && !scene.IsFirstLoop() )
+    if ( trackSize && isOnFloor && oldHeight != object->GetHeight() && !scene.GetTimeManager().IsFirstLoop() )
         object->SetY(object->GetY()+oldHeight-object->GetHeight());
 
     oldHeight = object->GetHeight();

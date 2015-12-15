@@ -14,7 +14,7 @@
 //*)
 #include "GDCore/CommonTools.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 namespace gd
 {
@@ -227,7 +227,7 @@ float InstancesAdvancedPasteDialog::GetRotationIncrementation() const
 
 void InstancesAdvancedPasteDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/editors/scene_editor/edit_scene_edit"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/editors/scene_editor/edit_scene_edit");
 }
 
 

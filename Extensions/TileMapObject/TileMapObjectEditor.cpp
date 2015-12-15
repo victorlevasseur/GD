@@ -20,10 +20,10 @@ This project is released under the MIT License.
 #include "GDCore/Tools/Log.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/Dialogs/ResourcesEditor.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCpp/Project.h"
+#include "GDCpp/Project/Project.h"
 #include "GDCpp/CommonTools.h"
 
 #include "TileMapObjectEditor.h"
@@ -171,7 +171,7 @@ void TileMapObjectEditor::OnChangeMapSizeButtonClicked(wxCommandEvent& event)
 
 void TileMapObjectEditor::OnHelpButtonClicked(wxHyperlinkEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/built_tilemap"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/built_tilemap");
 }
 
 void TileMapObjectEditor::OnCloseButtonClicked(wxCloseEvent& event)

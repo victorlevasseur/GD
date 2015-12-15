@@ -18,10 +18,10 @@
 #include <wx/cmndata.h>
 #include <wx/help.h>
 #include <wx/config.h>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/CommonTools.h"
 
 using namespace gd;
@@ -214,5 +214,5 @@ void EditPropScene::OnPanel1LeftUp(wxMouseEvent& event)
 
 void EditPropScene::OnAideBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_projman"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_projman");
 }

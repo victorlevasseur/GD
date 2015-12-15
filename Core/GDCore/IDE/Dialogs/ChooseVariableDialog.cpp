@@ -19,13 +19,13 @@
 #include <wx/textdlg.h>
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/IDE/EventsVariablesFinder.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/VariablesContainer.h"
-#include "GDCore/PlatformDefinition/Variable.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/IDE/Events/EventsVariablesFinder.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/VariablesContainer.h"
+#include "GDCore/Project/Variable.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 
@@ -390,7 +390,7 @@ void ChooseVariableDialog::OnRightClick(wxTreeListEvent& event)
  */
 void ChooseVariableDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/global_variables"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/global_variables");
 }
 
 /**

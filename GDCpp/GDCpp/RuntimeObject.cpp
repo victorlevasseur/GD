@@ -5,10 +5,10 @@
  */
 #include <cstring>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/BuiltinExtensions/MathematicalTools.h"
+#include "GDCpp/Extensions/Builtin/MathematicalTools.h"
 #include "GDCpp/RuntimeObject.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/Behavior.h"
+#include "GDCpp/Project/Object.h"
+#include "GDCpp/Project/Behavior.h"
 #include "GDCpp/CommonTools.h"
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/PolygonCollision.h"
@@ -325,7 +325,7 @@ void RuntimeObject::RotateTowardAngle(float angleInDegrees, float speed, Runtime
         return;
     }
 
-    float timeDelta = static_cast<double>(scene.GetElapsedTime())/1000000.0;
+    float timeDelta = static_cast<double>(scene.GetTimeManager().GetElapsedTime()) / 1000000.0;
     float angularDiff = GDpriv::MathematicalTools::angleDifference(GetAngle(), angleInDegrees);
     bool diffWasPositive = angularDiff >= 0;
 
@@ -340,7 +340,7 @@ void RuntimeObject::RotateTowardAngle(float angleInDegrees, float speed, Runtime
 
 void RuntimeObject::Rotate(float speed, RuntimeScene & scene)
 {
-    float timeDelta = static_cast<double>(scene.GetElapsedTime())/1000000.0;
+    float timeDelta = static_cast<double>(scene.GetTimeManager().GetElapsedTime()) / 1000000.0;
     SetAngle(GetAngle()+speed*timeDelta);
 }
 

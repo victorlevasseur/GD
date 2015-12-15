@@ -13,7 +13,7 @@
 #include <vector>
 #include "catch.hpp"
 #include "GDCore/String.h"
-#include "GDCore/GraphemeInterface.h"
+#include "GDCore/GraphemeTools.h"
 #include <SFML/System/String.hpp>
 
 TEST_CASE( "Utf8 String", "[common][utf8]") {
@@ -264,7 +264,7 @@ TEST_CASE( "Utf8 String", "[common][utf8]") {
 		gd::String str2 = u8"Ich heiße heiße GDevelop";
 		REQUIRE( str2.FindAndReplace(u8"heiße", "bin", false) == u8"Ich bin heiße GDevelop");
 		REQUIRE( str2.FindAndReplace(u8"heiße", "bin") == u8"Ich bin bin GDevelop");
-		
+
 		gd::String str3 = u8"Ich heiße GDevelop ß";
 		REQUIRE( str3.FindAndReplace(u8"ß", "SS") == u8"Ich heiSSe GDevelop SS");
 
@@ -277,7 +277,7 @@ TEST_CASE( "Utf8 String", "[common][utf8]") {
 
 		gd::String str5 = u8"ßßß";
 		REQUIRE( str5.FindAndReplace(u8"ß", u8"ßß") == u8"ßßßßßß");
-		
+
 		gd::String str6 = u8"ßßß";
 		REQUIRE( str6.FindAndReplace(u8"ßß", u8"ß") == u8"ßß");
 	}
@@ -293,29 +293,29 @@ TEST_CASE( "Utf8 Grapheme clusters aware methods of gd::String", "[common][utf8]
 		REQUIRE( str1.size() == 15 );
 		REQUIRE( str2.size() == 28 ); //There are 28 characters but e + grave accent and e + acute accent count as 2 characters each
 
-		REQUIRE( str2.Grph().size() == 26 ); //The count is correct with GraphemeIterators
+		REQUIRE( gd::GraphemeTools::size(str2) == 26 ); //The count is correct with GraphemeIterators
 
 		{
-			auto it = str2.Grph().begin();
+			auto it = gd::GraphemeTools::begin(str2);
 			std::advance(it, 9);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 9 );
 			++it;
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 11 );
 		}
 		{
-			auto it = str2.Grph().begin();
+			auto it = gd::GraphemeTools::begin(str2);
 			std::advance(it, 26);
-			REQUIRE( it == str2.Grph().end() );
+			REQUIRE( it == gd::GraphemeTools::end(str2) );
 			REQUIRE( it.base() == str2.end() );
 
 			std::advance(it, -25);
 			REQUIRE( std::distance( str2.begin(), it.base() ) == 1 );
 			--it;
-			REQUIRE( it == str2.Grph().begin() );
+			REQUIRE( it == gd::GraphemeTools::begin(str2) );
 			REQUIRE( it.base() == str2.begin() );
 		}
 		{
-			auto it = str2.Grph().begin();
+			auto it = gd::GraphemeTools::begin(str2);
 			REQUIRE( *it == "L" );
 			++it;
 			REQUIRE( *it == "e" );
@@ -368,22 +368,22 @@ TEST_CASE( "Utf8 Grapheme clusters aware methods of gd::String", "[common][utf8]
 			++it;
 			REQUIRE( *it == "!" );
 			++it;
-			REQUIRE( it == str2.Grph().end() );
+			REQUIRE( it == gd::GraphemeTools::end(str2) );
 		}
 
-		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(9) == 9 );
-		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(9) == 9 );
+		REQUIRE( gd::GraphemeTools::CodepointPosFromGraphemePos(str2, 9) == 9 );
+		REQUIRE( gd::GraphemeTools::GraphemePosFromCodepointPos(str2, 9) == 9 );
 
-		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(10) == 11 ); //After the è
-		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(11) == 10 );
+		REQUIRE( gd::GraphemeTools::CodepointPosFromGraphemePos(str2, 10) == 11 ); //After the è
+		REQUIRE( gd::GraphemeTools::GraphemePosFromCodepointPos(str2, 11) == 10 );
 
-		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(23) == 24 ); //After the è and just before the é
-		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(24) == 23 );
+		REQUIRE( gd::GraphemeTools::CodepointPosFromGraphemePos(str2, 23) == 24 ); //After the è and just before the é
+		REQUIRE( gd::GraphemeTools::GraphemePosFromCodepointPos(str2, 24) == 23 );
 
-		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(24) == 26 ); //After the è and é
-		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(26) == 24 );
+		REQUIRE( gd::GraphemeTools::CodepointPosFromGraphemePos(str2, 24) == 26 ); //After the è and é
+		REQUIRE( gd::GraphemeTools::GraphemePosFromCodepointPos(str2, 26) == 24 );
 
-		REQUIRE( str2.Grph().CodepointPosFromGraphemePos(40) == (size_t)-1 );
-		REQUIRE( str2.Grph().GraphemePosFromCodepointPos(40) == (size_t)-1 );
+		REQUIRE( gd::GraphemeTools::CodepointPosFromGraphemePos(str2, 40) == (size_t)-1 );
+		REQUIRE( gd::GraphemeTools::GraphemePosFromCodepointPos(str2, 40) == (size_t)-1 );
 	}
 }

@@ -8,7 +8,6 @@
 
 #include <SFML/System/String.hpp>
 #include "GDCore/CommonTools.h"
-#include "GDCore/GraphemeInterface.h"
 #include "GDCore/Utf8/utf8proc.h"
 
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -441,7 +440,7 @@ String String::FindAndReplace(String search, String replacement, bool all) const
     do {
         pos = result.find(search, lastPos);
         lastPos = pos;
-        if (pos != npos) 
+        if (pos != npos)
         {
             result.replace(pos, search.size(), replacement);
             lastPos += replacement.size();
@@ -695,16 +694,6 @@ String::size_type String::FindCaseInsensitive( const String &search, size_type p
         return npos;
     else
         return priv::GetPositionFromCaseFolded(*this, findPos);
-}
-
-GraphemeInterface String::Grph()
-{
-    return GraphemeInterface(*this);
-}
-
-ConstGraphemeInterface String::Grph() const
-{
-    return ConstGraphemeInterface(*this);
 }
 
 String GD_CORE_API operator+(String lhs, const String &rhs)

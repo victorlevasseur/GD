@@ -26,8 +26,6 @@ namespace gd
 {
 
 class String;
-class ConstGraphemeInterface;
-class GraphemeInterface;
 
 /**
  * \brief String represents an UTF8 encoded string.
@@ -690,43 +688,6 @@ public:
      * search string size
      */
     size_type FindCaseInsensitive( const String &search, size_type pos = 0 ) const;
-
-/**
- * \}
- */
-
-/**
- * \name Grapheme clusters aware interface
- * \{
- */
-
-    /**
-     * \brief Returns a interface that allows to manipulate this string with grapheme
-     * clusters aware methods.
-     * \note These methods are often slower than their standard counterpart but supports
-     * combining characters.
-     * \warning This class is not meant to be stored in a variable but used directly :
-     * \code
-     * gd::String str = u8"This is a sentence";
-     * if(str.Grph().find("is") != gd::String::npos)
-     *     std::cout << "Found \"is\"" << std::endl;
-     * \endcode
-     */
-    GraphemeInterface Grph();
-
-    /**
-     * \brief Returns a interface that allows to manipulate this string with grapheme
-     * clusters aware methods.
-     * \note These methods are often slower than their standard counterpart but supports
-     * combining characters.
-     * \warning This class is not meant to be stored in a variable but used directly :
-     * \code
-     * gd::String str = u8"This is a sentence";
-     * if(str.Grph().find("is") != gd::String::npos)
-     *     std::cout << "Found \"is\"" << std::endl;
-     * \endcode
-     */
-    ConstGraphemeInterface Grph() const;
 
 /**
  * \}

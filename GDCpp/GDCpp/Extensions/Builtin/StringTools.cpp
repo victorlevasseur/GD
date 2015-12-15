@@ -6,7 +6,7 @@
 #include <string>
 #include "GDCpp/RuntimeScene.h"
 #include "GDCpp/String.h"
-#include "GDCpp/GraphemeIterator.h"
+#include "GDCpp/GraphemeTools.h"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ gd::String GD_API SubStr(const gd::String & str, size_t start, size_t length )
 {
     try
     {
-        return gd::grapheme::substr(str, start, length);
+        return gd::GraphemeTools::substr(str, start, length);
     }
     catch(const std::exception &e)
     {
@@ -37,7 +37,7 @@ gd::String GD_API StrAt(const gd::String & str, size_t pos )
 {
     try
     {
-        return gd::grapheme::substr(str, pos, 1);
+        return gd::GraphemeTools::substr(str, pos, 1);
     }
     catch(const std::exception &e)
     {
@@ -74,7 +74,7 @@ gd::String GD_API ToLowerCase(const gd::String & str)
  */
 std::size_t GD_API StrLen(const gd::String & str)
 {
-    return gd::grapheme::size(str);
+    return gd::GraphemeTools::size(str);
 }
 
 /**

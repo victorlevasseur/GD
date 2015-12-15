@@ -6,7 +6,7 @@
 
 namespace gd
 {
-class GraphemeTools
+class GD_CORE_API GraphemeTools
 {
 public:
 
@@ -48,6 +48,8 @@ public:
     static String::size_type GraphemePosFromCodepointPos( const String &str, String::size_type codepointPos);
 
     static value_type GetGraphemeAt( const String &str, const size_type position);
+
+    static String substr( const gd::String &str, size_t start, size_t length );
 
     /**
      * \brief Replace the portion of the String between **i1** and **i2** (**i2** not

@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 #include "GDCore/String.h"
-#include "GDCore/GraphemeIterator.h"
+#include "GDCore/GraphemeTools.h"
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
@@ -45,7 +45,7 @@ wxPoint EventsRenderingHelper::DrawTextInArea(gd::String text, wxDC & dc, wxRect
     int charactersInALine = floor(static_cast<double>(rect.width)/static_cast<double>(fontCharacterWidth));
     if ( charactersInALine <= 0) charactersInALine = 1;
 
-    int textLength = gd::grapheme::size(text);
+    int textLength = gd::GraphemeTools::size(text);
 
     int cutCount = ceil(static_cast<double>(textLength)/static_cast<double>(charactersInALine));
     if ( cutCount <= 0 ) cutCount = 1;
@@ -60,7 +60,7 @@ wxPoint EventsRenderingHelper::DrawTextInArea(gd::String text, wxDC & dc, wxRect
         try
         {
         #endif
-        displayedText = gd::grapheme::substr(text, lastCutPosition, charactersInALine);
+        displayedText = gd::GraphemeTools::substr(text, lastCutPosition, charactersInALine);
         #if defined(LINUX)
         }
         catch(...)
@@ -75,7 +75,7 @@ wxPoint EventsRenderingHelper::DrawTextInArea(gd::String text, wxDC & dc, wxRect
     }
 
     //Return position to latest drawn character
-    return wxPoint(point.x+gd::grapheme::size(displayedText)*fontCharacterWidth, point.y);
+    return wxPoint(point.x+gd::GraphemeTools::size(displayedText)*fontCharacterWidth, point.y);
 }
 
 unsigned int EventsRenderingHelper::GetTextHeightInArea(const gd::String & text, unsigned int widthAvailable)
@@ -85,7 +85,7 @@ unsigned int EventsRenderingHelper::GetTextHeightInArea(const gd::String & text,
     int charactersInALine = floor(static_cast<double>(widthAvailable)/static_cast<double>(fontCharacterWidth));
     if ( charactersInALine <= 0) charactersInALine = 1;
 
-    int cutCount = ceil(static_cast<double>(gd::grapheme::size(text))/static_cast<double>(charactersInALine));
+    int cutCount = ceil(static_cast<double>(gd::GraphemeTools::size(text))/static_cast<double>(charactersInALine));
     if ( cutCount <= 0 ) cutCount = 1;
 
     return cutCount * fontCharacterHeight;

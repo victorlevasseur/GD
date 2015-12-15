@@ -72,6 +72,28 @@ GraphemeTools::value_type GraphemeTools::GetGraphemeAt( const gd::String &str, c
     return *it;
 }
 
+String GraphemeTools::substr( const gd::String &str, size_t start, size_t length )
+{
+    auto it = begin(str);
+    while(start > 0 && it != end(str))
+    {
+        start--;
+        ++it;
+    }
+    if(start > 0)
+        throw std::out_of_range("[gd::GraphemeTools::substr] starting pos greater than size");
+
+    auto it2 = it;
+    while(length > 0 && it2 != end(str))
+    {
+        length--;
+        ++it2;
+    }
+    if(length > 0)
+        return gd::String::FromUTF8(std::string(it.base().base(), str.Raw().end()));
+    else
+        return gd::String::FromUTF8(std::string(it.base().base(), it2.base().base()));
+}
 
 String& GraphemeTools::replace( gd::String &str, iterator i1, iterator i2, const String &replacement )
 {

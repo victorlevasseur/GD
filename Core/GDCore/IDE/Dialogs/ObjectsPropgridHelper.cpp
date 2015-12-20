@@ -18,6 +18,7 @@
 #include "GDCore/Project/Behavior.h"
 #include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/CommonTools.h"
+#include <wx/propgrid/advprops.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/richtooltip.h>
 #include <wx/settings.h>
@@ -132,6 +133,22 @@ void ObjectsPropgridHelper::RefreshFrom(const std::map<gd::String, gd::PropertyD
         }
         else if ( type == "Boolean" )
             grid->Append(new wxBoolProperty(name, propertiesNames, value == "true"));
+        else if ( type == "Color" )
+        {
+            wxColour color;
+            std::vector<gd::String> colorComponents = value.Split(U';');
+            if(colorComponents.size() >= 3 && colorComponents.size() <= 4)
+            {
+                color.Set(
+                    colorComponents[0].To<unsigned int>(),
+                    colorComponents[1].To<unsigned int>(),
+                    colorComponents[2].To<unsigned int>(),
+                    colorComponents.size() == 4 ? colorComponents[3].To<unsigned int>() : 255u
+                );
+            }
+
+            grid->Append(new wxColourProperty(name, propertiesNames, color));
+        }
         else
             grid->Append(new wxStringProperty(name, propertiesNames, value));
     }
@@ -294,8 +311,13 @@ bool ObjectsPropgridHelper::OnPropertyChanged(gd::Object * object, gd::Layout * 
     {
         gd::String value = event.GetPropertyValue().GetString();
 
-        //Special case for enums.
-        if (wxEnumProperty * enumProperty = dynamic_cast<wxEnumProperty*>(event.GetProperty()))
+        //Special case for colors and enums.
+        if (wxColourProperty * colorProperty = dynamic_cast<wxColourProperty*>(event.GetProperty()))
+            value = gd::String::From<unsigned int>(colorProperty->GetVal().m_colour.Red()) + ";" +
+                gd::String::From<unsigned int>(colorProperty->GetVal().m_colour.Green()) + ";" +
+                gd::String::From<unsigned int>(colorProperty->GetVal().m_colour.Blue()) + ";" +
+                gd::String::From<unsigned int>(colorProperty->GetVal().m_colour.Alpha());
+        else if (wxEnumProperty * enumProperty = dynamic_cast<wxEnumProperty*>(event.GetProperty()))
             value = readEnumPropertyString(object->GetProperties(project));
 
         if (!object->UpdateProperty(event.GetProperty()->GetLabel(), value, project))

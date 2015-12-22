@@ -36,6 +36,10 @@ public:
     bool UpdateProperty(const gd::String & name, const gd::String & value, gd::Project & project) override;
     #endif
 
+    sf::Color GetFillColor() const { return m_fillColor; };
+    sf::Color GetOutlineColor() const { return m_outlineColor; };
+    int GetOutlineThickness() const { return m_outlineThickness; };
+
 private:
     void DoUnserializeFrom(gd::Project & project, const gd::SerializerElement & element) override;
     #if defined(GD_IDE_ONLY)

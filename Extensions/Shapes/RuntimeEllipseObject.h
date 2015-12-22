@@ -8,13 +8,12 @@ This project is released under the MIT License.
 #ifndef RUNTIMEELLIPSISSHAPE_H
 #define RUNTIMEELLIPSISSHAPE_H
 
+#include <memory>
 #include <string>
-
 #include "GDCpp/Project/Object.h"
 #include "GDCpp/RuntimeObject.h"
 #include "GDCpp/Polygon2d.h"
-#include <memory>
-#include <SFML/Graphics/VertexArray.hpp>
+#include "Tools/EllipseShape.h"
 
 
 class SFMLTextureWrapper;
@@ -42,13 +41,14 @@ public :
     virtual float GetWidth() const;
     virtual float GetHeight() const;
 
-    virtual float GetAngle() const {return 0;};
-    virtual bool SetAngle(float ang) {return false;};
+    virtual void SetWidth(float newWidth);
+    virtual void SetHeight(float newHeight);
 
-    virtual void SetWidth(float newWidth) {};
-    virtual void SetHeight(float newHeight) {};
+    virtual float GetAngle() const;
+    virtual bool SetAngle(float angle);
 
     virtual void OnPositionChanged();
+    void OnSizeChanged();
 
     #if defined(GD_IDE_ONLY)
     virtual void GetPropertyForDebugger (std::size_t propertyNb, gd::String & name, gd::String & value) const;
@@ -57,7 +57,7 @@ public :
     #endif
 
 private:
-
+    EllipseShape m_ellipse;
 };
 
 RuntimeObject * CreateRuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object);

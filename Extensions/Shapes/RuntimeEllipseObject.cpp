@@ -21,11 +21,18 @@ This project is released under the MIT License.
 #include "GDCpp/RuntimeObjectsListsTools.h"
 #include "GDCpp/Serialization/SerializerElement.h"
 #include "GDCpp/CommonTools.h"
+#include "EllipseObject.h"
 
 RuntimeEllipseObject::RuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object)
+    RuntimeObject(scene, object),
+    m_ellipse(100.f, 100.f)
 {
+    const EllipseObject & ellipseObject = dynamic_cast<const EllipseObject &>(object);
 
+    m_ellipse.setOrigin(50.f, 50.f);
+    m_ellipse.setFillColor(ellipseObject.GetFillColor());
+    m_ellipse.setOutlineColor(ellipseObject.GetOutlineColor());
+    m_ellipse.setOutlineThickness(ellipseObject.GetOutlineThickness());
 }
 
 /**
@@ -33,6 +40,10 @@ RuntimeEllipseObject::RuntimeEllipseObject(RuntimeScene & scene, const gd::Objec
  */
 bool RuntimeEllipseObject::Draw( sf::RenderTarget& window )
 {
+    if(hidden)
+        return true;
+
+    window.draw(m_ellipse);
 
     return true;
 }
@@ -40,17 +51,48 @@ bool RuntimeEllipseObject::Draw( sf::RenderTarget& window )
 
 float RuntimeEllipseObject::GetWidth() const
 {
-    return 100.f;
+    return m_ellipse.GetWidth();
 }
 
 float RuntimeEllipseObject::GetHeight() const
 {
-    return 100.f;
+    return m_ellipse.GetHeight();
+}
+
+void RuntimeEllipseObject::SetWidth(float newWidth)
+{
+    m_ellipse.SetWidth(newWidth);
+    OnSizeChanged();
+}
+
+void RuntimeEllipseObject::SetHeight(float newHeight)
+{
+    m_ellipse.SetHeight(newHeight);
+    OnSizeChanged();
+}
+
+float RuntimeEllipseObject::GetAngle() const
+{
+    return m_ellipse.getRotation();
+}
+
+bool RuntimeEllipseObject::SetAngle(float angle)
+{
+    m_ellipse.setRotation(angle);
+    return true;
 }
 
 void RuntimeEllipseObject::OnPositionChanged()
 {
+    m_ellipse.setPosition(GetX() + GetWidth()/2.f, GetY() + GetHeight()/2.f);
+}
 
+void RuntimeEllipseObject::OnSizeChanged()
+{
+    unsigned int pointCount = std::min(30u * (unsigned int)(std::max(GetWidth(), GetHeight())/200.f + 1.f), 2048u);
+    m_ellipse.setPointCount(pointCount);
+    m_ellipse.setOrigin(GetWidth()/2.f, GetHeight()/2.f);
+    OnPositionChanged();
 }
 
 #ifdef GD_IDE_ONLY

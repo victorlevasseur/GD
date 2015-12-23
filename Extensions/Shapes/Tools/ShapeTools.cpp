@@ -26,8 +26,8 @@ gd::String GD_EXTENSION_API ColorToString(const sf::Color &color)
 {
     return gd::String::From<int>(color.r) + ";" +
         gd::String::From<int>(color.g) + ";" +
-        gd::String::From<int>(color.b) + ";" +
-        gd::String::From<int>(color.a);
+        gd::String::From<int>(color.b) +
+        (color.a != 255 ? ";" + gd::String::From<int>(color.a) : "");
 }
 
 }

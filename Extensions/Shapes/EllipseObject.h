@@ -46,9 +46,6 @@ private:
     void DoSerializeTo(gd::SerializerElement & element) const override;
     #endif
 
-    static sf::Texture edittimeIconImage;
-    static sf::Sprite edittimeIcon;
-
     sf::Color m_fillColor;
     sf::Color m_outlineColor;
     int m_outlineThickness;

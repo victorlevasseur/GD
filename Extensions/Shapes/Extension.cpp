@@ -23,14 +23,10 @@ void DeclareShapesExtension(gd::PlatformExtension & extension)
     gd::ObjectMetadata & obj = extension.AddObject("Ellipse",
                _("Ellipse"),
                _("Display a ellipse shape."),
-               "JsPlatform/Extensions/admobicon.png",
+               "CppPlatform/Extensions/EllipseObjecticon32.png",
                &CreateEllipseObject);
 
     obj.SetHelpUrl("/gdevelop/documentation/manual/built_shapes");
-
-    #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
-    EllipseObject::LoadEdittimeIcon();
-    #endif
 }
 
 /**

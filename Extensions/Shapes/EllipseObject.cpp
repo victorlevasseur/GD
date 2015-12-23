@@ -26,9 +26,6 @@ This project is released under the MIT License.
 #include <wx/bitmap.h>
 #endif
 
-sf::Texture EllipseObject::edittimeIconImage;
-sf::Sprite EllipseObject::edittimeIcon;
-
 EllipseObject::EllipseObject(gd::String name_) :
     gd::Object(name_),
     m_fillColor(255, 255, 255, 255),
@@ -98,13 +95,33 @@ bool EllipseObject::UpdateProperty(const gd::String & name, const gd::String & v
 
 void EllipseObject::DoUnserializeFrom(gd::Project & project, const gd::SerializerElement & element)
 {
+    try
+    {
+        m_fillColor = shapetools::ParseColor(element.GetStringAttribute("fillColor", "255;255;255"));
+    }
+    catch(std::exception &e)
+    {
+        std::cout << "Can't set fill color: " << e.what() << std::endl;
+    }
 
+    try
+    {
+        m_outlineColor = shapetools::ParseColor(element.GetStringAttribute("outlineColor", "0;0;0"));
+    }
+    catch(std::exception &e)
+    {
+        std::cout << "Can't set outline color: " << e.what() << std::endl;
+    }
+
+    m_outlineThickness = element.GetDoubleAttribute("outlineThickness", 2);
 }
 
 #if defined(GD_IDE_ONLY)
 void EllipseObject::DoSerializeTo(gd::SerializerElement & element) const
 {
-
+    element.SetAttribute("fillColor", shapetools::ColorToString(m_fillColor));
+    element.SetAttribute("outlineColor", shapetools::ColorToString(m_outlineColor));
+    element.SetAttribute("outlineThickness", m_outlineThickness);
 }
 
 sf::Vector2f EllipseObject::GetInitialInstanceDefaultSize(gd::InitialInstance & instance, gd::Project & project, gd::Layout & layout) const
@@ -135,16 +152,10 @@ void EllipseObject::DrawInitialInstance(gd::InitialInstance & instance, sf::Rend
     renderTarget.draw(shape);
 }
 
-void EllipseObject::LoadEdittimeIcon()
-{
-    edittimeIconImage.loadFromFile("JsPlatform/Extensions/admobicon.png");
-    edittimeIcon.setTexture(edittimeIconImage);
-}
-
 bool EllipseObject::GenerateThumbnail(const gd::Project & project, wxBitmap & thumbnail) const
 {
 #if !defined(GD_NO_WX_GUI)
-    thumbnail = wxBitmap("JsPlatform/Extensions/admobicon24.png", wxBITMAP_TYPE_ANY);
+    thumbnail = wxBitmap("CppPlatform/Extensions/EllipseObjecticon24.png", wxBITMAP_TYPE_ANY);
 #endif
 
     return true;

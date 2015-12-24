@@ -23,6 +23,7 @@ This project is released under the MIT License.
 #include "GDCpp/Serialization/SerializerElement.h"
 #include "GDCpp/CommonTools.h"
 #include "EllipseObject.h"
+#include "Tools/ShapeTools.h"
 
 RuntimeEllipseObject::RuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object) :
     RuntimeObject(scene, object),
@@ -100,17 +101,51 @@ void RuntimeEllipseObject::OnSizeChanged()
 #ifdef GD_IDE_ONLY
 void RuntimeEllipseObject::GetPropertyForDebugger(std::size_t propertyNb, gd::String & name, gd::String & value) const
 {
-
+    if(propertyNb == 0)
+    {
+        name = _("Fill color");
+        value = shapetools::ColorToString(m_ellipse.getFillColor());
+    }
+    else if(propertyNb == 1)
+    {
+        name = _("Outline color");
+        value = shapetools::ColorToString(m_ellipse.getOutlineColor());
+    }
+    else if(propertyNb == 2)
+    {
+        name = _("Outline thickness");
+        value = gd::String::From<float>(m_ellipse.getOutlineThickness());
+    }
 }
 
 bool RuntimeEllipseObject::ChangeProperty(std::size_t propertyNb, gd::String newValue)
 {
+    try
+    {
+        if(propertyNb == 0)
+        {
+            m_ellipse.setFillColor(shapetools::ParseColor(newValue));
+        }
+        else if(propertyNb == 1)
+        {
+            m_ellipse.setOutlineColor(shapetools::ParseColor(newValue));
+        }
+        else if(propertyNb == 2)
+        {
+            m_ellipse.setOutlineThickness(newValue.To<float>());
+        }
+    }
+    catch(std::domain_error &e)
+    {
+        return false;
+    }
+
     return true;
 }
 
 std::size_t RuntimeEllipseObject::GetNumberOfProperties() const
 {
-    return 0;
+    return 3;
 }
 #endif
 

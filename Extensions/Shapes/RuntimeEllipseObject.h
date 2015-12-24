@@ -10,6 +10,7 @@ This project is released under the MIT License.
 
 #include <memory>
 #include <string>
+#include <vector>
 #include "GDCpp/Project/Object.h"
 #include "GDCpp/RuntimeObject.h"
 #include "GDCpp/Polygon2d.h"
@@ -56,8 +57,13 @@ public :
     virtual std::size_t GetNumberOfProperties() const;
     #endif
 
+    virtual std::vector<Polygon2d> GetHitBoxes() const;
+
 private:
+    void UpdatePointCount();
+
     EllipseShape m_ellipse;
+    Polygon2d m_hitbox;
 };
 
 RuntimeObject * CreateRuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object);

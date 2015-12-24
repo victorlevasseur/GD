@@ -7,6 +7,7 @@ This project is released under the MIT License.
 
 #include "RuntimeEllipseObject.h"
 
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
 #include "GDCpp/Project/Object.h"
@@ -25,7 +26,8 @@ This project is released under the MIT License.
 
 RuntimeEllipseObject::RuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object) :
     RuntimeObject(scene, object),
-    m_ellipse(100.f, 100.f)
+    m_ellipse(100.f, 100.f),
+    m_hitbox()
 {
     const EllipseObject & ellipseObject = dynamic_cast<const EllipseObject &>(object);
 
@@ -33,6 +35,8 @@ RuntimeEllipseObject::RuntimeEllipseObject(RuntimeScene & scene, const gd::Objec
     m_ellipse.setFillColor(ellipseObject.GetFillColor());
     m_ellipse.setOutlineColor(ellipseObject.GetOutlineColor());
     m_ellipse.setOutlineThickness(ellipseObject.GetOutlineThickness());
+
+    UpdatePointCount();
 }
 
 /**
@@ -89,9 +93,7 @@ void RuntimeEllipseObject::OnPositionChanged()
 
 void RuntimeEllipseObject::OnSizeChanged()
 {
-    unsigned int pointCount = std::min(30u * (unsigned int)(std::max(GetWidth(), GetHeight())/200.f + 1.f), 2048u);
-    m_ellipse.setPointCount(pointCount);
-    m_ellipse.setOrigin(GetWidth()/2.f, GetHeight()/2.f);
+    UpdatePointCount();
     OnPositionChanged();
 }
 
@@ -111,6 +113,29 @@ std::size_t RuntimeEllipseObject::GetNumberOfProperties() const
     return 0;
 }
 #endif
+
+std::vector<Polygon2d> RuntimeEllipseObject::GetHitBoxes() const
+{
+    Polygon2d movedHitbox(m_hitbox);
+    movedHitbox.Rotate((GetAngle()/180.f)*M_PI);
+    movedHitbox.Move(GetX() + GetWidth()/2.f, GetY() + GetHeight()/2.f);
+    movedHitbox.ComputeEdges();
+
+    return std::vector<Polygon2d>{movedHitbox};
+}
+
+void RuntimeEllipseObject::UpdatePointCount()
+{
+    unsigned int pointCount = std::min(30u * (unsigned int)(std::max(GetWidth(), GetHeight())/200.f + 1.f), 2048u);
+    m_ellipse.setPointCount(pointCount);
+    m_ellipse.setOrigin(GetWidth()/2.f, GetHeight()/2.f);
+
+    m_hitbox.vertices.clear();
+    for(unsigned int i = 0; i < m_ellipse.getPointCount(); i++)
+    {
+        m_hitbox.vertices.push_back(sf::Vector2f(m_ellipse.getPoint(i).x - GetWidth()/2.f, m_ellipse.getPoint(i).y - GetHeight()/2.f));
+    }
+}
 
 RuntimeObject * CreateRuntimeEllipseObject(RuntimeScene & scene, const gd::Object & object)
 {

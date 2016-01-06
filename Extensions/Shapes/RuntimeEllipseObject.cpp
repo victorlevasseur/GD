@@ -159,6 +159,18 @@ std::vector<Polygon2d> RuntimeEllipseObject::GetHitBoxes() const
     return std::vector<Polygon2d>{movedHitbox};
 }
 
+void RuntimeEllipseObject::SetFillColor(const gd::String &fillColor)
+{
+    try
+    {
+        m_ellipse.setFillColor(shapetools::ParseColor(fillColor));
+    }
+    catch(const std::domain_error &e)
+    {
+
+    }
+}
+
 void RuntimeEllipseObject::UpdatePointCount()
 {
     unsigned int pointCount = std::min(30u * (unsigned int)(std::max(GetWidth(), GetHeight())/200.f + 1.f), 2048u);

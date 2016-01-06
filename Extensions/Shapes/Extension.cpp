@@ -11,6 +11,7 @@ This project is released under the MIT License.
 
 #include "EllipseObject.h"
 #include "RuntimeEllipseObject.h"
+#include "EllipseInstructions.h"
 
 void DeclareShapesExtension(gd::PlatformExtension & extension)
 {
@@ -27,6 +28,10 @@ void DeclareShapesExtension(gd::PlatformExtension & extension)
                &CreateEllipseObject);
 
     obj.SetHelpUrl("/gdevelop/documentation/manual/built_shapes");
+    #if defined(GD_IDE_ONLY)
+    obj.SetIncludeFile("Shapes/RuntimeEllipseObject.h");
+    DeclareEllipseObjectInstruction(obj);
+    #endif
 }
 
 /**

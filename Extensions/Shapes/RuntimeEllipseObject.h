@@ -59,6 +59,8 @@ public :
 
     virtual std::vector<Polygon2d> GetHitBoxes() const;
 
+    void SetFillColor(const gd::String &fillColor);
+
 private:
     void UpdatePointCount();
 

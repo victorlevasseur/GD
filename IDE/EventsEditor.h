@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -25,8 +25,8 @@
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/Events/Event.h"
 #include "GDCore/Events/EventsList.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
 namespace gd { class ExternalEvents; }
 namespace gd { class LayoutEditorCanvas; }
 class SearchEvents;

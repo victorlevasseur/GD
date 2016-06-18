@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2015. Victor Levasseur (victorlevasseur52@gmail.com)
+ * Copyright 2015-2016 Victor Levasseur (victorlevasseur52@gmail.com)
  * This project is released under the MIT License.
  */
 
@@ -10,8 +10,8 @@
 #include <assert.h>
 
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/Tools/Localization.h"
 
 namespace gd

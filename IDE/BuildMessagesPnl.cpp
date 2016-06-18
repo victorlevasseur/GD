@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -10,7 +10,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/CommonTools.h"
 #include "GDCpp/IDE/CodeCompiler.h"
 #include "GDCpp/IDE/CompilerMessagesParser.h"

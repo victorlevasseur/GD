@@ -1,14 +1,14 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
 #include "GDCore/Events/Event.h"
 #include "GDCore/Events/EventsList.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
 
 namespace gd
 {

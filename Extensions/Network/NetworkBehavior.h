@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Network Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef NETWORKBEHAVIOR_H
 #define NETWORKBEHAVIOR_H
 
-#include "GDCpp/Behavior.h"
-#include "GDCpp/Object.h"
+#include "GDCpp/Runtime/Project/Behavior.h"
+#include "GDCpp/Runtime/Project/Object.h"
 #include "SceneNetworkDatas.h"
 #include <map>
 namespace gd { class SerializerElement; }

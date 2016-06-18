@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 /**
@@ -9,7 +9,7 @@
 #include "catch.hpp"
 #include <SFML/Window.hpp>
 #include "GDCore/CommonTools.h"
-#include "GDCpp/InputManager.h"
+#include "GDCpp/Runtime/InputManager.h"
 #include <SFML/Window.hpp>
 
 TEST_CASE( "InputManager", "[game-engine]" ) {

@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY)
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 namespace gd { class EventsList; }
 namespace gd { class BaseEvent; }
 namespace gd { class Project; }

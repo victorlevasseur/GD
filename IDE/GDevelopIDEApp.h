@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -12,7 +12,8 @@
 #include "GDCore/Tools/Log.h"
 #include <wx/ipc.h>
 #include <wx/snglinst.h>
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
+#include "Dialogs/Rebrander.h"
 #include "GDCore/CommonTools.h"
 #include "MainFrame.h"
 class STServer;
@@ -34,6 +35,7 @@ public:
     MainFrame * mainEditor;
     wxSingleInstanceChecker * singleInstanceChecker;
     STServer * server;
+    Rebrander rebrander;
 };
 
 /** \brief Tool class used when dealing with interprocess communications.
@@ -83,4 +85,3 @@ public:
 };
 
 #endif // GAME_DEVELOP_EDITORAPP_H
-

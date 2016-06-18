@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Tile Map Extension
-Copyright (c) 2014-2015 Victor Levasseur (victorlevasseur52@gmail.com)
+Copyright (c) 2014-2016 Victor Levasseur (victorlevasseur52@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef TILEMAPOBJECT_H
 #define TILEMAPOBJECT_H
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/Polygon2d.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Runtime/Polygon2d.h"
 #include <memory>
 #include <SFML/Graphics/VertexArray.hpp>
 
@@ -66,7 +66,5 @@ private:
 
     sf::VertexArray vertexArray;
 };
-
-gd::Object * CreateTileMapObject(gd::String name);
 
 #endif // TILEDSPRITEOBJECT_H

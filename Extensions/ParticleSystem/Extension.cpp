@@ -1,13 +1,13 @@
 /**
 
 GDevelop - Particle System Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
-#include "GDCpp/BehaviorsSharedData.h"
+#include "GDCpp/Runtime/Project/BehaviorsSharedData.h"
 #include "ParticleEmitterObject.h"
 #include "ExtensionSubDeclaration1.h"
 #include "ExtensionSubDeclaration2.h"
@@ -28,13 +28,14 @@ Extension::Extension()
 
     //Declaration of all objects available
     {
-        gd::ObjectMetadata & obj = AddObject("ParticleEmitter",
+        gd::ObjectMetadata & obj = AddObject<ParticleEmitterObject>(
+                   "ParticleEmitter",
                    _("Particles emitter"),
                    _("Displays a large number of small particles to create visual effects"),
-                   "CppPlatform/Extensions/particleSystemicon.png",
-                   &CreateParticleEmitterObject);
+                   "CppPlatform/Extensions/particleSystemicon.png");
 
-        AddRuntimeObject(obj, "RuntimeParticleEmitterObject", CreateRuntimeParticleEmitterObject);
+        AddRuntimeObject<ParticleEmitterObject, RuntimeParticleEmitterObject>(
+            obj, "RuntimeParticleEmitterObject");
 
         #if defined(GD_IDE_ONLY)
         obj.SetIncludeFile("ParticleSystem/ParticleEmitterObject.h");

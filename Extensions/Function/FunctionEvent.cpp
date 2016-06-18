@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Function Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,17 +9,17 @@ This project is released under the MIT License.
 
 #include "GDCore/Events/Serialization.h"
 #include "FunctionEvent.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCore/Events/Builtin/LinkEvent.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
-#include "GDCore/Events/EventsCodeNameMangler.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
+#include "GDCore/Events/Tools/EventsCodeNameMangler.h"
 #include "GDCore/Serialization/SerializerElement.h"
-#include "GDCpp/tinyxml/tinyxml.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
+#include "GDCpp/Runtime/TinyXml/tinyxml.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
 #include "GDCore/Tools/Localization.h"
 #include "FunctionEventEditorDlg.h"
 namespace gd { class Project; }

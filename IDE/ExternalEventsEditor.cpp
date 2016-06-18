@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "ExternalEventsEditor.h"
@@ -13,9 +13,9 @@
 #include "GDCore/Tools/Log.h"
 #include <wx/ribbon/bar.h>
 #include "GDCore/Tools/Localization.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/ExternalEvents.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "EventsEditor.h"
 
@@ -89,7 +89,7 @@ ExternalEventsEditor::~ExternalEventsEditor()
 
 void ExternalEventsEditor::ForceRefreshRibbonAndConnect()
 {
-    mainFrameWrapper.GetRibbon()->SetActivePage(3);
+    mainFrameWrapper.SetRibbonPage(_("Events"));
     eventsEditor->ConnectEvents();
 }
 

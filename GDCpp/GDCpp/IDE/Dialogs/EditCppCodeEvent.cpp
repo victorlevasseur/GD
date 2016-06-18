@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -17,13 +17,13 @@
 #include <wx/textfile.h>
 #include <wx/filename.h>
 #include <fstream>
-#include "GDCpp/Project.h"
-#include "GDCore/PlatformDefinition/SourceFile.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/CppCodeEvent.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCore/Project/SourceFile.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Events/Builtin/CppCodeEvent.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCpp/IDE/CodeCompiler.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
 
 //(*IdInit(EditCppCodeEvent)

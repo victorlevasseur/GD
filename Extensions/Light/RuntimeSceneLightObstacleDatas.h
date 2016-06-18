@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Light Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef RUNTIMESCENELIGHTOBSTACLEDATAS_H
 #define RUNTIMESCENELIGHTOBSTACLEDATAS_H
 #include <vector>
-#include "GDCpp/BehaviorsRuntimeSharedData.h"
+#include "GDCpp/Runtime/BehaviorsRuntimeSharedData.h"
 class SceneLightObstacleDatas;
 class LightObstacleBehavior;
 

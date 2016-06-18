@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -14,9 +14,9 @@
 //*)
 #include <wx/mimetype.h>
 #include <wx/config.h>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include <wx/fontdlg.h>
 
@@ -266,7 +266,7 @@ void CodeEditor::OnResize(wxSizeEvent& event)
 
 void CodeEditor::ForceRefreshRibbonAndConnect()
 {
-    mainFrameWrapper.GetRibbon()->SetActivePage(6);
+    mainFrameWrapper.SetRibbonPage(_("Code"));
     ConnectEvents();
 }
 

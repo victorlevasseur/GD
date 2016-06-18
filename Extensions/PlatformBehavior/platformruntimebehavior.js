@@ -1,6 +1,6 @@
 /**
 GDevelop - Platform Behavior Extension
-Copyright (c) 2013-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2013-2016 Florian Rival (Florian.Rival@gmail.com)
  */
 
 /**
@@ -63,6 +63,11 @@ gdjs.PlatformObjectsManager.Vertex = function(x,y,radius) {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this._aabbComputed = false;
+
+    if (!this._aabb) {
+        this._aabb = {min: [0, 0], max: [0, 0]};
+    }
 };
 
 /**
@@ -70,8 +75,15 @@ gdjs.PlatformObjectsManager.Vertex = function(x,y,radius) {
  * @method getAABB
  */
 gdjs.PlatformObjectsManager.Vertex.prototype.getAABB = function(){
-    var rad = this.radius, x = this.x, y = this.y;
-    return this.aabb = { min: [ x - rad, y - rad ], max: [ x + rad, y + rad ] };
+    if (!this._aabbComputed) {
+        this._aabb.min[0] = this.x - this.radius;
+        this._aabb.min[1] = this.y - this.radius;
+        this._aabb.max[0] = this.x + this.radius;
+        this._aabb.max[1] = this.y + this.radius;
+        this._aabbComputed = true;
+    }
+
+    return this._aabb;
 };
 
 /**
@@ -82,19 +94,20 @@ gdjs.PlatformObjectsManager.Vertex.prototype.getAABB = function(){
  * @method getAllPlatformsAround
  */
 gdjs.PlatformObjectsManager.prototype.getAllPlatformsAround = function(object, maxMovementLength, result) {
-
     var ow = object.getWidth();
     var oh = object.getHeight();
     var x = object.getDrawableX()+object.getCenterX();
     var y = object.getDrawableY()+object.getCenterY();
     var objBoundingRadius = Math.sqrt(ow*ow+oh*oh)/2.0 + maxMovementLength;
 
-    var vertex = new gdjs.PlatformObjectsManager.Vertex(x,y, objBoundingRadius);
-    this._platformsHSHG.addObject(vertex);
-    var platformsCollidingWithVertex = this._platformsHSHG.queryForCollisionWith(vertex);
-    this._platformsHSHG.removeObject(vertex);
+    if (!this._aroundVertex)
+        this._aroundVertex = new gdjs.PlatformObjectsManager.Vertex(x, y, objBoundingRadius);
+    else
+        gdjs.PlatformObjectsManager.Vertex.call(this._aroundVertex, x, y, objBoundingRadius);
 
-    return platformsCollidingWithVertex;
+    this._platformsHSHG.addObject(this._aroundVertex);
+    this._platformsHSHG.queryForCollisionWith(this._aroundVertex, result);
+    this._platformsHSHG.removeObject(this._aroundVertex);
 };
 
 /**
@@ -117,6 +130,8 @@ gdjs.PlatformRuntimeBehavior = function(runtimeScene, behaviorData, owner)
         this._platformType = gdjs.PlatformRuntimeBehavior.JUMPTHRU;
     else
         this._platformType = gdjs.PlatformRuntimeBehavior.NORMALPLAFTORM;
+    this._canBeGrabbed = behaviorData.canBeGrabbed || false;
+    this._yGrabOffset = behaviorData.yGrabOffset || 0;
 
     //Note that we can't use getX(), getWidth()... of owner here: The owner is not fully constructed.
     this._oldX = 0;
@@ -218,4 +233,14 @@ gdjs.PlatformRuntimeBehavior.prototype.changePlatformType = function(platformTyp
 gdjs.PlatformRuntimeBehavior.prototype.getPlatformType = function()
 {
     return this._platformType;
+};
+
+gdjs.PlatformRuntimeBehavior.prototype.canBeGrabbed = function()
+{
+    return this._canBeGrabbed;
+};
+
+gdjs.PlatformRuntimeBehavior.prototype.getYGrabOffset = function()
+{
+    return this._yGrabOffset;
 };

@@ -11,12 +11,12 @@
 #include <wx/settings.h>
 //*)
 #include <sstream>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/Events/Builtin/LinkEvent.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/CommonTools.h"
 #include <wx/help.h>
 
@@ -94,7 +94,7 @@ game(game_)
 	StaticText5 = new wxStaticText(this, ID_STATICTEXT5, _("Remember to update the numbers of the events if\nyou delete or add events in the scene linked."), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT5"));
 	wxFont StaticText5Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	if ( !StaticText5Font.Ok() ) StaticText5Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	StaticText5Font.SetStyle(wxITALIC);
+	StaticText5Font.SetStyle(wxFONTSTYLE_ITALIC);
 	StaticText5->SetFont(StaticText5Font);
 	FlexGridSizer1->Add(StaticText5, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine1 = new wxStaticLine(this, ID_STATICLINE1, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("ID_STATICLINE1"));
@@ -151,7 +151,7 @@ EditLink::~EditLink()
 
 void EditLink::OnAideBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/link_events"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/link_events");
 }
 
 /**

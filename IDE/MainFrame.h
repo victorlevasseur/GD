@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -38,6 +38,7 @@
 #include <wx/msw/winundef.h>
 #endif
 #include "GDCore/IDE/Dialogs/ResourcesEditor.h"
+#include "Dialogs/EditorsNotebookManager.h"
 #include "GDCore/String.h"
 #include "EditorScene.h"
 #include "RecentList.h"
@@ -89,7 +90,7 @@ public:
     }
 
     /**
-     *  \briefChange the current game
+     *  \brief Change the current game
      */
     void SetCurrentGame(std::size_t i, bool refreshProjectManager = true);
 
@@ -117,6 +118,11 @@ public:
      * Get a pointer to the notebook containing editors
      */
     inline wxAuiNotebook * GetEditorsNotebook() { return editorsNotebook; };
+
+    /**
+     * Get a reference to the manager containing editors
+     */
+    EditorsNotebookManager & GetEditorsManager() { return editorsManager; }
 
     /**
      * Get a lightweight interface to this class.
@@ -154,9 +160,35 @@ public:
     inline ProjectPropertiesPnl * GetProjectPropertiesPanel() const { return projectPropertiesPnl; }
 
     /**
+     * Get a pointer to the project manager
+     */
+    inline ProjectManager * GetProjectManager() const { return projectManager; }
+
+    /**
      * Get a pointer to windows locking shortcuts list.
      */
     inline std::vector<wxWindow*> * GetScenesLockingShortcutsList() { return &scenesLockingShortcuts; };
+
+    /**
+     * \brief Get the file menu.
+     */
+    wxMenu & GetFileMenu() { return fileMenu; }
+
+    /**
+     * \brief Get the help menu.
+     */
+    wxMenu & GetHelpMenu() { return helpMenu; }
+
+    /**
+     * Set a function that will be called when the about box of the editor should be shown.
+     * \param cb A callback that return true if the default about box should still be shown.
+     */
+    void OnAboutBox(std::function<bool()> cb) { onAboutCb = cb; };
+
+    /**
+     * Change the base title of the frame.
+     */
+    void SetBaseTitle(wxString title) { baseTitle = title; UpdateTitle(); }
 
     /**
      * \brief Update the file logging the opened projects.
@@ -242,6 +274,7 @@ public:
     void RealizeRibbonCustomButtons();
     void SetLastUsedFile(wxString file);
     bool Save(gd::Project & project, wxString file);
+    StartHerePage* GetStartPage();
 
 private:
 
@@ -327,6 +360,7 @@ private:
     wxMenuItem* MenuItem19;
     wxMenu fileMenu;
     //*)
+    wxString baseTitle;
     wxAuiManager m_mgr;
     wxRibbonBar * ribbon; ///< Pointer to the ribbon
     wxStaticBitmap * ribbonFileBt; ///< Pointer to the ribbon file custom button
@@ -334,18 +368,21 @@ private:
     BuildToolsPnl * buildToolsPnl;
     std::vector<wxWindow*> scenesLockingShortcuts;
     gd::MainFrameWrapper mainFrameWrapper;
+    EditorsNotebookManager editorsManager;
+    std::function<bool()> onAboutCb;
 
-    StartHerePage * startPage;
     ProjectManager * projectManager;
     ProjectPropertiesPnl * projectPropertiesPnl;
 
     RecentList m_recentlist; ///<Inventory and manage recent files
-    std::map<long, gd::Platform*> idToPlatformExportMenuMap; ///< Mapping menu items identifier to their associated platform for the export menu.
+    std::map<long, std::pair<gd::Platform*, std::size_t>> idToPlatformExportMenuMap; ///< Mapping menu items identifier to their associated platform and exporter id for the export menu.
 
     wxBitmap ribbonFileNormalBitmap;
     wxBitmap ribbonFileHoveredBitmap;
     wxBitmap ribbonHelpNormalBitmap;
     wxBitmap ribbonHelpHoveredBitmap;
+
+    void UpdateTitle();
 
     DECLARE_EVENT_TABLE()
 };

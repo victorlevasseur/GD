@@ -1,6 +1,6 @@
 /*
  * GDevelop JS Platform
- * Copyright 2013-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2013-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -16,8 +16,8 @@
  */
 gdjs.SpriteAnimationFrame = function(imageManager, frameData)
 {
-    this.image = frameData ? frameData.image : "";
-    this.pixiTexture = imageManager.getPIXITexture(this.image);
+    this.image = frameData ? frameData.image : ""; //TODO: Rename in imageName, and do not store it in the object?
+    this.texture = gdjs.SpriteRuntimeObjectRenderer.getAnimationFrame(imageManager, this.image);
 
     if ( this.center === undefined ) this.center = { x:0, y:0 };
     if ( this.origin === undefined ) this.origin = { x:0, y:0 };
@@ -41,9 +41,9 @@ gdjs.SpriteAnimationFrame = function(imageManager, frameData)
         this.center.x = parseFloat(center.x);
         this.center.y = parseFloat(center.y);
     }
-    else  {
-        this.center.x = this.pixiTexture.width/2;
-        this.center.y = this.pixiTexture.height/2;
+    else {
+        this.center.x = gdjs.SpriteRuntimeObjectRenderer.getAnimationFrameWidth(this.texture)/2;
+        this.center.y = gdjs.SpriteRuntimeObjectRenderer.getAnimationFrameHeight(this.texture)/2;
     }
 
     //Load the custom collision mask, if any:
@@ -122,7 +122,8 @@ gdjs.SpriteAnimation = function(imageManager, animData)
         this.frames.length = i;
     };
 
-    this.hasMultipleDirections = animData.useMultipleDirections;
+    this.hasMultipleDirections = !!animData.useMultipleDirections;
+    this.name = animData.name || '';
 
     var that = this;
     var i = 0;
@@ -160,7 +161,6 @@ gdjs.SpriteRuntimeObject = function(runtimeScene, objectData)
     this._blendMode = 0;
     this._flippedX = false;
     this._flippedY = false;
-    this._runtimeScene = runtimeScene;
     this.opacity = 255;
 
     //Animations:
@@ -177,19 +177,15 @@ gdjs.SpriteRuntimeObject = function(runtimeScene, objectData)
     });
     this._animations.length = i; //Make sure to delete already existing animations which are not used anymore.
 
-    //PIXI sprite related members:
-    this._animationFrame = null; //Reference to the current SpriteAnimationFrame that is displayd. Can be null, so ensure that this case is handled properly.
-    this._spriteDirty = true;
-    this._textureDirty = true;
-    this._spriteInContainer = true;
-    if ( this._sprite === undefined )
-        this._sprite = new PIXI.Sprite(runtimeScene.getGame().getImageManager().getInvalidPIXITexture());
+    //Reference to the current SpriteAnimationFrame that is displayd. Can be null, so ensure that this case is handled properly.
+    this._animationFrame = null;
 
-    var layer = runtimeScene.getLayer("");
-    if (layer) layer.addChildToPIXIContainer(this._sprite, this.zOrder);
+    if (this._renderer)
+        gdjs.SpriteRuntimeObjectRenderer.call(this._renderer, this, runtimeScene);
+    else
+        this._renderer = new gdjs.SpriteRuntimeObjectRenderer(this, runtimeScene);
 
-	this._updatePIXITexture();
-	this._updatePIXISprite();
+    this._updateFrame();
 };
 
 gdjs.SpriteRuntimeObject.prototype = Object.create( gdjs.RuntimeObject.prototype );
@@ -212,62 +208,6 @@ gdjs.SpriteRuntimeObject.prototype.extraInitializationFromInitialInstance = func
         this.setWidth(initialInstanceData.width);
         this.setHeight(initialInstanceData.height);
     }
-};
-
-/**
- * Update the internal PIXI.Sprite position, angle...
- */
-gdjs.SpriteRuntimeObject.prototype._updatePIXISprite = function() {
-
-    if (this._animationFrame !== null) {
-        this._sprite.anchor.x = this._animationFrame.center.x/this._sprite.texture.frame.width;
-        this._sprite.anchor.y = this._animationFrame.center.y/this._sprite.texture.frame.height;
-        this._sprite.position.x = this.x + (this._animationFrame.center.x - this._animationFrame.origin.x)*Math.abs(this._scaleX);
-        this._sprite.position.y = this.y + (this._animationFrame.center.y - this._animationFrame.origin.y)*Math.abs(this._scaleY);
-        if ( this._flippedX ) this._sprite.position.x += (this._sprite.texture.frame.width/2-this._animationFrame.center.x)*Math.abs(this._scaleX)*2;
-        if ( this._flippedY ) this._sprite.position.y += (this._sprite.texture.frame.height/2-this._animationFrame.center.y)*Math.abs(this._scaleY)*2;
-        this._sprite.rotation = gdjs.toRad(this.angle);
-        this._sprite.visible = !this.hidden;
-        this._sprite.blendMode = this._blendMode;
-        this._sprite.alpha = this._sprite.visible ? this.opacity/255 : 0; //TODO: Workaround not working property in PIXI.js
-        this._sprite.scale.x = this._scaleX;
-        this._sprite.scale.y = this._scaleY;
-        this._cachedWidth = Math.abs(this._sprite.width);
-        this._cachedHeight = Math.abs(this._sprite.height);
-    }
-    else {
-        this._sprite.visible = false;
-        this._sprite.alpha = 0;
-        this._cachedWidth = 0;
-        this._cachedHeight = 0;
-    }
-
-
-    this._spriteDirty = false;
-};
-
-/**
- * Update the internal texture of the PIXI sprite.
- */
-gdjs.SpriteRuntimeObject.prototype._updatePIXITexture = function() {
-    this._textureDirty = false;
-    this._spriteDirty = true;
-
-    if ( this._currentAnimation < this._animations.length &&
-         this._currentDirection < this._animations[this._currentAnimation].directions.length) {
-        var direction = this._animations[this._currentAnimation].directions[this._currentDirection];
-
-        if ( this._currentFrame < direction.frames.length ) {
-            this._animationFrame = direction.frames[this._currentFrame];
-            if ( this._animationFrame !== null )
-                this._sprite.texture = this._animationFrame.pixiTexture;
-
-            return;
-        }
-    }
-
-    //Invalid animation/direction/frame:
-    this._animationFrame = null;
 };
 
 /**
@@ -297,13 +237,35 @@ gdjs.SpriteRuntimeObject.prototype.updateTime = function(elapsedTime) {
     }
     if ( this._currentFrame < 0 ) this._currentFrame = 0; //May happen if there is no frame.
 
-    if ( oldFrame != this._currentFrame || this._textureDirty ) this._updatePIXITexture();
+    if ( oldFrame != this._currentFrame || this._frameDirty ) this._updateFrame();
     if ( oldFrame != this._currentFrame ) this.hitBoxesDirty = true;
-    if ( this._spriteDirty ) this._updatePIXISprite();
+
+    this._renderer.ensureUpToDate();
 };
 
-gdjs.SpriteRuntimeObject.prototype.onDeletedFromScene = function(runtimeScene) {
-    runtimeScene.getLayer(this.layer).removePIXIContainerChild(this._sprite);
+gdjs.SpriteRuntimeObject.prototype._updateFrame = function() {
+   this._frameDirty = false;
+
+   if ( this._currentAnimation < this._animations.length &&
+        this._currentDirection < this._animations[this._currentAnimation].directions.length) {
+       var direction = this._animations[this._currentAnimation].directions[this._currentDirection];
+
+       if ( this._currentFrame < direction.frames.length ) {
+           this._animationFrame = direction.frames[this._currentFrame];
+           if ( this._animationFrame !== null ) {
+               this._renderer.updateFrame(this._animationFrame);
+           }
+
+           return;
+       }
+   }
+
+   //Invalid animation/direction/frame:
+   this._animationFrame = null;
+};
+
+gdjs.SpriteRuntimeObject.prototype.exposeRendererObject = function(cb) {
+    this._renderer.exposeRendererObject(cb);
 };
 
 /**
@@ -314,7 +276,7 @@ gdjs.SpriteRuntimeObject.prototype.onDeletedFromScene = function(runtimeScene) {
  * @method updateHitBoxes
  */
 gdjs.SpriteRuntimeObject.prototype.updateHitBoxes = function() {
-    if ( this._textureDirty ) this._updatePIXITexture(); //Beware, _animationFrame could be invalid if this._textureDirty === true.
+    if ( this._frameDirty ) this._updateFrame(); //Beware, _animationFrame could be invalid if this._frameDirty === true.
     if ( this._animationFrame === null ) return;
 
     if ( !this._animationFrame.hasCustomHitBoxes )
@@ -354,14 +316,36 @@ gdjs.SpriteRuntimeObject.prototype.setAnimation = function(newAnimation) {
         this._currentAnimation = newAnimation;
         this._currentFrame = 0;
         this._frameElapsedTime = 0;
-        this._spriteDirty = true;
-        this._textureDirty = true;
+        this._renderer.update(); //TODO: This may be unnecessary.
+        this._frameDirty = true;
         this.hitBoxesDirty = true;
+    }
+};
+
+gdjs.SpriteRuntimeObject.prototype.setAnimationName = function(newAnimationName) {
+    if (!newAnimationName) return;
+
+    for(var i = 0;i < this._animations.length;++i) {
+        if (this._animations[i].name === newAnimationName) {
+            return this.setAnimation(i);
+        }
     }
 };
 
 gdjs.SpriteRuntimeObject.prototype.getAnimation = function() {
     return this._currentAnimation;
+};
+
+gdjs.SpriteRuntimeObject.prototype.getAnimationName = function() {
+    if ( this._currentAnimation >= this._animations.length ) {
+        return '';
+    }
+
+    return this._animations[this._currentAnimation].name;
+};
+
+gdjs.SpriteRuntimeObject.prototype.isCurrentAnimationName = function(name) {
+    return this.getAnimationName() === name;
 };
 
 gdjs.SpriteRuntimeObject.prototype.setDirectionOrAngle = function(newValue) {
@@ -374,8 +358,8 @@ gdjs.SpriteRuntimeObject.prototype.setDirectionOrAngle = function(newValue) {
         if ( this.angle === newValue ) return;
 
         this.angle = newValue;
-        this._sprite.rotation = gdjs.toRad(this.angle);
         this.hitBoxesDirty = true;
+        this._renderer.updateAngle();
     }
     else {
         newValue = newValue | 0;
@@ -391,8 +375,8 @@ gdjs.SpriteRuntimeObject.prototype.setDirectionOrAngle = function(newValue) {
         this._frameElapsedTime = 0;
         this.angle = 0;
 
-        this._spriteDirty = true;
-        this._textureDirty = true;
+        this._renderer.update(); //TODO: This may be unnecessary.
+        this._frameDirty = true;
         this.hitBoxesDirty = true;
     }
 };
@@ -422,7 +406,7 @@ gdjs.SpriteRuntimeObject.prototype.setAnimationFrame = function(newFrame) {
 
     if ( newFrame >= 0 && newFrame < direction.frames.length && newFrame != this._currentFrame ) {
         this._currentFrame = newFrame;
-        this._textureDirty = true;
+        this._frameDirty = true;
         this.hitBoxesDirty = true;
     }
 };
@@ -507,12 +491,12 @@ gdjs.SpriteRuntimeObject.prototype._transformToGlobal = function(x, y, result) {
 
     //Flipping
     if ( this._flippedX ) {
-        x = this._sprite.texture.frame.width - x;
-        cx = this._sprite.texture.frame.width - cx;
+        x = this._renderer.getUnscaledWidth() - x;
+        cx = this._renderer.getUnscaledWidth() - cx;
     }
     if ( this._flippedY ) {
-        y = this._sprite.texture.frame.height - y;
-        cy = this._sprite.texture.frame.height - cy;
+        y = this._renderer.getUnscaledHeight() - y;
+        cy = this._renderer.getUnscaledHeight() - cy;
     }
 
     //Scale
@@ -567,9 +551,7 @@ gdjs.SpriteRuntimeObject.prototype.setX = function(x) {
     this.x = x;
     if (this._animationFrame !== null) {
         this.hitBoxesDirty = true;
-        this._sprite.position.x = this.x + (this._animationFrame.center.x - this._animationFrame.origin.x)*Math.abs(this._scaleX);
-        if ( this._flippedX )
-            this._sprite.position.x += (this._sprite.texture.frame.width/2-this._animationFrame.center.x)*Math.abs(this._scaleX)*2;
+        this._renderer.updateX();
     }
 };
 
@@ -579,9 +561,7 @@ gdjs.SpriteRuntimeObject.prototype.setY = function(y) {
     this.y = y;
     if ( this._animationFrame !== null) {
         this.hitBoxesDirty = true;
-        this._sprite.position.y = this.y + (this._animationFrame.center.y - this._animationFrame.origin.y)*Math.abs(this._scaleY);
-        if ( this._flippedY )
-            this._sprite.position.y += (this._sprite.texture.frame.height/2-this._animationFrame.center.y)*Math.abs(this._scaleY)*2;
+        this._renderer.updateY();
     }
 };
 
@@ -594,10 +574,9 @@ gdjs.SpriteRuntimeObject.prototype.setAngle = function(angle) {
         if (this.angle === angle) return;
 
         this.angle = angle;
-        this._sprite.rotation = gdjs.toRad(this.angle);
+        this._renderer.updateAngle();
         this.hitBoxesDirty = true;
-    }
-    else {
+    } else {
         angle = angle % 360;
         if ( angle < 0 ) angle += 360;
         this.setDirectionOrAngle(Math.round(angle/45) % 8);
@@ -619,7 +598,7 @@ gdjs.SpriteRuntimeObject.prototype.getAngle = function(angle) {
 
 gdjs.SpriteRuntimeObject.prototype.setBlendMode = function(newMode) {
     this._blendMode = newMode;
-    this._spriteDirty = true;
+    this._renderer.update();
 };
 
 gdjs.SpriteRuntimeObject.prototype.getBlendMode = function() {
@@ -631,8 +610,7 @@ gdjs.SpriteRuntimeObject.prototype.setOpacity = function(opacity) {
     if ( opacity > 255 ) opacity = 255;
 
     this.opacity = opacity;
-    //TODO: Workaround a not working property in PIXI.js:
-    this._sprite.alpha = this._sprite.visible ? this.opacity/255 : 0;
+    this._renderer.updateOpacity();
 };
 
 gdjs.SpriteRuntimeObject.prototype.getOpacity = function() {
@@ -642,17 +620,8 @@ gdjs.SpriteRuntimeObject.prototype.getOpacity = function() {
 gdjs.SpriteRuntimeObject.prototype.hide = function(enable) {
     if ( enable === undefined ) enable = true;
     this.hidden = enable;
-    this._sprite.visible = !enable;
-    //TODO: Workaround a not working property in PIXI.js:
-    this._sprite.alpha = this._sprite.visible ? this.opacity / 255 : 0;
-};
 
-gdjs.SpriteRuntimeObject.prototype.setLayer = function(name) {
-    //We need to move the object from the pixi container of the layer
-    //TODO: Pass the runtimeScene as parameter ?
-    this._runtimeScene.getLayer(this.layer).removePIXIContainerChild(this._sprite);
-    this.layer = name;
-    this._runtimeScene.getLayer(this.layer).addChildToPIXIContainer(this._sprite, this.zOrder);
+    this._renderer.updateVisibility();
 };
 
 /**
@@ -661,25 +630,22 @@ gdjs.SpriteRuntimeObject.prototype.setLayer = function(name) {
  * \param {String} The color, in RGB format ("128;200;255").
  */
 gdjs.SpriteRuntimeObject.prototype.setColor = function(rgbColor) {
-    var colors = rgbColor.split(";");
-    if ( colors.length < 3 ) return;
-
-    this._sprite.tint = "0x" + gdjs.rgbToHex(parseInt(colors[0]), parseInt(colors[1]), parseInt(colors[2]));
+    this._renderer.setColor(rgbColor);
 };
 
 gdjs.SpriteRuntimeObject.prototype.flipX = function(enable) {
     if ( enable !== this._flippedX ) {
         this._scaleX *= -1;
-        this._spriteDirty = true;
         this._flippedX = enable;
+        this._renderer.update();
     }
 };
 
 gdjs.SpriteRuntimeObject.prototype.flipY = function(enable) {
     if ( enable !== this._flippedY ) {
         this._scaleY *= -1;
-        this._spriteDirty = true;
         this._flippedY = enable;
+        this._renderer.update();
     }
 };
 
@@ -694,27 +660,25 @@ gdjs.SpriteRuntimeObject.prototype.isFlippedY = function() {
 //Scale and size :
 
 gdjs.SpriteRuntimeObject.prototype.getWidth = function() {
-    if ( this._spriteDirty ) this._updatePIXISprite();
-    return this._cachedWidth;
+    return this._renderer.getWidth();
 };
 
 gdjs.SpriteRuntimeObject.prototype.getHeight = function() {
-    if ( this._spriteDirty ) this._updatePIXISprite();
-    return this._cachedHeight;
+    return this._renderer.getHeight();
 };
 
 gdjs.SpriteRuntimeObject.prototype.setWidth = function(newWidth) {
-    if ( this._textureDirty ) this._updatePIXITexture();
-    if ( this._spriteDirty ) this._updatePIXISprite();
-    var newScaleX = newWidth/this._sprite.texture.frame.width;
-    this.setScaleX(newScaleX);
+    if ( this._frameDirty ) this._updateFrame();
+
+    var unscaledWidth = this._renderer.getUnscaledWidth();
+    if (unscaledWidth !== 0) this.setScaleX(newWidth / unscaledWidth);
 };
 
 gdjs.SpriteRuntimeObject.prototype.setHeight = function(newHeight) {
-    if ( this._textureDirty ) this._updatePIXITexture();
-    if ( this._spriteDirty ) this._updatePIXISprite();
-    var newScaleY = newHeight/this._sprite.texture.frame.height;
-    this.setScaleY(newScaleY);
+    if ( this._frameDirty ) this._updateFrame();
+
+    var unscaledHeight = this._renderer.getUnscaledHeight();
+    if (unscaledHeight !== 0) this.setScaleY(newHeight / unscaledHeight);
 };
 
 gdjs.SpriteRuntimeObject.prototype.setScale = function(newScale) {
@@ -723,7 +687,7 @@ gdjs.SpriteRuntimeObject.prototype.setScale = function(newScale) {
 
     this._scaleX = newScale * (this._flippedX ? -1 : 1);
     this._scaleY = newScale * (this._flippedY ? -1 : 1);
-    this._spriteDirty = true;
+    this._renderer.update();
     this.hitBoxesDirty = true;
 };
 
@@ -732,7 +696,7 @@ gdjs.SpriteRuntimeObject.prototype.setScaleX = function(newScale) {
     if ( newScale < 0 ) newScale = 0;
 
     this._scaleX = newScale * (this._flippedX ? -1 : 1);
-    this._spriteDirty = true;
+    this._renderer.update();
     this.hitBoxesDirty = true;
 };
 
@@ -741,7 +705,7 @@ gdjs.SpriteRuntimeObject.prototype.setScaleY = function(newScale) {
     if ( newScale < 0 ) newScale = 0;
 
     this._scaleY = newScale * (this._flippedY ? -1 : 1);
-    this._spriteDirty = true;
+    this._renderer.update();
     this.hitBoxesDirty = true;
 };
 
@@ -758,20 +722,6 @@ gdjs.SpriteRuntimeObject.prototype.getScaleX = function() {
 };
 
 //Other :
-
-/**
- * Set the Z order of the object.
- *
- * @method setZOrder
- * @param z {Number} The new Z order position of the object
- */
-gdjs.SpriteRuntimeObject.prototype.setZOrder = function(z) {
-    if ( z !== this.zOrder ) {
-        //TODO: Pass the runtimeScene as parameter ?
-        this._runtimeScene.getLayer(this.layer).changePIXIContainerChildZOrder(this._sprite, z);
-        this.zOrder = z;
-    }
-};
 
 /**
  * @method turnTowardObject

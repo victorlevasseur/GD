@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 /**
@@ -8,10 +8,10 @@
  */
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/ExternalLayout.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/ExternalLayout.h"
+#include "GDCore/Project/ExternalEvents.h"
 #include "GDCore/IDE/Clipboard.h"
 #include "GDCore/Events/EventsList.h"
 #include "GDCore/Events/Builtin/StandardEvent.h"

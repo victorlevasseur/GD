@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Text Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -10,20 +10,20 @@ This project is released under the MIT License.
 #include "Dialogs/TextObjectEditor.h" //Must be placed first, otherwise we get errors relative to "cannot convert 'const TCHAR*'..." in wx/msw/winundef.h
 #endif
 #include <SFML/Graphics.hpp>
-#include "GDCpp/Object.h"
+#include "GDCpp/Runtime/Project/Object.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
 #include "TextObject.h"
 
 #if defined(GD_IDE_ONLY)
 #include "GDCore/IDE/AbstractFileSystem.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 namespace gd { class MainFrameWrapper; }
 #endif
 
@@ -154,13 +154,11 @@ void TextObject::SetFontFilename(const gd::String & fontFilename)
 
 /* RuntimeTextObject : */
 
-RuntimeTextObject::RuntimeTextObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object),
+RuntimeTextObject::RuntimeTextObject(RuntimeScene & scene, const TextObject & textObject) :
+    RuntimeObject(scene, textObject),
     opacity(255),
     angle(0)
 {
-    const TextObject & textObject = static_cast<const TextObject&>(object);
-
     ChangeFont(textObject.GetFontFilename());
     SetSmooth(textObject.IsSmoothed());
     SetColor(textObject.GetColorR(), textObject.GetColorG(), textObject.GetColorB());
@@ -394,14 +392,3 @@ std::size_t RuntimeTextObject::GetNumberOfProperties() const
     return 6;
 }
 #endif
-
-
-RuntimeObject * CreateRuntimeTextObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeTextObject(scene, object);
-}
-
-gd::Object * CreateTextObject(gd::String name)
-{
-    return new TextObject(name);
-}

@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Function Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #include "FunctionTools.h"
-#include "GDCpp/profile.h"
+#include "GDCpp/Runtime/profile.h"
 
 namespace GDpriv
 {

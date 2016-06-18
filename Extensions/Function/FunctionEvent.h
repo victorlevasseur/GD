@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Function Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -11,8 +11,8 @@ This project is released under the MIT License.
 #define FUNCTIONEVENT_H
 #include "GDCore/Events/EventsList.h"
 #include "GDCore/Events/Event.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/SceneNameMangler.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/SceneNameMangler.h"
 class RuntimeScene;
 namespace gd { class Instruction; }
 namespace gd { class SerializerElement; }

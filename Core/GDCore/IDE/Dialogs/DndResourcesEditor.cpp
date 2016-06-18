@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -30,7 +30,7 @@ bool DndTextResourcesEditor::OnDropText(wxCoord x, wxCoord y, const wxString& te
         for (std::size_t i = 2;i<command.size();++i)
             files.push_back(command[i]);
 
-        editor.CopyAndAddResources(files, command[1]);
+        editor.CopyAndAddResources(files, command[1], "image");
     }
     else
         std::cout << "Drop was triggered but the command was not understood" << std::endl;

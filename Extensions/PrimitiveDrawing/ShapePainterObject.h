@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Primitive Drawing Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef DRAWEROBJECT_H
 #define DRAWEROBJECT_H
 
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include <vector>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -137,7 +137,7 @@ private:
 class GD_EXTENSION_API RuntimeShapePainterObject : public RuntimeObject, public ShapePainterObjectBase
 {
 public:
-    RuntimeShapePainterObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeShapePainterObject(RuntimeScene & scene, const ShapePainterObject & shapePainterObject);
     virtual ~RuntimeShapePainterObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeShapePainterObject(*this);}
 
@@ -162,8 +162,5 @@ public:
 private:
     std::vector < DrawingCommand > shapesToDraw;
 };
-
-RuntimeObject * CreateRuntimeShapePainterObject(RuntimeScene & scene, const gd::Object & object);
-gd::Object * CreateShapePainterObject(gd::String name);
 
 #endif // DRAWEROBJECT_H

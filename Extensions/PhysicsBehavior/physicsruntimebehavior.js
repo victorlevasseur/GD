@@ -1,6 +1,6 @@
 /**
 GDevelop - Physics Behavior Extension
-Copyright (c) 2013-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2013-2016 Florian Rival (Florian.Rival@gmail.com)
  */
 
 /**
@@ -26,49 +26,44 @@ gdjs.PhysicsSharedData = function(runtimeScene, sharedData)
     this.staticBody = this.world.CreateBody(new Box2D.b2BodyDef());
 
     //...and prepare contact listeners
-    this.contactListener = new Box2D.b2ContactListener();
-    Box2D.customizeVTable(this.contactListener, [{
-        original: Box2D.b2ContactListener.prototype.BeginContact,
-        replacement:
-            function (thsPtr, contactPtr) {
-                var contact = Box2D.wrapPointer( contactPtr, Box2D.b2Contact );
+	this.contactListener = new Box2D.JSContactListener();
+    this.contactListener.BeginContact = function (contactPtr) {
+        var contact = Box2D.wrapPointer( contactPtr, Box2D.b2Contact );
 
-                if ( contact.GetFixtureA().GetBody() == null ||
-                     contact.GetFixtureB().GetBody() == null )
-                    return;
+        if ( contact.GetFixtureA().GetBody() == null ||
+             contact.GetFixtureB().GetBody() == null )
+            return;
 
-                var behaviorA = contact.GetFixtureA().GetBody().gdjsAssociatedBehavior,
-                behaviorB = contact.GetFixtureB().GetBody().gdjsAssociatedBehavior;
+        var behaviorA = contact.GetFixtureA().GetBody().gdjsAssociatedBehavior,
+        behaviorB = contact.GetFixtureB().GetBody().gdjsAssociatedBehavior;
 
-                behaviorA.currentContacts.push(behaviorB);
-                behaviorB.currentContacts.push(behaviorA);
-            }
-    }]);
+        behaviorA.currentContacts.push(behaviorB);
+        behaviorB.currentContacts.push(behaviorA);
+    };
 
-    Box2D.customizeVTable(this.contactListener, [{
-        original: Box2D.b2ContactListener.prototype.EndContact,
-        replacement:
-            function (thsPtr, contactPtr) {
-                var contact = Box2D.wrapPointer( contactPtr, Box2D.b2Contact );
+    this.contactListener.EndContact = function (contactPtr) {
+        var contact = Box2D.wrapPointer( contactPtr, Box2D.b2Contact );
 
-                if ( contact.GetFixtureA().GetBody() == null ||
-                     contact.GetFixtureB().GetBody() == null )
-                    return;
+        if ( contact.GetFixtureA().GetBody() == null ||
+             contact.GetFixtureB().GetBody() == null )
+            return;
 
-                if ( contact.GetFixtureA().GetBody() === null ||
-                    contact.GetFixtureB().GetBody() === null )
-                return;
+        if ( contact.GetFixtureA().GetBody() === null ||
+            contact.GetFixtureB().GetBody() === null )
+        return;
 
-                var behaviorA = contact.GetFixtureA().GetBody().gdjsAssociatedBehavior,
-                behaviorB = contact.GetFixtureB().GetBody().gdjsAssociatedBehavior;
+        var behaviorA = contact.GetFixtureA().GetBody().gdjsAssociatedBehavior,
+        behaviorB = contact.GetFixtureB().GetBody().gdjsAssociatedBehavior;
 
-                var i = behaviorA.currentContacts.indexOf(behaviorB);
-                if ( i !== -1 ) behaviorA.currentContacts.remove(i);
+        var i = behaviorA.currentContacts.indexOf(behaviorB);
+        if ( i !== -1 ) behaviorA.currentContacts.remove(i);
 
-                i = behaviorB.currentContacts.indexOf(behaviorA);
-                if ( i !== -1 ) behaviorB.currentContacts.remove(i);
-            }
-    }]);
+        i = behaviorB.currentContacts.indexOf(behaviorA);
+        if ( i !== -1 ) behaviorB.currentContacts.remove(i);
+    };
+
+	this.contactListener.PreSolve = function() {};
+	this.contactListener.PostSolve = function() {};
 
 	this.world.SetContactListener(this.contactListener);
 };
@@ -105,6 +100,12 @@ gdjs.PhysicsSharedData.prototype.step = function(dt) {
 
     this.stepped = true;
 };
+
+gdjs.PhysicsSharedData.gdjsCallbackRuntimeSceneUnloaded = function (runtimeScene) {
+	//Callback that destroys the box2d.js world of PhysicsSharedData shared data of the scene
+	if(runtimeScene.physicsSharedData)
+		Box2D.destroy(runtimeScene.physicsSharedData.world)
+}
 
 /**
  * Allows objects to be moved in a realistic way thanks to a physics engine (Box2D).
@@ -229,7 +230,7 @@ gdjs.PhysicsRuntimeBehavior.prototype.doStepPreEvents = function(runtimeScene) {
 
 	//Simulate the world
 	if ( !this._sharedData.stepped )
-		this._sharedData.step(runtimeScene.getElapsedTime()/1000);
+		this._sharedData.step(runtimeScene.getTimeManager().getElapsedTime()/1000);
 
     //Update object position according to Box2D body
 	this.owner.setX(this._box2DBody.GetPosition().get_x()*this._sharedData.scaleX-
@@ -537,8 +538,11 @@ gdjs.PhysicsRuntimeBehavior.prototype.collisionWith = function( otherObjectsTabl
     if ( this._box2DBody === null ) this.createBody();
 
     //Getting a list of all objects which are tested
-    var objects = [];
-    var objectsLists = otherObjectsTable.values();
+    var objects = gdjs.staticArray(gdjs.PhysicsRuntimeBehavior.prototype.collisionWith);
+    objects.length = 0;
+
+    var objectsLists = gdjs.staticArray2(gdjs.PhysicsRuntimeBehavior.prototype.collisionWith);
+    otherObjectsTable.values(objectsLists);
 
     for(var i = 0, len = objectsLists.length;i<len;++i) {
         objects.push.apply(objects, objectsLists[i]);

@@ -1,22 +1,22 @@
 /**
 
 GDevelop - Timed Event Extension
-Copyright (c) 2011-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2011-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 
 #include "TimedEvent.h"
 #include "TimedEventsManager.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
-#include "GDCore/Events/ExpressionsCodeGeneration.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
-#include "GDCore/Events/EventsCodeNameMangler.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
+#include "GDCore/Events/CodeGeneration/ExpressionsCodeGeneration.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
+#include "GDCore/Events/Tools/EventsCodeNameMangler.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
 
 /**
  * \brief This class declares information about the extension.

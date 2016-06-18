@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -17,20 +17,20 @@
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/PlatformDefinition/ImageManager.h"
-#include "GDCore/PlatformDefinition/LayoutEditorPreviewer.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/CodeExecutionEngine.h"
-#include "GDCpp/SceneNameMangler.h"
-#include "GDCpp/SoundManager.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeSpriteObject.h"
-#include "GDCpp/Events/CodeCompilationHelpers.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/Project/ImageManager.h"
+#include "GDCore/Project/LayoutEditorPreviewer.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/CodeExecutionEngine.h"
+#include "GDCpp/Runtime/SceneNameMangler.h"
+#include "GDCpp/Runtime/SoundManager.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeSpriteObject.h"
+#include "GDCpp/IDE/CodeCompilationHelpers.h"
 #include "GDCpp/IDE/Dialogs/DebuggerGUI.h"
 #include "GDCpp/IDE/Dialogs/ProfileDlg.h"
 #include "GDCpp/IDE/Dialogs/RenderDialog.h"
@@ -135,7 +135,7 @@ void CppLayoutPreviewer::StopPreview()
     if ( profiler ) previewScene.SetProfiler(profiler.get());
     if ( profiler ) editor.GetLayout().SetProfiler(profiler.get());
     if ( debugger ) debugger->Pause();
-    SoundManager::Get()->ClearAllSoundsAndMusics();
+    previewGame.GetSoundManager().ClearAllSoundsAndMusics();
 }
 
 void CppLayoutPreviewer::OnUpdate()
@@ -181,7 +181,7 @@ void CppLayoutPreviewer::RefreshFromLayout()
     cout << "Scene Editor canvas reloading... (step 1/2)" << endl;
     isReloading = true;
 
-    SoundManager::Get()->ClearAllSoundsAndMusics();
+    previewGame.GetSoundManager().ClearAllSoundsAndMusics();
     if ( editor.GetProject().GetImageManager() ) editor.GetProject().GetImageManager()->PreventImagesUnloading(); //Images are normally unloaded and loaded again when reloading the scene. We can prevent this to happen as it is time wasting.
 
     //Reset game
@@ -275,7 +275,6 @@ void CppLayoutPreviewer::OnPreviewPlayWindowBtClick( wxCommandEvent & event )
         externalPreviewWindow = std::shared_ptr<RenderDialog>(new RenderDialog(editor.GetParentControl(), this) );
 
     externalPreviewWindow->Show(true);
-    externalPreviewWindow->renderCanvas->setFramerateLimit( previewGame.GetMaximumFPS() );
 
     externalPreviewWindow->SetSizeOfRenderingZone(editor.GetProject().GetMainWindowDefaultWidth(), editor.GetProject().GetMainWindowDefaultHeight());
     previewScene.ChangeRenderWindow(externalPreviewWindow->renderCanvas);

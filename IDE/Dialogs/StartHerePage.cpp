@@ -1,13 +1,13 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
 #include <wx/config.h>
 #include "StartHerePage.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "../UpdateChecker.h"
 #include "../MainFrame.h"
 
@@ -15,7 +15,7 @@ StartHerePage::StartHerePage(wxWindow* parent, MainFrame & mainEditor_)
     : BaseStartHerePage(parent),
     mainEditor(mainEditor_)
 {
-	wxFont titleFont(13,wxDEFAULT,wxFONTSTYLE_NORMAL,wxNORMAL,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	wxFont titleFont(13,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	gettingStartedTxt->SetFont(titleFont);
 	communityTxt->SetFont(titleFont);
 	newsTxt->SetFont(titleFont);

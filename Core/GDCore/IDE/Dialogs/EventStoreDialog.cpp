@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -9,7 +9,7 @@
 #include "EventStoreDialog.h"
 #include "GDCore/Serialization/Serializer.h"
 #include "GDCore/Serialization/SerializerElement.h"
-#include "GDCore/IDE/EventsRefactorer.h"
+#include "GDCore/IDE/Events/EventsRefactorer.h"
 #include "GDCore/IDE/wxTools/SafeYield.h"
 #include "GDCore/CommonTools.h"
 #include "SFML/Network.hpp"

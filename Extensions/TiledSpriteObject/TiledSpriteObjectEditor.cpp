@@ -1,8 +1,8 @@
 /**
 
 GDevelop - Tiled Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -16,9 +16,9 @@ This project is released under the MIT License.
 #include "GDCore/Tools/Log.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCore/IDE/Dialogs/ResourcesEditor.h"
 #include "TiledSpriteObjectEditor.h"
 #include "TiledSpriteObject.h"

@@ -1,12 +1,12 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY)
 #ifndef CHANGESNOTIFIER_H
 #define CHANGESNOTIFIER_H
-#include "GDCore/PlatformDefinition/ChangesNotifier.h"
+#include "GDCore/Project/ChangesNotifier.h"
 
 /**
  * \brief Internal class used to trigger some custom works after changes have been made.

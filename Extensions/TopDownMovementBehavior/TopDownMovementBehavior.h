@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Top-down movement Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef TOPDOWNMOVEMENTBEHAVIOR_H
 #define TOPDOWNMOVEMENTBEHAVIOR_H
-#include "GDCpp/Behavior.h"
-#include "GDCpp/Object.h"
+#include "GDCpp/Runtime/Project/Behavior.h"
+#include "GDCpp/Runtime/Project/Object.h"
 #include <SFML/System/Vector2.hpp>
 #include <vector>
 namespace gd { class Layout; }

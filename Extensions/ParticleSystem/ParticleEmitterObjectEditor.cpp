@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Particle System Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -20,8 +20,8 @@ This project is released under the MIT License.
 #include <wx/colordlg.h>
 #include <wx/filedlg.h>
 
-#include "GDCpp/Project.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "ParticleEmitterObject.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/ResourcesEditor.h"

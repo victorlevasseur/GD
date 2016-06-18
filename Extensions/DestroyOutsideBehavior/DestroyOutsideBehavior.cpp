@@ -1,7 +1,7 @@
 /**
 
 GDevelop - DestroyOutside Behavior Extension
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,12 +9,12 @@ This project is released under the MIT License.
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "DestroyOutsideBehavior.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/RuntimeLayer.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/RuntimeLayer.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Runtime/CommonTools.h"
 
 DestroyOutsideBehavior::DestroyOutsideBehavior() :
     extraBorder(0)

@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "SearchEvents.h"
@@ -13,15 +13,15 @@
 //*)
 #include <string>
 #include <vector>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Events/Event.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/EventsRefactorer.h"
+#include "GDCore/IDE/Events/EventsRefactorer.h"
 #include "EventsEditor.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
 #include "GDCore/Tools/Localization.h"
 
 using namespace std;
@@ -344,7 +344,7 @@ void SearchEvents::OnpreviousBtClick(wxCommandEvent&)
 
 void SearchEvents::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_event_find"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_event_find");
 }
 
 void SearchEvents::OnKeyDown(wxKeyEvent& event)

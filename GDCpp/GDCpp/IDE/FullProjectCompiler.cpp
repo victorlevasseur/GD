@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -21,31 +21,31 @@
 #include <wx/msgdlg.h>
 #include <cstdio>
 #include <wx/filename.h>
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/ExternalEvents.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/IDE/AbstractFileSystem.h"
 #include "GDCore/IDE/ProjectFileWriter.h"
 #include "GDCpp/IDE/CodeCompiler.h"
-#include "GDCpp/Events/CodeCompilationHelpers.h"
-#include "GDCpp/DatFile.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/Object.h"
-#include "GDCore/PlatformDefinition/SourceFile.h"
-#include "GDCpp/SceneNameMangler.h"
-#include "GDCpp/Tools/AES.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/ExtensionBase.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCpp/IDE/CodeCompilationHelpers.h"
+#include "GDCpp/Runtime/DatFile.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCore/Project/SourceFile.h"
+#include "GDCpp/Runtime/SceneNameMangler.h"
+#include "GDCpp/Runtime/Tools/AES.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
+#include "GDCore/Project/ExternalEvents.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Platform.h"
+#include "GDCore/Extensions/Platform.h"
 #include "GDCore/IDE/ProjectStripper.h"
-#include "GDCore/IDE/ResourcesMergingHelper.h"
+#include "GDCore/IDE/Project/ResourcesMergingHelper.h"
 #include "GDCpp/IDE/ExecutableIconChanger.h"
 #include "GDCpp/IDE/BaseProfiler.h"
 #include "GDCpp/IDE/DependenciesAnalyzer.h"
 #include "GDCore/IDE/wxTools/SafeYield.h"
-#include "GDCpp/CppPlatform.h"
+#include "GDCpp/Extensions/CppPlatform.h"
 
 using namespace std;
 using namespace gd;
@@ -167,7 +167,7 @@ void FullProjectCompiler::LaunchProjectCompilation()
 
     wxLogNull noLogPlease;
     wxString tempDir = GetTempDir();
-    ClearDirectory(tempDir); //Pr�paration du r�pertoire
+    ClearDirectory(tempDir);
 
     //Wait current compilations to end
     if ( CodeCompiler::Get()->CompilationInProcess() )
@@ -191,32 +191,8 @@ void FullProjectCompiler::LaunchProjectCompilation()
     //Prepare resources to copy
     diagnosticManager.OnMessage( _("Preparing resources...") );
 
-    //Add images
-    std::vector<gd::String> allResources = game.GetResourcesManager().GetAllResourcesList();
-    for ( unsigned int i = 0;i < allResources.size() ;i++ )
-    {
-        diagnosticManager.OnMessage( _("Preparing resources..."), allResources[i] );
-
-        if ( game.GetResourcesManager().GetResource(allResources[i]).UseFile() )
-            resourcesMergingHelper.ExposeResource(game.GetResourcesManager().GetResource(allResources[i]));
-    }
-
-    //Add scenes resources
-    for ( unsigned int i = 0;i < game.GetLayoutsCount();i++ )
-    {
-        for (unsigned int j = 0;j<game.GetLayout(i).GetObjects().size();++j) //Add objects resources
-        	game.GetLayout(i).GetObjects()[j]->ExposeResources(resourcesMergingHelper);
-
-        LaunchResourceWorkerOnEvents(game, game.GetLayout(i).GetEvents(), resourcesMergingHelper);
-    }
-    //Add external events resources
-    for ( unsigned int i = 0;i < game.GetExternalEventsCount();i++ )
-    {
-        LaunchResourceWorkerOnEvents(game, game.GetExternalEvents(i).GetEvents(), resourcesMergingHelper);
-    }
-    //Add global objects resources
-    for (unsigned int j = 0;j<game.GetObjects().size();++j) //Add global objects resources
-        game.GetObjects()[j]->ExposeResources(resourcesMergingHelper);
+    //Add resources
+    game.ExposeResources(resourcesMergingHelper);
 
     //Compile all scene events to object files
     for (unsigned int i = 0;i<game.GetLayoutsCount();++i)

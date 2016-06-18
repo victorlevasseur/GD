@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Tiled Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
-Copyright (c) 2013-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2013-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef TILEDSPRITEOBJECT_H
 #define TILEDSPRITEOBJECT_H
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include <memory>
 class SFMLTextureWrapper;
 class RuntimeScene;
@@ -72,7 +72,7 @@ class GD_EXTENSION_API RuntimeTiledSpriteObject : public RuntimeObject
 {
 public :
 
-    RuntimeTiledSpriteObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeTiledSpriteObject(RuntimeScene & scene, const TiledSpriteObject & tiledSpriteObject);
     virtual ~RuntimeTiledSpriteObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeTiledSpriteObject(*this);}
 
@@ -113,8 +113,5 @@ private:
 
     std::shared_ptr<SFMLTextureWrapper> texture;
 };
-
-gd::Object * CreateTiledSpriteObject(gd::String name);
-RuntimeObject * CreateRuntimeTiledSpriteObject(RuntimeScene & scene, const gd::Object & object);
 
 #endif // TILEDSPRITEOBJECT_H

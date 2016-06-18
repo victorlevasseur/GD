@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -16,12 +16,12 @@
 #include "GDCore/Tools/Log.h"
 #include <wx/help.h>
 #include <wx/msgdlg.h>
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/PlatformDefinition/ObjectGroup.h"
+#include "GDCore/Project/ObjectGroup.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/CommonTools.h"
 #ifdef __WXMSW__
 #include <wx/msw/winundef.h>
@@ -232,5 +232,5 @@ void EditObjectGroup::OnDelObjetSelected(wxCommandEvent& event)
 
 void EditObjectGroup::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_group"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_group");
 }

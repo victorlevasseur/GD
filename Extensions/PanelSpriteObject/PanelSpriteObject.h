@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Panel Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
 This project is released under the MIT License.
 */
 
 #ifndef TILEDSPRITEOBJECT_H
 #define TILEDSPRITEOBJECT_H
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include <memory>
 class SFMLTextureWrapper;
 namespace gd { class ImageManager; }
@@ -61,13 +61,12 @@ public :
     float GetBottomMargin() const { return bottomMargin; };
     void SetBottomMargin(float newMargin) { bottomMargin = newMargin; };
 
-    bool IsSmooth() const { return smooth; };
-    void SetSmooth(bool enable) { smooth = enable; };
+    bool IsTiled() const { return tiled; };
+    void SetTiled(bool enable = true) { tiled = enable; };
 
     gd::String textureName;
 
 private:
-
     virtual void DoUnserializeFrom(gd::Project & project, const gd::SerializerElement & element);
     #if defined(GD_IDE_ONLY)
     virtual void DoSerializeTo(gd::SerializerElement & element) const;
@@ -81,7 +80,7 @@ private:
     float rightMargin;
     float bottomMargin;
 
-    bool smooth;
+    bool tiled;
 
     std::shared_ptr<SFMLTextureWrapper> texture;
 };
@@ -90,7 +89,7 @@ class GD_EXTENSION_API RuntimePanelSpriteObject : public RuntimeObject
 {
 public :
 
-    RuntimePanelSpriteObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimePanelSpriteObject(RuntimeScene & scene, const PanelSpriteObject & panelSpriteObject);
     virtual ~RuntimePanelSpriteObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimePanelSpriteObject(*this);}
 
@@ -138,13 +137,8 @@ private:
     float bottomMargin;
 
     float angle;
-    bool smooth;
 
     std::shared_ptr<SFMLTextureWrapper> texture;
 };
 
-RuntimeObject * CreateRuntimePanelSpriteObject(RuntimeScene & scene, const gd::Object & object);
-gd::Object * CreatePanelSpriteObject(gd::String name);
-
 #endif // TILEDSPRITEOBJECT_H
-

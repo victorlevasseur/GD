@@ -1,12 +1,12 @@
 /**
 
 GDevelop - Tiled Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "TiledSpriteObject.h"
 #include <iostream>
@@ -20,11 +20,11 @@ void DeclareTiledSpriteObjectExtension(gd::PlatformExtension & extension)
                               "Victor Levasseur and Florian Rival",
                               "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("TiledSprite",
+    gd::ObjectMetadata & obj = extension.AddObject<TiledSpriteObject>(
+               "TiledSprite",
                _("Tiled Sprite"),
                _("Displays an image repeated over an area"),
-               "CppPlatform/Extensions/TiledSpriteIcon.png",
-               &CreateTiledSpriteObject);
+               "CppPlatform/Extensions/TiledSpriteIcon.png");
 
     #if defined(GD_IDE_ONLY)
     obj.SetIncludeFile("TiledSpriteObject/TiledSpriteObject.h");
@@ -172,29 +172,34 @@ void DeclareTiledSpriteObjectExtension(gd::PlatformExtension & extension)
 /**
  * \brief This class declares information about the extension.
  */
-class Extension : public ExtensionBase
+class TiledSpriteObjectCppExtension : public ExtensionBase
 {
 public:
 
     /**
      * Constructor of an extension declares everything the extension contains: objects, actions, conditions and expressions.
      */
-    Extension()
+    TiledSpriteObjectCppExtension()
     {
         DeclareTiledSpriteObjectExtension(*this);
-        AddRuntimeObject(GetObjectMetadata("TiledSpriteObject::TiledSprite"),
-            "RuntimeTiledSpriteObject", CreateRuntimeTiledSpriteObject);
+        AddRuntimeObject<TiledSpriteObject, RuntimeTiledSpriteObject>(
+            GetObjectMetadata("TiledSpriteObject::TiledSprite"),
+            "RuntimeTiledSpriteObject");
 
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
     };
 };
 
-#if !defined(EMSCRIPTEN)
+#if defined(ANDROID)
+extern "C" ExtensionBase * CreateGDCppTiledSpriteObjectExtension() {
+    return new TiledSpriteObjectCppExtension;
+}
+#elif !defined(EMSCRIPTEN)
 /**
  * Used by GDevelop to create the extension class
  * -- Do not need to be modified. --
  */
 extern "C" ExtensionBase * GD_EXTENSION_API CreateGDExtension() {
-    return new Extension;
+    return new TiledSpriteObjectCppExtension;
 }
 #endif

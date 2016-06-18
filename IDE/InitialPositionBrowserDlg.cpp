@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "InitialPositionBrowserDlg.h"
@@ -10,8 +10,8 @@
 #include <wx/string.h>
 //*)
 #include <wx/imaglist.h>
-#include "GDCore/PlatformDefinition/InitialInstancesContainer.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
+#include "GDCore/Project/InitialInstancesContainer.h"
+#include "GDCore/Project/InitialInstance.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
 #include "GDCore/CommonTools.h"
 
@@ -87,7 +87,7 @@ public:
         editor.initialPositionsList->SetItemColumnImage(i, 1, instance.IsLocked() ? 1 : 0 );
         editor.initialPositionsList->SetItem(i, 2, gd::String::From(instance.GetX()));
         editor.initialPositionsList->SetItem(i, 3, gd::String::From(instance.GetY()));
-        editor.initialPositionsList->SetItem(i, 4, gd::String::From(instance.GetAngle())+"�");
+        editor.initialPositionsList->SetItem(i, 4, gd::String::From(instance.GetAngle())+u8"°");
         editor.initialPositionsList->SetItem(i, 5, gd::String::From(instance.GetZOrder()));
         editor.initialPositionsList->SetItemPtrData(i, wxPtrToUInt(&instance));
 

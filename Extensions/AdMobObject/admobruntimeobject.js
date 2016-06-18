@@ -1,11 +1,11 @@
 /**
 
 GDevelop - AdMob Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-if (typeof AdMob !== "undefined") 
+if (typeof AdMob !== "undefined")
     console.warn("AdMob plugin for Cordova is not installed - no ads will be displayed. Ensure you have installed com.google.cordova.admob or cordova-plugin-admobpro.");
 
 /**
@@ -20,8 +20,6 @@ if (typeof AdMob !== "undefined")
 gdjs.AdMobRuntimeObject = function(runtimeScene, objectData)
 {
     gdjs.RuntimeObject.call(this, runtimeScene, objectData);
-
-    this._runtimeScene = runtimeScene;
 
     this._androidBannerId = objectData.androidBannerId;
     this._androidInterstitialId = objectData.androidInterstitialId;
@@ -56,12 +54,12 @@ gdjs.AdMobRuntimeObject.getPlatformName = function() {
 };
 
 gdjs.AdMobRuntimeObject.prototype._onAdPresent = function(data) {
-    if (data.adType == 'interstitial') 
+    if (data.adType == 'interstitial')
         this._interstitialReady = false;
 };
 
 gdjs.AdMobRuntimeObject.prototype._onAdDismiss = function(data) {
-    if (data.adType == 'interstitial') 
+    if (data.adType == 'interstitial')
         this._interstitialReady = false;
 };
 
@@ -78,7 +76,7 @@ gdjs.AdMobRuntimeObject.prototype.createBanner = function() {
 
     var that = this;
     AdMob.createBanner({
-        adId: adId,
+        adId: adId || 'not-specified-xxx', //Avoid a crash by never letting the id empty.
         position: position,
         autoShow: true,
         overlap: this._overlap,
@@ -129,7 +127,7 @@ gdjs.AdMobRuntimeObject.prototype.prepareInterstitial = function(cb) {
 
     var that = this;
     AdMob.prepareInterstitial({
-        adId: adId,
+        adId: adId || 'not-specified-xxx', //Avoid a crash by never letting the id empty.
         autoShow: false
     }, function() {
         that._interstitialReady = true;
@@ -145,6 +143,7 @@ gdjs.AdMobRuntimeObject.prototype.isInterstitialReady = function() {
 };
 
 gdjs.AdMobRuntimeObject.prototype.onDeletedFromScene = function(runtimeScene) {
+    gdjs.RuntimeObject.prototype.onDeletedFromScene.call(this, runtimeScene);
     if (typeof AdMob === "undefined") return;
 
     document.removeEventListener('onAdPresent', this._onAdPresent, false);

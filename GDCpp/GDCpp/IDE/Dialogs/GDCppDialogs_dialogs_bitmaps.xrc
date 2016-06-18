@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+<resource xmlns="http://www.wxwidgets.org/wxxrc">
+  <!-- Handler Generation is ON -->
   <object class="wxBitmap" name="addobjet">../../../../Binaries/Output/Release_Windows/res/addobjet.png</object>
   <object class="wxBitmap" name="addvargicon">../../../../Binaries/Output/Release_Windows/res/addvargicon.png</object>
   <object class="wxBitmap" name="addvaricon">../../../../Binaries/Output/Release_Windows/res/addvaricon.png</object>

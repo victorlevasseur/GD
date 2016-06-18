@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Path Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef SCENEPATHDATAS_H
 #define SCENEPATHDATAS_H
 
-#include "GDCpp/BehaviorsSharedData.h"
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/Project/BehaviorsSharedData.h"
+#include "GDCpp/Runtime/String.h"
 #include "RuntimeScenePathDatas.h"
 #include <SFML/System/Vector2.hpp>
 #include <map>

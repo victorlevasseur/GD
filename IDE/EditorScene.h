@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #ifndef EDITORSCENE_H
@@ -46,6 +46,11 @@ public:
      * Return the layout edited by the editor
      */
     gd::Layout & GetLayout() { return layout; };
+
+    /**
+     * Return the project edited by the editor
+     */
+    gd::Project & GetProject() { return project; };
 
     /**
      * Can be called by parent so as to refresh ribbon for this editor.

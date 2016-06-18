@@ -1,7 +1,7 @@
 /*
 
 GDevelop - AdvancedXML Extension
-Copyright (c) 2012-2015 Victor Levasseur
+Copyright (c) 2012-2016 Victor Levasseur
 This project is released under the MIT License.
 */
 /**
@@ -9,7 +9,7 @@ This project is released under the MIT License.
  * Florian Rival (Minor changes and adaptations)
  */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "GDCore/Tools/Localization.h"
 #include "AdvancedXMLRefManager.h"

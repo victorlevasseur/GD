@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Box 3D Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -13,23 +13,23 @@ This project is released under the MIT License.
 #include "Box3DObject.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "GDCpp/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Polygon2d.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Polygon2d.h"
 #include "GDCore/Serialization/SerializerElement.h"
 #include "GDCore/Tools/Localization.h"
 
 #if defined(GD_IDE_ONLY)
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "Box3DObjectEditor.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #endif
 
 using namespace std;
@@ -196,14 +196,13 @@ bool RuntimeBox3DObject::Draw( sf::RenderTarget& window )
     return true;
 }
 
-RuntimeBox3DObject::RuntimeBox3DObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object),
+RuntimeBox3DObject::RuntimeBox3DObject(RuntimeScene & scene, const Box3DObject & box3DObject) :
+    RuntimeObject(scene, box3DObject),
     zPosition(0),
     yaw(0),
     pitch(0),
     roll(0)
 {
-    const Box3DObject & box3DObject = static_cast<const Box3DObject&>(object);
 
     SetWidth(box3DObject.GetWidth());
     SetHeight(box3DObject.GetHeight());
@@ -413,13 +412,3 @@ std::size_t RuntimeBox3DObject::GetNumberOfProperties() const
     return 7;
 }
 #endif
-
-RuntimeObject * CreateRuntimeBox3DObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeBox3DObject(scene, object);
-}
-
-gd::Object * CreateBox3DObject(gd::String name)
-{
-    return new Box3DObject(name);
-}

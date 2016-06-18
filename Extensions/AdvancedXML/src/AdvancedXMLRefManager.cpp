@@ -1,7 +1,7 @@
 /*
 
 GDevelop - AdvancedXML Extension
-Copyright (c) 2012-2015 Victor Levasseur
+Copyright (c) 2012-2016 Victor Levasseur
 This project is released under the MIT License.
 */
 
@@ -10,8 +10,8 @@ This project is released under the MIT License.
 #include <algorithm>
 #include <vector>
 
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/tinyxml/tinyxml.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/TinyXml/tinyxml.h"
 
 namespace AdvancedXML
 {

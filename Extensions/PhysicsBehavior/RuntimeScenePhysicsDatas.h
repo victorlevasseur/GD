@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Physics Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -10,7 +10,7 @@ This project is released under the MIT License.
 
 class b2World;
 class b2Body;
-#include "GDCpp/BehaviorsRuntimeSharedData.h"
+#include "GDCpp/Runtime/BehaviorsRuntimeSharedData.h"
 class ScenePhysicsDatas;
 class ContactListener;
 

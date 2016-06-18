@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -19,13 +19,13 @@
 #include <wx/textdlg.h>
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/IDE/EventsVariablesFinder.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/VariablesContainer.h"
-#include "GDCore/PlatformDefinition/Variable.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/IDE/Events/EventsVariablesFinder.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/VariablesContainer.h"
+#include "GDCore/Project/Variable.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
 
@@ -390,7 +390,7 @@ void ChooseVariableDialog::OnRightClick(wxTreeListEvent& event)
  */
 void ChooseVariableDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/global_variables"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/global_variables");
 }
 
 /**
@@ -466,11 +466,18 @@ void ChooseVariableDialog::OnEditValueSelected(wxCommandEvent& event)
     UpdateSelectedAndParentVariable();
     if ( !selectedVariable || selectedVariable->IsStructure() ) return;
 
-    gd::String value = wxGetTextFromUser(_("Enter the initial value of the variable"), _("Initial value"), selectedVariable->GetString());
-    selectedVariable->SetString(value);
-    RefreshVariable(variablesList->GetSelection(), selectedVariableName, *selectedVariable);
+    wxTextEntryDialog editDialog(this,
+    	_("Enter the initial value of the variable"), _("Initial value"),
+    	selectedVariable->GetString(), wxTextEntryDialogStyle | wxTE_MULTILINE);
 
-    modificationCount++;
+    if (editDialog.ShowModal() == wxID_OK)
+    {
+    	gd::String value = editDialog.GetValue();
+    	selectedVariable->SetString(value);
+
+    	RefreshVariable(variablesList->GetSelection(), selectedVariableName, *selectedVariable);
+    	modificationCount++;
+    }
 }
 
 void ChooseVariableDialog::OnRenameSelected(wxCommandEvent& event)

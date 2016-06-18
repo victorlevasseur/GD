@@ -1,13 +1,13 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
 #include "InitialInstancesPropgridHelper.h"
 #include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
 #include "GDCore/IDE/Dialogs/ChooseVariableDialog.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
+#include "GDCore/Project/InitialInstance.h"
 #include "GDCore/CommonTools.h"
 #include <wx/propgrid/propgrid.h>
 #include <wx/settings.h>

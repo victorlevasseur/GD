@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -34,12 +34,13 @@
 
 #include "MainFrame.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCore/Project/ExternalLayout.h"
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasAssociatedEditor.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/ProjectFileWriter.h"
 #include "GDCore/IDE/ProjectExporter.h"
 #include "GDCore/IDE/PlatformManager.h"
@@ -58,6 +59,7 @@
 #include "BuildToolsPnl.h"
 #include "Preferences.h"
 #include "ExternalEventsEditor.h"
+#include "Dialogs/ExternalLayoutEditor.h"
 #include "mp3ogg.h"
 #include "ImportImage.h"
 #include "Dialogs/StartHerePage.h"
@@ -124,15 +126,14 @@ END_EVENT_TABLE()
  */
 MainFrame::MainFrame( wxWindow* parent ) :
     projectCurrentlyEdited(0),
+    baseTitle("GDevelop"),
     ribbon(NULL),
     ribbonFileBt(NULL),
     ribbonSceneEditorButtonBar(NULL),
     buildToolsPnl(NULL),
     mainFrameWrapper(NULL, NULL, this, NULL, NULL, NULL, &scenesLockingShortcuts, wxGetCwd()),
-    startPage(NULL),
     projectManager(NULL)
 {
-
     //(*Initialize(MainFrame)
     wxBoxSizer* ribbonSizer;
     wxMenuItem* MenuItem1;
@@ -296,18 +297,27 @@ MainFrame::MainFrame( wxWindow* parent ) :
     helpMenu.Delete(MenuItem21); //(useful when GD is distributed on a system managing updates by itself).
     #endif
 
-    //Update the file menu with exporting items
-    for (std::size_t i = 0;i<gd::PlatformManager::Get()->GetAllPlatforms().size();++i)
-    {
-        std::shared_ptr<gd::ProjectExporter> exporter = gd::PlatformManager::Get()->GetAllPlatforms()[i]->GetProjectExporter();
-        if ( exporter != std::shared_ptr<gd::ProjectExporter>()
-             && !exporter->GetProjectExportButtonLabel().empty() )
-        {
-            long id = wxNewId();
+    editorsManager.SetNotebook(editorsNotebook);
+    editorsManager.ShouldDisplayPrefix([this]() {
+        return games.size() > 1;
+    });
 
-            fileMenu.Insert(11, id, exporter->GetProjectExportButtonLabel());
-            Connect( id, wxEVT_COMMAND_MENU_SELECTED, ( wxObjectEventFunction )&MainFrame::OnMenuCompilationSelected );
-            idToPlatformExportMenuMap[id] = gd::PlatformManager::Get()->GetAllPlatforms()[i].get();
+    //Update the file menu with exporting items
+    for ( std::size_t i = 0; i < gd::PlatformManager::Get()->GetAllPlatforms().size(); ++i )
+    {
+        auto exporters = gd::PlatformManager::Get()->GetAllPlatforms()[i]->GetProjectExporters();
+        for( std::size_t j = 0; j < exporters.size(); ++j )
+        {
+            auto exporter = exporters[j];
+            if ( exporter != std::shared_ptr<gd::ProjectExporter>()
+                 && !exporter->GetProjectExportButtonLabel().empty() )
+            {
+                long id = wxNewId();
+
+                fileMenu.Insert(11, id, exporter->GetProjectExportButtonLabel());
+                Connect( id, wxEVT_COMMAND_MENU_SELECTED, ( wxObjectEventFunction )&MainFrame::OnMenuCompilationSelected );
+                idToPlatformExportMenuMap[id] = std::make_pair(gd::PlatformManager::Get()->GetAllPlatforms()[i].get(), j);
+            }
         }
     }
 
@@ -354,7 +364,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     static int widths[2] = { -1, 175 };
     statusBar->SetFieldsCount(2);
     statusBar->SetStatusWidths(2, widths);
-    statusBar->SetStatusText( "2008-2015", 1 );
+    statusBar->SetStatusText( "2008-2016", 1 );
     SetStatusBar(statusBar);
 
     std::vector<wxWindow*> controlsToBeDisabledOnPreview; //Used below:
@@ -446,8 +456,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     RealizeRibbonCustomButtons();
 
     //Create start page
-    startPage = new StartHerePage(editorsNotebook, *this);
-    editorsNotebook->AddPage(startPage, _("Start page"));
+    editorsManager.AddPage(new StartHerePage(editorsNotebook, *this));
 
     //Create project manager
     projectManager = new ProjectManager(this, *this);
@@ -517,26 +526,28 @@ MainFrame::~MainFrame()
     m_mgr.UnInit();
 }
 
-/** Change current project
-  */
+void MainFrame::UpdateTitle()
+{
+    std::shared_ptr<gd::Project> project = GetCurrentGame();
+    if (project == std::shared_ptr<gd::Project>())
+    {
+        SetTitle(baseTitle);
+        return;
+    }
+
+    SetTitle(baseTitle + " - [" + project->GetName() + "] "+project->GetProjectFile());
+}
+
 void MainFrame::SetCurrentGame(std::size_t i, bool refreshProjectManager)
 {
     projectCurrentlyEdited = i;
     if ( i >= games.size())
-    {
-        wxString GD = "GDevelop";
-        SetTitle( GD );
         projectPropertiesPnl->SetProject(NULL); //Update editors displaying current project properties
-    }
     else
-    {
-        wxString GD = "GDevelop";
-        SetTitle( GD + " - [" + games[i]->GetName() + "] "+games[i]->GetProjectFile() );
         projectPropertiesPnl->SetProject(games[i].get()); //Update editors displaying current project properties
-    }
 
     if ( refreshProjectManager ) projectManager->Refresh();
-
+    UpdateTitle();
     return;
 }
 
@@ -580,17 +591,10 @@ void MainFrame::OnRibbonCppToolsClicked(wxRibbonButtonBarEvent& evt)
  */
 void MainFrame::OnRibbonStartPageClicked(wxRibbonButtonBarEvent& evt)
 {
-    for (std::size_t i = 0;i<editorsNotebook->GetPageCount();++i)
-    {
-    	if ( dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(i)) != NULL )
-    	{
-    	    editorsNotebook->SetSelection(i);
-    	    return;
-    	}
-    }
+    if (editorsManager.SelectStartHerePage())
+        return;
 
-    startPage = new StartHerePage(this, *this);
-    editorsNotebook->AddPage(startPage, _("Start page"), true);
+    editorsManager.AddPage(new StartHerePage(this, *this), "", true);
 }
 
 void MainFrame::UpdateOpenedProjectsLogFile()
@@ -676,6 +680,11 @@ void MainFrame::OnNotebook1PageChanged(wxAuiNotebookEvent& event)
     {
         externalEventsEditorPtr->ForceRefreshRibbonAndConnect();
         LogFileManager::Get()->WriteToLogFile("Switched to the editor of external events \""+externalEventsEditorPtr->events.GetName()+"\"");
+    }
+    else if ( ExternalLayoutEditor * externalLayoutEditorPtr = dynamic_cast<ExternalLayoutEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
+    {
+        externalLayoutEditorPtr->ForceRefreshRibbonAndConnect();
+        LogFileManager::Get()->WriteToLogFile("Switched to the editor of external layout \""+externalLayoutEditorPtr->GetExternalLayout().GetName()+"\"");
     }
 }
 
@@ -767,9 +776,7 @@ void MainFrame::RealizeRibbonCustomButtons()
 
 void MainFrame::OneditorsNotebookPageClose(wxAuiNotebookEvent& event)
 {
-    if ( dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(event.GetSelection())) != NULL )
-        startPage = NULL;
-    else if ( CodeEditor * editor = dynamic_cast<CodeEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
+    if ( CodeEditor * editor = dynamic_cast<CodeEditor*>(editorsNotebook->GetPage(event.GetSelection())) )
     {
         if ( !editor->QueryClose() )
             event.Veto();
@@ -925,7 +932,7 @@ void MainFrame::OnRibbonFileBtClick(wxMouseEvent& event)
 {
     if ( scenesLockingShortcuts.empty() )
     {
-        for(std::map<long, gd::Platform*>::const_iterator it = idToPlatformExportMenuMap.begin();it != idToPlatformExportMenuMap.end();++it)
+        for ( auto it = idToPlatformExportMenuMap.cbegin(); it != idToPlatformExportMenuMap.cend(); ++it )
         {
             fileMenu.Enable(it->first, false);
         }
@@ -933,9 +940,9 @@ void MainFrame::OnRibbonFileBtClick(wxMouseEvent& event)
         if ( CurrentGameIsValid() )
         {
             const std::vector<gd::Platform*> & usedPlaftorms = GetCurrentGame()->GetUsedPlatforms();
-            for(std::map<long, gd::Platform*>::const_iterator it = idToPlatformExportMenuMap.begin();it != idToPlatformExportMenuMap.end();++it)
+            for ( auto it = idToPlatformExportMenuMap.cbegin(); it != idToPlatformExportMenuMap.end(); ++it )
             {
-                if ( std::find(usedPlaftorms.begin(), usedPlaftorms.end(), it->second) != usedPlaftorms.end() )
+                if ( std::find(usedPlaftorms.begin(), usedPlaftorms.end(), it->second.first) != usedPlaftorms.end() )
                     fileMenu.Enable(it->first, true);
             }
         }
@@ -978,7 +985,21 @@ void MainFrame::OnMenuPrefSelected( wxCommandEvent& event )
 
 void MainFrame::RefreshNews()
 {
-    startPage->RefreshNewsUsingUpdateChecker();
+    if (GetStartPage()) GetStartPage()->RefreshNewsUsingUpdateChecker();
+}
+
+StartHerePage* MainFrame::GetStartPage()
+{
+    int page = editorsManager.GetPageOfStartHerePage();
+    if (page != -1)
+    {
+        if (StartHerePage* startPage = dynamic_cast<StartHerePage*>(editorsNotebook->GetPage(page)))
+        {
+            return startPage;
+        }
+    }
+
+    return NULL;
 }
 
 void MainFrame::OnMenuItem23Selected(wxCommandEvent& event)

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -8,11 +8,11 @@
 #include <wx/dcmemory.h>
 #endif
 #include "CommentEvent.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
 #include "GDCore/Serialization/SerializerElement.h"
 #include "GDCore/IDE/Dialogs/EditComment.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
 #include "GDCore/CommonTools.h"
 
 using namespace std;
@@ -87,7 +87,7 @@ void CommentEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::Event
     unsigned int text2Height = renderingHelper->GetHTMLRenderer().GetTotalHeight();
 
     //Prepare background
-    dc.SetBrush(wxBrush(wxColour(r, v, b), wxTRANSPARENT));
+    dc.SetBrush(wxBrush(wxColour(r, v, b), wxBRUSHSTYLE_TRANSPARENT));
     dc.SetPen(wxPen(wxColour(r/2, v/2, b/2), 1));
 
     //Draw the background

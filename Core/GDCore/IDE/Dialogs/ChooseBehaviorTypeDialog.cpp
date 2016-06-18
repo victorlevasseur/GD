@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -15,15 +15,15 @@
 #include <wx/config.h>
 #include <wx/msgdlg.h>
 #include <wx/settings.h>
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include <algorithm>
 #include <memory>
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Behavior.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Behavior.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
 #include "GDCore/IDE/Dialogs/ChooseBehaviorTypeDialog.h"
 #include "GDCore/Tools/HelpFileAccess.h"
@@ -275,7 +275,7 @@ void ChooseBehaviorTypeDialog::OnResize(wxSizeEvent& event)
 
 void ChooseBehaviorTypeDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/game_develop/documentation/manual/edit_object")); //TODO: Behavior help page
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_object"); //TODO: Behavior help page
 }
 
 void ChooseBehaviorTypeDialog::OnplatformChoiceSelect(wxCommandEvent& event)

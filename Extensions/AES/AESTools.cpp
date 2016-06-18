@@ -1,13 +1,13 @@
 /**
 
 GDevelop - AES Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #include "AESTools.h"
 
-#include "GDCpp/Tools/AES.h"
+#include "GDCpp/Runtime/Tools/AES.h"
 #include <iostream>
 #include <fstream>
 #include <string>

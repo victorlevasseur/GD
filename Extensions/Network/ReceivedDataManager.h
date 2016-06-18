@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Network Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,7 +9,7 @@ This project is released under the MIT License.
 #define RECEIVEDDATAMANAGER_H
 #include <map>
 #include <string>
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 
 /**
  * Singleton where is stocked receveid data from other peers.

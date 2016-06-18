@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -12,17 +12,19 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <functional>
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <wx/menu.h>
 #include <wx/ribbon/buttonbar.h>
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
-#include "GDCore/PlatformDefinition/LayoutEditorPreviewer.h"
+#include "GDCore/Project/LayoutEditorPreviewer.h"
 #include "GDCore/String.h"
 namespace gd { class MainFrameWrapper; }
 namespace gd { class InitialInstancesContainer; }
 namespace gd { class InitialInstance; }
+namespace gd { class ExternalLayout; }
 namespace gd { class LayoutEditorCanvasAssociatedEditor; }
 namespace gd { class Project; }
 namespace gd { class Layout; }
@@ -70,12 +72,25 @@ class GD_CORE_API LayoutEditorCanvas: public wxPanel, public sf::RenderWindow
     friend class InstancesRenderer;
 public:
 
+    /**
+     * \brief Construct a new layout editor.
+     *
+     * \param parent The wxWidgets parent window
+     * \param project The project owning the layout
+     * \param layout The layout being edited
+     * \param instances The instances to edit: most of the time, they are either the
+     * layout instances or the external layout instances.
+     * \param options The options of the editor
+     * \param mainFrameWrapper Wrapper to let the editor access to the main frame.
+     * \param externalLayout The external layout being edited, or NULL.
+     */
     LayoutEditorCanvas(wxWindow* parent,
                        gd::Project & project,
                        gd::Layout & layout,
                        gd::InitialInstancesContainer & instances,
                        LayoutEditorCanvasOptions & options,
-                       gd::MainFrameWrapper & mainFrameWrapper);
+                       gd::MainFrameWrapper & mainFrameWrapper,
+                       gd::ExternalLayout * externalLayout = NULL);
     virtual ~LayoutEditorCanvas();
 
     /**
@@ -92,6 +107,12 @@ public:
      * \brief Return a reference to the scene being edited inside the editor.
      */
     gd::Layout & GetLayout() { return layout; }
+
+    /**
+     * \brief Return a pointer to the external layout being edited, if any, or
+     * NULL otherwise.
+     */
+    gd::ExternalLayout * GetExternalLayout() { return externalLayout; }
 
     /**
      * \brief Provide an access to the main frame wrapper that can be needed by some previewers.
@@ -158,6 +179,22 @@ public:
      * \see CreateEditionRibbonTools
      */
     void RecreateRibbonToolbar();
+
+    /**
+     * Set a function to be called when the ribbon button bar containing the layout editor tools
+     * is updated.
+     */
+    void OnRibbonButtonBarUpdated(std::function<void(wxRibbonButtonBar *)> cb) { onRibbonButtonBarUpdatedCb = cb; };
+
+    /**
+     * Get the context menu used for objects.
+     */
+    wxMenu & GetContextMenu() { return contextMenu; };
+
+    /**
+     * Get the context menu used when no object is selected.
+     */
+    wxMenu & GetNoObjectContextMenu() { return noObjectContextMenu; };
 
     /**
      * The editors' parent panel can forward the event of the scrollbars to these methods.
@@ -459,6 +496,7 @@ protected:
 
     gd::Project & project; ///< The project owning the layout
     gd::Layout & layout; ///< The layout being edited or used to edit the instances
+    gd::ExternalLayout * externalLayout; ///< The external layout being edited, if any.
     gd::InitialInstancesContainer & instances; ///< The initial instances of objects being edited
     LayoutEditorCanvasOptions & options;
     gd::MainFrameWrapper & mainFrameWrapper;
@@ -514,6 +552,8 @@ protected:
     wxMenu zoomMenu;
     wxMenu platformsMenu;
     static wxRibbonButtonBar * modeRibbonBar;
+
+    std::function<void(wxRibbonButtonBar *)> onRibbonButtonBarUpdatedCb;
 
     DECLARE_EVENT_TABLE()
     friend class InstancesInAreaPicker;

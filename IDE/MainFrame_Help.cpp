@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -17,7 +17,7 @@
  */
 void MainFrame::OnMenuAideSelected( wxCommandEvent& event )
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation"));
+    gd::HelpFileAccess::Get()->OpenPage("gdevelop/documentation");
 }
 
 /**
@@ -25,7 +25,7 @@ void MainFrame::OnMenuAideSelected( wxCommandEvent& event )
  */
 void MainFrame::OnMenuTutoSelected(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/tutorials/beginnertutorial"));
+    gd::HelpFileAccess::Get()->OpenPage("gdevelop/tutorials/beginnertutorial");
 }
 
 /**
@@ -33,6 +33,9 @@ void MainFrame::OnMenuTutoSelected(wxCommandEvent& event)
  */
 void MainFrame::OnAbout( wxCommandEvent& event )
 {
+    //Check if the about box was overriden.
+    if (onAboutCb && onAboutCb()) return;
+
     Credits Dialog( this );
     Dialog.ShowModal();
 }

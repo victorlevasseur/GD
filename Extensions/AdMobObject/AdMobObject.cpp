@@ -1,30 +1,27 @@
 /**
 
 GDevelop - AdMob Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #include <SFML/Graphics.hpp>
-#include "GDCpp/Object.h"
+#include "GDCpp/Runtime/Project/Object.h"
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/CommonTools.h"
-#include "AdMobObject.h"
-
-#if defined(GD_IDE_ONLY)
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
-#endif
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "AdMobObject.h"
 
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
 #include <wx/bitmap.h>
-#endif
 
 sf::Texture AdMobObject::edittimeIconImage;
 sf::Sprite AdMobObject::edittimeIcon;
+#endif
 
 AdMobObject::AdMobObject(gd::String name_) :
     Object(name_),
@@ -45,7 +42,7 @@ std::map<gd::String, gd::PropertyDescriptor> AdMobObject::GetProperties(gd::Proj
     properties[_("Overlap game")].SetValue(overlap ? "true" : "false").SetType("Boolean");
     properties[_("Show banner on startup")].SetValue(showOnStartup ? "true" : "false").SetType("Boolean");
     properties[_("Banner position")].SetValue(
-        position == "Top" ? _("Top of the screen") : _("Bottom of the screen"))
+        position == "Bottom" ? _("Bottom of the screen") : _("Top of the screen"))
         .SetType("Choice")
         .AddExtraInfo(_("Top of the screen"))
         .AddExtraInfo(_("Bottom of the screen"));
@@ -79,7 +76,6 @@ void AdMobObject::DoUnserializeFrom(gd::Project & project, const gd::SerializerE
     showOnStartup = element.GetBoolAttribute("showOnStartup");
 }
 
-#if defined(GD_IDE_ONLY)
 void AdMobObject::DoSerializeTo(gd::SerializerElement & element) const
 {
     element.SetAttribute("androidBannerId", androidBannerId);
@@ -92,6 +88,7 @@ void AdMobObject::DoSerializeTo(gd::SerializerElement & element) const
     element.SetAttribute("showOnStartup", showOnStartup);
 }
 
+#if !defined(GD_NO_WX_GUI)
 void AdMobObject::DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarget & renderTarget, gd::Project & project, gd::Layout & layout)
 {
     edittimeIcon.setPosition(instance.GetX(), instance.GetY());
@@ -106,9 +103,7 @@ void AdMobObject::LoadEdittimeIcon()
 
 bool AdMobObject::GenerateThumbnail(const gd::Project & project, wxBitmap & thumbnail) const
 {
-#if !defined(GD_NO_WX_GUI)
     thumbnail = wxBitmap("JsPlatform/Extensions/admobicon24.png", wxBITMAP_TYPE_ANY);
-#endif
 
     return true;
 }

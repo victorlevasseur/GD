@@ -1,14 +1,14 @@
 /**
 
 GDevelop - AES Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef AESACTIONS_H_INCLUDED
 #define AESACTIONS_H_INCLUDED
 
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 
 namespace GDpriv
 {

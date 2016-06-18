@@ -13,17 +13,17 @@ AllowNoIcons=yes
 LicenseFile=..\Output\Release_Windows\License-en.rtf
 InfoBeforeFile=..\Output\Release_Windows\Informations-en.rtf
 OutputDir=.\
-OutputBaseFilename=gd4083
+OutputBaseFilename=gd4090
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=..\Output\Release_Windows\res\icon.ico
 VersionInfoVersion=4.0
 WizardImageFile=Setup bitmap\wizbmp.bmp
 WizardSmallImageFile=Setup bitmap/smallicon.bmp
-AppCopyright=2008-2015 Florian Rival
+AppCopyright=2008-2016 Florian Rival
 VersionInfoCompany=Florian Rival
 VersionInfoDescription=GDevelop setup
-VersionInfoCopyright=2008-2015 Florian Rival
+VersionInfoCopyright=2008-2016 Florian Rival
 VersionInfoProductName=GDevelop
 VersionInfoProductVersion=4.0
 
@@ -36,7 +36,9 @@ Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl";
 Name: "german"; MessagesFile: "compiler:Languages\German.isl";
 Name: "chinese"; MessagesFile: "..\Packaging\innosetup-languages\ChineseSimplified.isl";
 Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl";
+Name: "finnish"; MessagesFile: "compiler:Languages\Finnish.isl";
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl";
+Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl";
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags:
@@ -45,11 +47,11 @@ Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription
 [Components]
 Name: "main"; Description: "GDevelop"; Types: full compact custom; Flags: fixed
 Name: "example"; Description: "Exemples"; Types: full custom; Languages: french
-Name: "example"; Description: "Examples"; Types: full custom; Languages: english russian
+Name: "example"; Description: "Examples"; Types: full custom; Languages: english russian italian polish chinese dutch finnish
 Name: "example"; Description: "Ejemplos"; Types: full custom; Languages: spanish
 Name: "res"; Description: "Ressources (Images, sons...)"; Types: full custom; Languages: french
-Name: "res"; Description: "Resources (images, sounds...)"; Types: full custom; Languages: english russian italian polish chinese
-Name: "res"; Description: "Recursos (imágenes, sonidos ...)"; Types: full custom; Languages: spanish
+Name: "res"; Description: "Resources (images, sounds...)"; Types: full custom; Languages: english russian italian polish chinese dutch finnish
+Name: "res"; Description: "Recursos (imï¿½genes, sonidos ...)"; Types: full custom; Languages: spanish
 
 [Files]
 Source: ..\Output\Release_Windows\GDIDE.exe; DestDir: {app}; Flags: ignoreversion
@@ -72,6 +74,8 @@ Source: ..\Output\Release_Windows\SelectLanguage-pt.cfg; DestDir: {userdocs}\..\
 Source: ..\Output\Release_Windows\SelectLanguage-pl.cfg; DestDir: {userdocs}\..\.GDevelop; Flags: ignoreversion createallsubdirs recursesubdirs; DestName: SelectLanguage.cfg; Languages: polish ; Components: main
 Source: ..\Output\Release_Windows\SelectLanguage-zh.cfg; DestDir: {userdocs}\..\.GDevelop; Flags: ignoreversion createallsubdirs recursesubdirs; DestName: SelectLanguage.cfg; Languages: chinese ; Components: main
 Source: ..\Output\Release_Windows\SelectLanguage-it.cfg; DestDir: {userdocs}\..\.GDevelop; Flags: ignoreversion createallsubdirs recursesubdirs; DestName: SelectLanguage.cfg; Languages: italian ; Components: main
+Source: ..\Output\Release_Windows\SelectLanguage-nl.cfg; DestDir: {userdocs}\..\.GDevelop; Flags: ignoreversion createallsubdirs recursesubdirs; DestName: SelectLanguage.cfg; Languages: dutch ; Components: main
+Source: ..\Output\Release_Windows\SelectLanguage-fi.cfg; DestDir: {userdocs}\..\.GDevelop; Flags: ignoreversion createallsubdirs recursesubdirs; DestName: SelectLanguage.cfg; Languages: finnish ; Components: main
 
 [Icons]
 Name: {group}\GDevelop; Filename: {app}\GDIDE.exe; WorkingDir: {app}

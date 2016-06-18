@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -15,11 +15,11 @@
 #include <iostream>
 #include <wx/textdlg.h>
 #include <wx/dcbuffer.h>
-#include "GDCpp/Events/CodeCompilationHelpers.h"
-#include "GDCpp/ProfileEvent.h"
+#include "GDCpp/IDE/CodeCompilationHelpers.h"
+#include "GDCpp/Events/Builtin/ProfileEvent.h"
 #include "GDCpp/IDE/Dialogs/CppLayoutPreviewer.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/CppPlatform.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Extensions/CppPlatform.h"
 
 using namespace std;
 
@@ -195,7 +195,7 @@ void ProfileDlg::OnratioGraphicsPaint(wxPaintEvent& event)
     dc.SetBackgroundMode( wxBG_STYLE_COLOUR );
     wxColour backgroundColor( wxColour( 250, 250, 250 ) );
     dc.SetBackground( backgroundColor );
-    dc.SetFont( wxFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL ) );
+    dc.SetFont( wxFont( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL ) );
     dc.SetTextForeground( wxColour( 0, 0, 0 ) );
 
     //Background
@@ -226,7 +226,7 @@ void ProfileDlg::OnratioGraphicsPaint(wxPaintEvent& event)
                                      static_cast<double>(ratioGraphics->GetSize().y)-static_cast<double>(totalTimeData[i])/static_cast<double>(maximumTime)*static_cast<double>(ratioGraphics->GetSize().y)));
         points.push_back(wxPoint(points.back().x, ratioGraphics->GetSize().y));
 
-        dc.SetBrush( wxBrush( wxColour(255, 209, 12), wxSOLID ) );
+        dc.SetBrush( wxBrush( wxColour(255, 209, 12), wxBRUSHSTYLE_SOLID ) );
         dc.SetPen(wxPen(wxColour( 255, 137, 12 )));
         if ( !points.empty() ) dc.DrawPolygon(points.size(), &points[0]);
     }
@@ -243,7 +243,7 @@ void ProfileDlg::OnratioGraphicsPaint(wxPaintEvent& event)
                                      static_cast<double>(ratioGraphics->GetSize().y)-static_cast<double>(eventsData[i])/static_cast<double>(maximumTime)*static_cast<double>(ratioGraphics->GetSize().y)));
         points.push_back(wxPoint(points.back().x, ratioGraphics->GetSize().y));
 
-        dc.SetBrush( wxBrush( wxColour(116, 132, 255), wxSOLID ) );
+        dc.SetBrush( wxBrush( wxColour(116, 132, 255), wxBRUSHSTYLE_SOLID ) );
         dc.SetPen(wxPen(wxColour( 77, 88, 168 )));
         if ( !points.empty() ) dc.DrawPolygon(points.size(), &points[0]);
     }

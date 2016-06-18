@@ -1,12 +1,12 @@
 /**
 
 GDevelop - TextEntry Object Extension
-Copyright (c) 2011-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2011-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Version.h"
 
@@ -34,7 +34,10 @@ public:
 
         DeclareTextEntryObjectExtension(*this);
 
-        GetObjectMetadata("TextEntryObject::TextEntry").SetIncludeFile("TextEntryObject/textentryruntimeobject.js");
+        GetObjectMetadata("TextEntryObject::TextEntry")
+            .SetIncludeFile("TextEntryObject/textentryruntimeobject.js")
+            .AddIncludeFile("TextEntryObject/textentryruntimeobject-pixi-renderer.js")
+            .AddIncludeFile("TextEntryObject/textentryruntimeobject-cocos-renderer.js");
 
         GetAllActionsForObject("TextEntryObject::TextEntry")["TextEntryObject::String"].SetFunctionName("setString").SetGetter("getString");
         GetAllConditionsForObject("TextEntryObject::TextEntry")["TextEntryObject::String"].SetFunctionName("getString");

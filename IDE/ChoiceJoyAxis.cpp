@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -14,9 +14,9 @@
 //*)
 #include <string>
 #include <vector>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/IDE/Dialogs/EditStrExpressionDialog.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 
@@ -145,5 +145,5 @@ void ChoiceJoyAxis::OnannulerBtClick(wxCommandEvent& event)
 
 void ChoiceJoyAxis::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/events_editor/parameters");
 }

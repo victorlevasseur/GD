@@ -1,6 +1,6 @@
 /*
  * GDevelop JS Platform
- * Copyright 2013-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2013-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -85,11 +85,11 @@ gdjs.InputManager.prototype.wasKeyReleased = function(keyCode) {
  * @method anyKeyPressed
  */
 gdjs.InputManager.prototype.anyKeyPressed = function() {
-    var allKeys = this._pressedKeys.entries();
-
-    for(var i = 0, len = allKeys.length;i < len;++i) {
-        if (allKeys[i][1]) {
-            return true;
+    for(var keyCode in this._pressedKeys.items) {
+        if (this._pressedKeys.items.hasOwnProperty(keyCode)) {
+            if (this._pressedKeys.items[keyCode]) {
+                return true;
+            }
         }
     }
 
@@ -211,17 +211,21 @@ gdjs.InputManager.prototype.getTouchY = function(identifier) {
 };
 
 /**
- * Return an array containing the identifiers of all touches.
+ * Update and return the array containing the identifiers of all touches.
  *
  * @method getAllTouchIdentifiers
  */
 gdjs.InputManager.prototype.getAllTouchIdentifiers = function() {
-    var touchIds = this._touches.keys();
-    for(var i = 0;i<touchIds.length;++i) {
-        touchIds[i] = parseInt(touchIds[i], 10);
+    gdjs.InputManager._allTouchIds = gdjs.InputManager._allTouchIds || [];
+    gdjs.InputManager._allTouchIds.length = 0;
+
+    for(var id in this._touches.items) {
+        if (this._touches.items.hasOwnProperty(id)) {
+            gdjs.InputManager._allTouchIds.push(parseInt(id, 10));
+        }
     }
 
-    return touchIds;
+    return gdjs.InputManager._allTouchIds;
 };
 
 gdjs.InputManager.prototype.onTouchStart = function(identifier, x, y) {
@@ -287,16 +291,17 @@ gdjs.InputManager.prototype.touchSimulateMouse = function(enable) {
  * Notify the input manager that the frame ended, so anything that last
  * only for one frame (started/ended touches) should be reset.
  *
- * This method should be called in the game loop (see gdjs.RuntimeGame.startStandardGameLoop).
+ * This method should be called in the game loop (see gdjs.RuntimeGame.startGameLoop).
  * @method onFrameEnded
  */
 gdjs.InputManager.prototype.onFrameEnded = function() {
     //Only clear the ended touches at the end of the frame.
-    var identifiers = this._touches.keys();
-    for(var i = 0;i<identifiers.length;++i) {
-        var touch = this._touches.get(identifiers[i]);
-        if(touch.justEnded) {
-            this._touches.remove(identifiers[i]);
+    for(var id in this._touches.items) {
+        if (this._touches.items.hasOwnProperty(id)) {
+            var touch = this._touches.items[id];
+            if(touch.justEnded) {
+                this._touches.remove(id);
+            }
         }
     }
 
@@ -305,127 +310,3 @@ gdjs.InputManager.prototype.onFrameEnded = function() {
     this._releasedKeys.clear();
     this._releasedMouseButtons.length = 0;
 };
-
-/**
- * Add the standard events handler.
- * @method bindStandardEvents
- */
-gdjs.InputManager.prototype.bindStandardEvents = function(window, document, game, renderer, canvasArea) {
-
-    //Translate an event (mouse or touch) made on the canvas on the page
-    //to game coordinates.
-    function getEventPosition(e) {
-        var pos = [0,0];
-        if (e.pageX) {
-            pos[0] = e.pageX-canvasArea.offsetLeft;
-            pos[1] = e.pageY-canvasArea.offsetTop;
-        } else {
-            pos[0] = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft-canvasArea.offsetLeft;
-            pos[1] = e.clientY + document.body.scrollTop + document.documentElement.scrollTop-canvasArea.offsetTop;
-        }
-
-        //Handle the fact that the game is stretched to fill the canvas.
-        pos[0] *= game.getDefaultWidth()/renderer.view.width;
-        pos[1] *= game.getDefaultHeight()/renderer.view.height;
-
-        return pos;
-    }
-
-    //Some browsers lacks definition of some variables used to do calculations
-    //in getEventPosition. They are defined to 0 as they are useless.
-    (function ensureOffsetsExistence() {
-        if ( isNaN(canvasArea.offsetLeft) ) {
-            canvasArea.offsetLeft = 0;
-            canvasArea.offsetTop = 0;
-        }
-        if ( isNaN(document.body.scrollLeft) ) {
-            document.body.scrollLeft = 0;
-            document.body.scrollTop = 0;
-        }
-        if ( document.documentElement === undefined || document.documentElement === null ) {
-            document.documentElement = {};
-        }
-        if ( isNaN(document.documentElement.scrollLeft) ) {
-            document.documentElement.scrollLeft = 0;
-            document.documentElement.scrollTop = 0;
-        }
-        if ( isNaN(canvasArea.offsetLeft) ) {
-            canvasArea.offsetLeft = 0;
-            canvasArea.offsetTop = 0;
-        }
-    })();
-
-    var manager = this;
-    //Keyboard
-    document.onkeydown = function(e) {
-        manager.onKeyPressed(e.keyCode);
-    };
-    document.onkeyup = function(e) {
-        manager.onKeyReleased(e.keyCode);
-    };
-    //Mouse
-    renderer.view.onmousemove = function(e){
-        var pos = getEventPosition(e);
-        manager.onMouseMove(pos[0], pos[1]);
-    };
-    renderer.view.onmousedown = function(e){
-        manager.onMouseButtonPressed(e.button === 2 ? 1 : 0);
-        if (window.focus !== undefined) window.focus();
-        return false;
-    };
-    renderer.view.onmouseup = function(e){
-        manager.onMouseButtonReleased(e.button === 2 ? 1 : 0);
-        return false;
-    };
-    renderer.view.onmouseout = function(e){
-        manager.onMouseButtonReleased(0);
-        manager.onMouseButtonReleased(1);
-        manager.onMouseWheel(0);
-        return false;
-    };
-    window.addEventListener('click', function(e) {
-        if (window.focus !== undefined) window.focus();
-        e.preventDefault();
-        return false;
-    }, false);
-    renderer.view.oncontextmenu = function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    };
-    renderer.view.onmousewheel = function (event){
-        manager.onMouseWheel(event.wheelDelta);
-    };
-    //Touches
-    //Also simulate mouse events when receiving touch events
-    window.addEventListener('touchmove', function(e){
-        e.preventDefault();
-        if (e.changedTouches) {
-            for(var i = 0;i<e.changedTouches.length;++i) {
-                var pos = getEventPosition(e.changedTouches[i]);
-                manager.onTouchMove(e.changedTouches[i].identifier, pos[0], pos[1]);
-            }
-        }
-    });
-    window.addEventListener('touchstart', function(e){
-        e.preventDefault();
-        if (e.changedTouches) {
-            for(var i = 0;i<e.changedTouches.length;++i) {
-                var pos = getEventPosition(e.changedTouches[i]);
-                manager.onTouchStart(e.changedTouches[i].identifier, pos[0], pos[1]);
-            }
-        }
-        return false;
-    });
-    window.addEventListener('touchend', function(e){
-        e.preventDefault();
-        if (e.changedTouches) {
-            for(var i = 0;i<e.changedTouches.length;++i) {
-                var pos = getEventPosition(e.changedTouches[i]);
-                manager.onTouchEnd(e.changedTouches[i].identifier);
-            }
-        }
-        return false;
-    });
-};
-

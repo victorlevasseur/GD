@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Light Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -10,21 +10,21 @@ This project is released under the MIT License.
 #endif
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCore/Tools/Localization.h"
 #include "LightObject.h"
 #include "LightManager.h"
 
 #if defined(GD_IDE_ONLY)
-#include "GDCpp/CommonTools.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "LightObjectEditor.h"
 #endif
@@ -89,12 +89,10 @@ void LightObject::DoSerializeTo(gd::SerializerElement & element) const
 }
 #endif
 
-RuntimeLightObject::RuntimeLightObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object),
+RuntimeLightObject::RuntimeLightObject(RuntimeScene & scene, const LightObject & lightObject) :
+    RuntimeObject(scene, lightObject),
     angle(0)
 {
-    const LightObject & lightObject = static_cast<const LightObject&>(object);
-
     globalLight = lightObject.IsGlobalLight();
     globalLightColor = lightObject.GetGlobalColor();
     light = Light(sf::Vector2f(GetX(),GetY()), lightObject.GetIntensity(), lightObject.GetRadius(), lightObject.GetQuality(), lightObject.GetColor());
@@ -296,14 +294,4 @@ void RuntimeLightObject::SetGlobalColor(const gd::String & colorStr)
     if ( colors.size() < 3 ) return; //La couleur est incorrecte
 
     SetGlobalColor(sf::Color( colors[0].To<int>(),colors[1].To<int>(),colors[2].To<int>() ));
-}
-
-RuntimeObject * CreateRuntimeLightObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeLightObject(scene, object);
-}
-
-gd::Object * CreateLightObject(gd::String name)
-{
-    return new LightObject(name);
 }

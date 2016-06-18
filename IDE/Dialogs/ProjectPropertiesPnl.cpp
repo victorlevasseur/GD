@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "ProjectPropertiesPnl.h"
@@ -11,8 +11,8 @@
 //*)
 #include <wx/settings.h>
 #include <wx/treectrl.h>
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "../ProjectManager.h"
 
 //(*IdInit(ProjectPropertiesPnl)

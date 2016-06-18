@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Tile Map Extension
-Copyright (c) 2014-2015 Victor Levasseur (victorlevasseur52@gmail.com)
+Copyright (c) 2014-2016 Victor Levasseur (victorlevasseur52@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -16,18 +16,18 @@ This project is released under the MIT License.
 #include "TileMapObject.h"
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/PolygonCollision.h"
-#include "GDCpp/BuiltinExtensions/ObjectTools.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/PolygonCollision.h"
+#include "GDCpp/Extensions/Builtin/ObjectTools.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/CommonTools.h"
 
 #include "TileMap.h"
 #include "TileSet.h"
@@ -35,8 +35,8 @@ This project is released under the MIT License.
 
 #if defined(GD_IDE_ONLY)
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
-#include "TileMapObjectEditor.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
+#include "IDE/Dialogs/TileMapObjectEditor.h"
 #endif
 
 using namespace std;
@@ -146,14 +146,8 @@ bool TileMapObject::GenerateThumbnail(const gd::Project & project, wxBitmap & th
 void TileMapObject::EditObject( wxWindow* parent, gd::Project & game, gd::MainFrameWrapper & mainFrameWrapper )
 {
 #if !defined(GD_NO_WX_GUI)
-    wxLogNull logNo;
     TileMapObjectEditor dialog(parent, game, *this, mainFrameWrapper);
     dialog.ShowModal();
 #endif
 }
 #endif
-
-gd::Object * CreateTileMapObject(gd::String name)
-{
-    return new TileMapObject(name);
-}

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -12,12 +12,12 @@
 #include <wx/image.h>
 #include <wx/string.h>
 //*)
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/Dialogs/EditExpressionDialog.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/Events/Builtin/RepeatEvent.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/CommonTools.h"
 
 namespace gd
@@ -127,7 +127,7 @@ void EditRepeatEvent::OncancelBtClick(wxCommandEvent& event)
 
 void EditRepeatEvent::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/repeat_events"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/repeat_events");
 }
 
 }

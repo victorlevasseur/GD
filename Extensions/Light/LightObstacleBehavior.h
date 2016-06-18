@@ -4,7 +4,7 @@
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
 GDevelop - Light Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose,
@@ -27,13 +27,13 @@ freely, subject to the following restrictions:
 #ifndef LIGHTOBSTACLEBEHAVIOR_H
 #define LIGHTOBSTACLEBEHAVIOR_H
 
-#include "GDCpp/Behavior.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Behavior.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include "Light.h"
 #include "LightManager.h"
 #include <map>
 #include <set>
-#include "GDCpp/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
 namespace gd { class SerializerElement; }
 namespace gd { class Layout; }
 class LightObstacleBehaviorEditor;

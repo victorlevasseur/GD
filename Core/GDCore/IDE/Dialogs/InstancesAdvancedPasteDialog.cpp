@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -14,7 +14,7 @@
 //*)
 #include "GDCore/CommonTools.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 namespace gd
 {
@@ -227,7 +227,7 @@ float InstancesAdvancedPasteDialog::GetRotationIncrementation() const
 
 void InstancesAdvancedPasteDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/editors/scene_editor/edit_scene_edit"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/editors/scene_editor/edit_scene_edit");
 }
 
 

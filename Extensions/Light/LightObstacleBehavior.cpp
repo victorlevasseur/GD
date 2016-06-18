@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Light Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #include "LightObstacleBehavior.h"
 #include "LightObstacleBehaviorEditor.h"
 #include "LightObject.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cmath>

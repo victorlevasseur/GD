@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Common Dialogs Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef COMMONDIALOGS_H_INCLUDED
 #define COMMONDIALOGS_H_INCLUDED
 
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 
 class RuntimeScene;
 namespace gd { class Variable; }

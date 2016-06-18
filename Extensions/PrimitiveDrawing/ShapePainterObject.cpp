@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Primitive Drawing Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -10,19 +10,19 @@ This project is released under the MIT License.
 #endif
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "ShapePainterObject.h"
 
 #if defined(GD_IDE_ONLY)
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "ShapePainterObjectEditor.h"
 #endif
@@ -53,11 +53,10 @@ ShapePainterObject::ShapePainterObject(gd::String name_) :
 {
 }
 
-RuntimeShapePainterObject::RuntimeShapePainterObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object)
+RuntimeShapePainterObject::RuntimeShapePainterObject(RuntimeScene & scene, const ShapePainterObject & shapePainterObject) :
+    RuntimeObject(scene, shapePainterObject)
 {
-    const ShapePainterObject & drawerObject = static_cast<const ShapePainterObject&>(object);
-    ShapePainterObjectBase::operator=(drawerObject);
+    ShapePainterObjectBase::operator=(shapePainterObject);
 }
 
 void ShapePainterObjectBase::UnserializeFrom(const gd::SerializerElement & element)
@@ -310,14 +309,4 @@ void RuntimeShapePainterObject::DrawCircle( float x, float y, float radius )
     command.circleShape.setOutlineColor(sf::Color(GetOutlineColorR(), GetOutlineColorG(), GetOutlineColorB(), GetOutlineOpacity()));
 
     shapesToDraw.push_back(command);
-}
-
-RuntimeObject * CreateRuntimeShapePainterObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeShapePainterObject(scene, object);
-}
-
-gd::Object * CreateShapePainterObject(gd::String name)
-{
-    return new ShapePainterObject(name);
 }

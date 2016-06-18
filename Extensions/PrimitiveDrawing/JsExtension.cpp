@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Primitive Drawing Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Version.h"
 
@@ -26,7 +26,10 @@ public:
     PrimitiveDrawingJsExtension()
     {
         DeclarePrimitiveDrawingExtension(*this);
-        GetObjectMetadata("PrimitiveDrawing::Drawer").SetIncludeFile("PrimitiveDrawing/shapepainterruntimeobject.js");
+        GetObjectMetadata("PrimitiveDrawing::Drawer")
+            .SetIncludeFile("PrimitiveDrawing/shapepainterruntimeobject.js")
+            .AddIncludeFile("PrimitiveDrawing/shapepainterruntimeobject-pixi-renderer.js")
+            .AddIncludeFile("PrimitiveDrawing/shapepainterruntimeobject-cocos-renderer.js");
 
         GetAllActionsForObject("PrimitiveDrawing::Drawer")["PrimitiveDrawing::Rectangle"].SetFunctionName("drawRectangle");
         GetAllActionsForObject("PrimitiveDrawing::Drawer")["PrimitiveDrawing::Circle"].SetFunctionName("drawCircle");

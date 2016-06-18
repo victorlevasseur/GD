@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "LayoutEditorPropertiesPnl.h"
@@ -9,12 +9,12 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvas.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/InitialInstancesContainer.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/InitialInstancesContainer.h"
+#include "GDCore/Project/InitialInstance.h"
 #include "GDCore/CommonTools.h"
 
 using namespace gd;
@@ -108,6 +108,7 @@ void LayoutEditorPropertiesPnl::Refresh()
 
     grid->Refresh();
     grid->Update();
+    if (onRefreshedCb) onRefreshedCb();
 }
 
 void LayoutEditorPropertiesPnl::SelectedInitialInstance(const gd::InitialInstance &)

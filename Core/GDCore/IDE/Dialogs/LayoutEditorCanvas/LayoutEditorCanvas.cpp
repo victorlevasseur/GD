@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -14,13 +14,13 @@
 #include <wx/ribbon/buttonbar.h>
 #include <wx/aui/aui.h>
 #include <SFML/Graphics.hpp>
-#include "GDCore/PlatformDefinition/LayoutEditorPreviewer.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
-#include "GDCore/PlatformDefinition/InitialInstancesContainer.h"
+#include "GDCore/Project/LayoutEditorPreviewer.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/InitialInstance.h"
+#include "GDCore/Project/InitialInstancesContainer.h"
 #include "GDCore/IDE/Dialogs/ChooseBehaviorTypeDialog.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasAssociatedEditor.h"
 #include "GDCore/IDE/Dialogs/LayoutEditorCanvas/LayoutEditorCanvasTextDnd.h"
@@ -28,7 +28,7 @@
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/GridSetupDialog.h"
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/Tools/Log.h"
 #include "GDCore/CommonTools.h"
 // Platform-specific includes. Be sure to include them at the end as it seems
@@ -97,9 +97,12 @@ const long LayoutEditorCanvas::ID_CUSTOMZOOMMENUITEM10 = wxNewId();
 const long LayoutEditorCanvas::ID_CUSTOMZOOMMENUITEM5 = wxNewId();
 wxRibbonButtonBar * LayoutEditorCanvas::modeRibbonBar = NULL;
 
-LayoutEditorCanvas::LayoutEditorCanvas(wxWindow* parent, gd::Project & project_, gd::Layout & layout_, gd::InitialInstancesContainer & instances_, LayoutEditorCanvasOptions & options_, gd::MainFrameWrapper & mainFrameWrapper_) :
+LayoutEditorCanvas::LayoutEditorCanvas(wxWindow* parent, gd::Project & project_,
+    gd::Layout & layout_, gd::InitialInstancesContainer & instances_,
+    LayoutEditorCanvasOptions & options_, gd::MainFrameWrapper & mainFrameWrapper_, gd::ExternalLayout * externalLayout_) :
     project(project_),
     layout(layout_),
+    externalLayout(externalLayout_),
     instances(instances_),
     options(options_),
     mainFrameWrapper(mainFrameWrapper_),
@@ -146,15 +149,15 @@ LayoutEditorCanvas::LayoutEditorCanvas(wxWindow* parent, gd::Project & project_,
 
         //...and pass it to the sf::RenderWindow.
         #if GTK_CHECK_VERSION(3, 0, 0)
-        sf::RenderWindow::create(GDK_WINDOW_XID(win));
+        sf::RenderWindow::create(GDK_WINDOW_XID(win), sf::ContextSettings(24, 8));
         #else
-        sf::RenderWindow::create(GDK_WINDOW_XWINDOW(win));
+        sf::RenderWindow::create(GDK_WINDOW_XWINDOW(win), sf::ContextSettings(24, 8));
         #endif
 
     #else
 
         // Tested under Windows XP only (should work with X11 and other Windows versions - no idea about MacOS)
-        sf::RenderWindow::create(static_cast<sf::WindowHandle>(GetHandle()));
+        sf::RenderWindow::create(static_cast<sf::WindowHandle>(GetHandle()), sf::ContextSettings(24, 8));
 
     #endif
 
@@ -535,16 +538,18 @@ wxRibbonButtonBar* LayoutEditorCanvas::CreateRibbonPage(wxRibbonPage * page)
 
 void LayoutEditorCanvas::RecreateRibbonToolbar()
 {
-    mainFrameWrapper.GetRibbonSceneEditorButtonBar()->ClearButtons();
+    wxRibbonButtonBar * toolsBar = mainFrameWrapper.GetRibbonSceneEditorButtonBar();
+    toolsBar->ClearButtons();
 
     if ( editing )
         CreateEditionRibbonTools();
     else
     {
-        if (currentPreviewer) currentPreviewer->CreatePreviewRibbonTools(*mainFrameWrapper.GetRibbonSceneEditorButtonBar());
+        if (currentPreviewer) currentPreviewer->CreatePreviewRibbonTools(*toolsBar);
     }
 
-    mainFrameWrapper.GetRibbonSceneEditorButtonBar()->Realize();
+    toolsBar->Realize();
+    if (onRibbonButtonBarUpdatedCb) onRibbonButtonBarUpdatedCb(toolsBar);
 }
 
 void LayoutEditorCanvas::CreateEditionRibbonTools()
@@ -570,23 +575,6 @@ void LayoutEditorCanvas::UpdateContextMenu()
     if ( selectedInstances.empty() ) return;
 
     //Can we send the objects on a higher layer ?
-    std::size_t lowestLayer = layout.GetLayersCount()-1;
-    for (auto & it : selectedInstances)
-    {
-        if (it.first == NULL) continue;
-        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it.first->GetLayer()));
-    }
-
-    contextMenu.FindItem(ID_LAYERUPMENU)->Enable(false);
-    if ( lowestLayer+1 < layout.GetLayersCount() )
-    {
-        gd::String name = layout.GetLayer(lowestLayer+1).GetName();
-        if ( name == "" ) name = _("Base layer");
-        contextMenu.FindItem(ID_LAYERUPMENU)->Enable(true);
-        contextMenu.FindItem(ID_LAYERUPMENU)->SetItemLabel(_("Put the object(s) on the layer \"") + name + "\"");
-    }
-
-    //Can we send the objects on a lower layer ?
     std::size_t highestLayer = 0;
     for (auto & it : selectedInstances)
     {
@@ -594,14 +582,37 @@ void LayoutEditorCanvas::UpdateContextMenu()
         highestLayer = std::max(highestLayer, layout.GetLayerPosition(it.first->GetLayer()));
     }
 
-    contextMenu.FindItem(ID_LAYERDOWNMENU)->Enable(false);
-    if ( highestLayer >= 1 )
+    //Can we send the objects on a lower layer ?
+    std::size_t lowestLayer = layout.GetLayersCount()-1;
+    for (auto & it : selectedInstances)
     {
-        gd::String name = layout.GetLayer(highestLayer-1).GetName();
-        if ( name == "" ) name = _("Base layer");
+        if (it.first == NULL) continue;
+        lowestLayer = std::min(lowestLayer, layout.GetLayerPosition(it.first->GetLayer()));
+    }
 
-        contextMenu.FindItem(ID_LAYERDOWNMENU)->Enable(true);
-        contextMenu.FindItem(ID_LAYERDOWNMENU)->SetItemLabel(_("Put the object(s) on the layer \"") + name + "\"");
+    if (wxMenuItem * layerUpItem = contextMenu.FindItem(ID_LAYERUPMENU))
+    {
+        layerUpItem->Enable(false);
+        if ( highestLayer+1 < layout.GetLayersCount() )
+        {
+            gd::String name = layout.GetLayer(highestLayer+1).GetName();
+            if ( name == "" ) name = _("Base layer");
+            layerUpItem->Enable(true);
+            layerUpItem->SetItemLabel(_("Put the object(s) on the layer \"") + name + "\"");
+        }
+    }
+
+    if (wxMenuItem * layerDownItem = contextMenu.FindItem(ID_LAYERDOWNMENU))
+    {
+        layerDownItem->Enable(false);
+        if ( lowestLayer >= 1 )
+        {
+            gd::String name = layout.GetLayer(lowestLayer-1).GetName();
+            if ( name == "" ) name = _("Base layer");
+
+            layerDownItem->Enable(true);
+            layerDownItem->SetItemLabel(_("Put the object(s) on the layer \"") + name + "\"");
+        }
     }
 }
 

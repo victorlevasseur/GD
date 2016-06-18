@@ -1,22 +1,22 @@
 /**
 
 GDevelop - Function Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
-#include "GDCore/Events/ExpressionsCodeGeneration.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
-#include "GDCore/Events/EventsCodeNameMangler.h"
-#include "GDCpp/CppPlatform.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCore/Events/CodeGeneration/ExpressionsCodeGeneration.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
+#include "GDCore/Events/Tools/EventsCodeNameMangler.h"
+#include "GDCpp/Extensions/CppPlatform.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #if defined(GD_IDE_ONLY)
-#include "GDCore/Events/ExpressionParser.h"
+#include "GDCore/Events/Parsers/ExpressionParser.h"
 #include "GDCore/Events/Instruction.h"
 #endif
 #include "FunctionEvent.h"

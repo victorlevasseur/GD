@@ -1,6 +1,6 @@
 /*
  * GDevelop JS Platform
- * Copyright 2013-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2013-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -51,35 +51,6 @@ gdjs.toRad = function(angleInDegrees) {
  */
 gdjs.toDegrees = function(angleInRadians) {
     return angleInRadians*180/3.14159;
-};
-
-/**
- * Get the height of the document ( or of the viewport ) displayed in browser
- * @method getDocHeight
- * @static
- */
-gdjs.getDocHeight = function() {
-    //Nice snippet from http://james.padolsey.com/javascript/get-document-height-cross-browser/
-    var D = document;
-    return Math.max(
-        D.body.scrollHeight, D.documentElement.scrollHeight,
-        D.body.offsetHeight, D.documentElement.offsetHeight,
-        D.body.clientHeight, D.documentElement.clientHeight
-    );
-};
-
-/**
- * Get the width of the document ( or of the viewport ) displayed in browser
- * @method getDocWidth
- * @static
- */
-gdjs.getDocWidth = function() {
-    var D = document;
-    return Math.max(
-        D.body.scrollWidth, D.documentElement.scrollWidth,
-        D.body.offsetWidth, D.documentElement.offsetWidth,
-        D.body.clientWidth, D.documentElement.clientWidth
-    );
 };
 
 /**
@@ -219,6 +190,16 @@ gdjs.getBehaviorConstructor = function(name) {
     return gdjs.behaviorsTypes.get(""); //Create a base empty runtime behavior.
 };
 
+gdjs.staticArray = function(owner) {
+    owner._staticArray = owner._staticArray || [];
+    return owner._staticArray;
+}
+
+gdjs.staticArray2 = function(owner) {
+    owner._staticArray2 = owner._staticArray2 || [];
+    return owner._staticArray2;
+}
+
 Array.prototype.remove = function(from) {
     //Adapted from the nice article available at
     //https://www.scirra.com/blog/76/how-to-write-low-garbage-real-time-javascript
@@ -237,3 +218,7 @@ Array.prototype.createFrom = function(arr) {
         }
     }
 };
+
+//Make sure console.warn and console.error are available.
+console.warn = console.warn || console.log;
+console.error = console.error || console.log;

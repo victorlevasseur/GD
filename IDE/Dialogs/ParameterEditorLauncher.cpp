@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "ParameterEditorLauncher.h"
@@ -17,9 +17,9 @@
 #include <wx/msgdlg.h>
 #include <wx/config.h>
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/IDE/Dialogs/ParameterControlsHelper.h"
 
 //Editors:

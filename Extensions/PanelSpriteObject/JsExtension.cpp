@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Panel Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
 This project is released under the MIT License.
 */
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Version.h"
 
@@ -27,7 +27,10 @@ public:
     {
         DeclarePanelSpriteObjectExtension(*this);
 
-        GetObjectMetadata("PanelSpriteObject::PanelSprite").SetIncludeFile("PanelSpriteObject/panelspriteruntimeobject.js");
+        GetObjectMetadata("PanelSpriteObject::PanelSprite")
+            .SetIncludeFile("PanelSpriteObject/panelspriteruntimeobject.js")
+            .AddIncludeFile("PanelSpriteObject/panelspriteruntimeobject-pixi-renderer.js")
+            .AddIncludeFile("PanelSpriteObject/panelspriteruntimeobject-cocos-renderer.js");
 
         GetAllActionsForObject("PanelSpriteObject::PanelSprite")["PanelSpriteObject::Width"].SetFunctionName("setWidth").SetGetter("getWidth");
         GetAllConditionsForObject("PanelSpriteObject::PanelSprite")["PanelSpriteObject::Width"].SetFunctionName("getWidth");

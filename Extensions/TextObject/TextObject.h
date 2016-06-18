@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Text Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,9 +9,9 @@ This project is released under the MIT License.
 #define TEXTOBJECT_H
 
 #include <SFML/Graphics/Text.hpp>
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Runtime/String.h"
 class ImageManager;
 class RuntimeScene;
 namespace gd { class Object; }
@@ -108,7 +108,7 @@ class GD_EXTENSION_API RuntimeTextObject : public RuntimeObject
 {
 public :
 
-    RuntimeTextObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeTextObject(RuntimeScene & scene, const TextObject & textObject);
     virtual ~RuntimeTextObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeTextObject(*this);}
 
@@ -177,8 +177,5 @@ private:
     bool smoothed;
     float angle;
 };
-
-gd::Object * CreateTextObject(gd::String name);
-RuntimeObject * CreateRuntimeTextObject(RuntimeScene & scene, const gd::Object & object);
 
 #endif // TEXTOBJECT_H

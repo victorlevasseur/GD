@@ -1,12 +1,12 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
 #ifndef GDCORE_TreeItemExpressionMetadata_H
 #define GDCORE_TreeItemExpressionMetadata_H
-#include "GDCore/Events/ExpressionMetadata.h"
+#include "GDCore/Extensions/Metadata/ExpressionMetadata.h"
 #include "GDCore/String.h"
 #include <wx/treectrl.h>
 

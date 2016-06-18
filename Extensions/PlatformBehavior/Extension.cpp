@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Platform Behavior Extension
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "PlatformerObjectBehavior.h"
 #include "PlatformBehavior.h"
@@ -84,7 +84,7 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 
         aut.AddCondition("IsFalling",
                        _("Is falling"),
-                       _("Check if the object is falling.\nNote that the object can be flagged as jumping and falling at the same time: At the end of a jump, the fall speed becomes higher that the jump speed."),
+                       _("Check if the object is falling.\nNote that the object can be flagged as jumping and falling at the same time: at the end of a jump, the fall speed becomes higher that the jump speed."),
                        _("_PARAM0_ is falling"),
                        _(""),
                        "CppPlatform/Extensions/platformerobjecticon24.png",
@@ -92,6 +92,17 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
             .AddParameter("object", _("Object"))
             .AddParameter("behavior", _("Behavior"), "PlatformerObjectBehavior")
             .SetFunctionName("IsFalling").SetIncludeFile("PlatformBehavior/PlatformerObjectBehavior.h");
+
+        aut.AddCondition("IsGrabbingPlatform",
+                       _("Is grabbing platform ledge"),
+                       _("Check if the object is grabbing a platform ledge."),
+                       _("_PARAM0_ is grabbing a platform ledge"),
+                       _(""),
+                       "CppPlatform/Extensions/platformerobjecticon24.png",
+                       "CppPlatform/Extensions/platformerobjecticon16.png")
+            .AddParameter("object", _("Object"))
+            .AddParameter("behavior", _("Behavior"), "PlatformerObjectBehavior")
+            .SetFunctionName("IsGrabbingPlatform").SetIncludeFile("PlatformBehavior/PlatformerObjectBehavior.h");
 
         aut.AddCondition("Gravity",
                        _("Gravity"),
@@ -297,7 +308,7 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 
         aut.AddAction("SimulateUpKey",
                        _("Simulate up key press"),
-                       _("Simulate a pressing on up key ( Used when on a ladder )."),
+                       _("Simulate a pressing on up key (used when on a ladder)."),
                        _("Simulate pressing Up for _PARAM0_"),
                        _("Controls"),
                        "res/conditions/keyboard24.png",
@@ -309,7 +320,7 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 
         aut.AddAction("SimulateDownKey",
                        _("Simulate down key press"),
-                       _("Simulate a pressing on down key ( Used when on a ladder )."),
+                       _("Simulate a pressing on down key (used when on a ladder)."),
                        _("Simulate pressing Down for _PARAM0_"),
                        _("Controls"),
                        "res/conditions/keyboard24.png",
@@ -321,7 +332,7 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 
         aut.AddAction("SimulateLadderKey",
                        _("Simulate ladder key press"),
-                       _("Simulate a pressing on ladder key ( Used to grab a ladder )."),
+                       _("Simulate a pressing on ladder key (used to grab a ladder)."),
                        _("Simulate pressing Ladder key for _PARAM0_"),
                        _("Controls"),
                        "res/conditions/keyboard24.png",
@@ -341,6 +352,17 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
             .AddParameter("object", _("Object"))
             .AddParameter("behavior", _("Behavior"), "PlatformerObjectBehavior")
             .SetFunctionName("SimulateJumpKey").SetIncludeFile("PlatformBehavior/PlatformerObjectBehavior.h");
+
+        aut.AddAction("SimulateReleaseKey",
+                       _("Simulate release key press"),
+                       _("Simulate a pressing on release key (used when grabbing a platform ledge)."),
+                       _("Simulate pressing Release key for _PARAM0_"),
+                       _("Controls"),
+                       "res/conditions/keyboard24.png",
+                       "res/conditions/keyboard.png")
+            .AddParameter("object", _("Object"))
+            .AddParameter("behavior", _("Behavior"), "PlatformerObjectBehavior")
+            .SetFunctionName("SimulateReleaseKey").SetIncludeFile("PlatformBehavior/PlatformerObjectBehavior.h");
 
         aut.AddAction("SimulateControl",
                        _("Simulate control"),
@@ -432,14 +454,14 @@ void DeclarePlatformBehaviorExtension(gd::PlatformExtension & extension)
 /**
  * \brief This class declares information about the extension.
  */
-class Extension : public ExtensionBase
+class PlatformBehaviorCppExtension : public ExtensionBase
 {
 public:
 
     /**
      * Constructor of an extension declares everything the extension contains: objects, actions, conditions and expressions.
      */
-    Extension()
+    PlatformBehaviorCppExtension()
     {
         DeclarePlatformBehaviorExtension(*this);
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
@@ -464,12 +486,16 @@ public:
 
 };
 
-#if !defined(EMSCRIPTEN)
+#if defined(ANDROID)
+extern "C" ExtensionBase * CreateGDCppPlatformBehaviorExtension() {
+    return new PlatformBehaviorCppExtension;
+}
+#elif !defined(EMSCRIPTEN)
 /**
  * Used by GDevelop to create the extension class
  * -- Do not need to be modified. --
  */
 extern "C" ExtensionBase * GD_EXTENSION_API CreateGDExtension() {
-    return new Extension;
+    return new PlatformBehaviorCppExtension;
 }
 #endif

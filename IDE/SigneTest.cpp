@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "SigneTest.h"
@@ -12,7 +12,7 @@
 #include <wx/string.h>
 //*)
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 //(*IdInit(SigneTest)
 const long SigneTest::ID_RADIOBOX1 = wxNewId();
@@ -39,10 +39,10 @@ SigneTest::SigneTest(wxWindow* parent)
 	{
 		_("= ( equal to )"),
 		_("> ( greater than )"),
-		_("< ( lesser than )"),
+		_("< ( less than )"),
 		_(">= ( greater than or equal to )"),
-		_("<= ( lesser than or equal to )"),
-		_("!= ( different of )")
+		_("<= ( less than or equal to )"),
+		_("!= ( not equal to )")
 	};
 	SigneRadio = new wxRadioBox(this, ID_RADIOBOX1, _("Choose the comparison operator"), wxDefaultPosition, wxDefaultSize, 6, __wxRadioBoxChoices_1, 1, wxRA_HORIZONTAL, wxDefaultValidator, _T("ID_RADIOBOX1"));
 	FlexGridSizer1->Add(SigneRadio, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -83,5 +83,5 @@ void SigneTest::OnOkBtClick(wxCommandEvent& event)
 
 void SigneTest::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/events_editor/parameters");
 }

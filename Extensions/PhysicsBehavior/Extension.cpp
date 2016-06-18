@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Physics Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 /**
@@ -13,19 +13,19 @@ This project is released under the MIT License.
 #include "PhysicsBehavior.h"
 #include "ScenePhysicsDatas.h"
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 
 /**
  * \brief This class declares information about the extension.
  */
-class Extension : public ExtensionBase
+class PhysicsBehaviorCppExtension : public ExtensionBase
 {
 public:
 
     /**
      * Constructor of an extension declares everything the extension contains: objects, actions, conditions and expressions.
      */
-    Extension()
+    PhysicsBehaviorCppExtension()
     {
         SetExtensionInformation("PhysicsBehavior",
                               _("Physics behavior"),
@@ -571,10 +571,16 @@ public:
     };
 };
 
+#if defined(ANDROID)
+extern "C" ExtensionBase * CreateGDCppPhysicsBehaviorExtension() {
+    return new PhysicsBehaviorCppExtension;
+}
+#elif !defined(EMSCRIPTEN)
 /**
  * Used by GDevelop to create the extension class
  * -- Do not need to be modified. --
  */
 extern "C" ExtensionBase * GD_EXTENSION_API CreateGDExtension() {
-    return new Extension;
+    return new PhysicsBehaviorCppExtension;
 }
+#endif

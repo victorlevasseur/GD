@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -9,11 +9,11 @@
 #include "GDCore/Events/EventsList.h"
 #include "GDCore/Events/Event.h"
 #include "GDCore/Events/Builtin/LinkEvent.h"
-#include "GDCore/Events/ExpressionParser.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Events/Parsers/ExpressionParser.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/IDE/EventsChangesNotifier.h"
 
 namespace gd

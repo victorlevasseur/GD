@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Box 3D Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -15,10 +15,10 @@ This project is released under the MIT License.
 #include <wx/string.h>
 //*)
 #include "GDCore/Tools/Log.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/Dialogs/ResourcesEditor.h"
 #include "GDCore/Tools/Localization.h"
 

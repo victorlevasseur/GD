@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -10,15 +10,15 @@
 #include <wx/renderer.h>
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #endif
-#include "GDCore/IDE/EventsRenderingHelper.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
 #include "GDCore/Events/Serialization.h"
 #include "GDCore/Serialization/SerializerElement.h"
 #include "GDCore/TinyXml/tinyxml.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
 #include "GDCore/IDE/Dialogs/GroupEventDialog.h"
 #include "GDCore/IDE/Dialogs/EventStoreDialog.h"
 
@@ -132,7 +132,7 @@ void GroupEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::EventsE
 
     dc.SetTextBackground(backgroundColor);
     dc.SetTextForeground(textColor);
-    dc.SetFont( wxFont( 12, wxDEFAULT, wxNORMAL, wxFONTWEIGHT_BOLD ) );
+    dc.SetFont( wxFont( 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD ) );
     dc.DrawText( groupTitle, x+5, y + 5 );
 #endif
 }
@@ -148,7 +148,7 @@ unsigned int GroupEvent::GetRenderedHeight(unsigned int width, const gd::Platfor
 
         wxString groupTitle = name.empty() ? _("Untitled group") : wxString(name);
 
-        dc.SetFont( wxFont( 12, wxDEFAULT, wxNORMAL, wxNORMAL ) );
+        dc.SetFont( wxFont( 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL ) );
         wxRect text = dc.GetTextExtent(groupTitle);
 
         renderedHeight = text.GetHeight()+10;

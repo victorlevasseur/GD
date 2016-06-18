@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Pathfinding Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #ifndef SCENEPLATFORMOBJECTSMANAGER_H
 #define SCENEPLATFORMOBJECTSMANAGER_H
 #include <map>
 #include <set>
-#include "GDCpp/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
 class PathfindingObstacleBehavior;
 
 /**

@@ -1,12 +1,12 @@
 /**
 
 GDevelop - Tiled Sprite Extension
-Copyright (c) 2012-2015 Victor Levasseur (victorlevasseur01@orange.fr)
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2012-2016 Victor Levasseur (victorlevasseur01@orange.fr)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Version.h"
 #include "TiledSpriteObject.h"
@@ -29,7 +29,10 @@ public:
     {
         DeclareTiledSpriteObjectExtension(*this);
 
-        GetObjectMetadata("TiledSpriteObject::TiledSprite").SetIncludeFile("TiledSpriteObject/tiledspriteruntimeobject.js");
+        GetObjectMetadata("TiledSpriteObject::TiledSprite")
+            .SetIncludeFile("TiledSpriteObject/tiledspriteruntimeobject.js")
+            .AddIncludeFile("TiledSpriteObject/tiledspriteruntimeobject-pixi-renderer.js")
+            .AddIncludeFile("TiledSpriteObject/tiledspriteruntimeobject-cocos-renderer.js");
 
         GetAllActionsForObject("TiledSpriteObject::TiledSprite")["TiledSpriteObject::Width"].SetFunctionName("setWidth").SetGetter("getWidth").SetIncludeFile("TiledSpriteObject/tiledspriteruntimeobject.js");
         GetAllConditionsForObject("TiledSpriteObject::TiledSprite")["TiledSpriteObject::Width"].SetFunctionName("getWidth").SetIncludeFile("TiledSpriteObject/tiledspriteruntimeobject.js");

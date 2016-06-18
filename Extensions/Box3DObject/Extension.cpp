@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Box 3D Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "Box3DObject.h"
 
@@ -30,13 +30,14 @@ public:
                               "Open source (MIT License)");
 
         {
-            gd::ObjectMetadata & obj = AddObject("Box3D",
+            gd::ObjectMetadata & obj = AddObject<Box3DObject>(
+                       "Box3D",
                        _("3D Box"),
                        _("Displays a 3D Box"),
-                       "CppPlatform/Extensions/Box3Dicon.png",
-                       &CreateBox3DObject);
+                       "CppPlatform/Extensions/Box3Dicon.png");
 
-            AddRuntimeObject(obj, "RuntimeBox3DObject", &CreateRuntimeBox3DObject);
+            AddRuntimeObject<Box3DObject, RuntimeBox3DObject>(
+                obj, "RuntimeBox3DObject");
 
             #if defined(GD_IDE_ONLY)
 

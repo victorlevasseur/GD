@@ -54,11 +54,11 @@ ENDIF(WIN32)
 #The target
 ###
 include_directories(.)
-file(GLOB f1 GDJS/*)
-file(GLOB_RECURSE f2 GDJS/Bindings/* GDJS/BuiltinExtensions/* GDJS/mongoose/*)
+file(GLOB f1 GDJS/* GDJS/IDE/* GDJS/IDE/mongoose/*)
+file(GLOB_RECURSE f2 GDJS/Extensions/* GDJS/Events/*)
 set(source_files ${f1} ${f2})
 IF(NOT EMSCRIPTEN)
-file(GLOB_RECURSE f3 GDJS/Dialogs/*)
+file(GLOB_RECURSE f3 GDJS/IDE/Dialogs/*)
 set(source_files ${source_files} ${f3})
 ENDIF()
 
@@ -96,12 +96,12 @@ IF(EMSCRIPTEN)
 	#Nothing.
 ELSE()
 	IF(WIN32)
-		add_custom_command(TARGET GDJS
-			POST_BUILD
+		add_custom_target(GDJS_Runtime
+			ALL
 			COMMAND "${GD_base_dir}/GDJS/scripts/CopyRuntimeToGD.bat")
 	ELSE()
-		add_custom_command(TARGET GDJS
-			POST_BUILD
+		add_custom_target(GDJS_Runtime
+			ALL
 			COMMAND sh "CopyRuntimeToGD.sh" ${GD_base_dir}/Binaries/Output/${CMAKE_BUILD_TYPE}_${CMAKE_SYSTEM_NAME}/JsPlatform/Runtime
 			WORKING_DIRECTORY ${GD_base_dir}/GDJS/scripts)
 	ENDIF()

@@ -1,14 +1,14 @@
 /**
 
 GDevelop - Draggable Behavior Extension
-Copyright (c) 2013-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2013-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef DRAGGABLEBEHAVIOR_H
 #define DRAGGABLEBEHAVIOR_H
-#include "GDCpp/Behavior.h"
-#include "GDCpp/Object.h"
+#include "GDCpp/Runtime/Project/Behavior.h"
+#include "GDCpp/Runtime/Project/Object.h"
 #include <SFML/System/Vector2.hpp>
 #include <map>
 class RuntimeScene;

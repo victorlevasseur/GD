@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -23,13 +23,13 @@
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/IDE/Clipboard.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/ImageManager.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
-#include "GDCore/PlatformDefinition/InitialInstancesContainer.h"
-#include "GDCore/PlatformDefinition/Object.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/ImageManager.h"
+#include "GDCore/Project/InitialInstance.h"
+#include "GDCore/Project/InitialInstancesContainer.h"
+#include "GDCore/Project/Object.h"
 #include "GDCore/CommonTools.h"
 
 using namespace std;
@@ -685,7 +685,7 @@ void LayoutEditorCanvas::UpdateSize()
         //Scene takes all the space available in edition mode.
         Window::setSize(sf::Vector2u(width * scaleFactor, height * scaleFactor));
         wxWindowBase::SetPosition(wxPoint(0,0));
-        wxWindowBase::SetSize(width, height);
+        wxWindowBase::SetSize(width * scaleFactor, height * scaleFactor);
 
         UpdateViewAccordingToZoomFactor();
     }
@@ -758,7 +758,7 @@ void LayoutEditorCanvas::UpdateViewAccordingToZoomFactor()
 
 void LayoutEditorCanvas::OnHelpBtClick( wxCommandEvent & event )
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_layout"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/edit_layout");
 }
 
 

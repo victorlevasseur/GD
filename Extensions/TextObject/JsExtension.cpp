@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Text Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Version.h"
 #include "TextObject.h"
 
@@ -28,7 +28,10 @@ public:
     {
         DeclareTextObjectExtension(*this);
 
-        GetObjectMetadata("TextObject::Text").SetIncludeFile("TextObject/textruntimeobject.js");
+        GetObjectMetadata("TextObject::Text")
+            .SetIncludeFile("TextObject/textruntimeobject.js")
+            .AddIncludeFile("TextObject/textruntimeobject-pixi-renderer.js")
+            .AddIncludeFile("TextObject/textruntimeobject-cocos-renderer.js");
 
         GetAllActionsForObject("TextObject::Text")["TextObject::String"].SetFunctionName("setString").SetGetter("getString").SetIncludeFile("TextObject/textruntimeobject.js");
         GetAllConditionsForObject("TextObject::Text")["TextObject::String"].SetFunctionName("getString").SetIncludeFile("TextObject/textruntimeobject.js");

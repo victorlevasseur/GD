@@ -1,11 +1,11 @@
 /**
 
 GDevelop - AdMob Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Version.h"
 #include "AdMobObject.h"
@@ -18,15 +18,17 @@ void DeclareAdMobObjectExtension(gd::PlatformExtension & extension)
                           "Florian Rival",
                           "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("AdMob",
+    gd::ObjectMetadata & obj = extension.AddObject<AdMobObject>(
+               "AdMob",
                _("AdMob banner"),
                _("Display an ad banner or interstitial screen using AdMob"),
-               "JsPlatform/Extensions/admobicon.png",
-               &CreateAdMobObject);
+               "JsPlatform/Extensions/admobicon.png");
 
     obj.SetHelpUrl("/gdevelop/documentation/manual/built_admob");
 
+    #if !defined(GD_NO_WX_GUI)
     AdMobObject::LoadEdittimeIcon();
+    #endif
 
     obj.AddAction("ShowBanner",
         _("Show banner ad"),

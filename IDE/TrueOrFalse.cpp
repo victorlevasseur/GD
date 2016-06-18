@@ -8,7 +8,7 @@
 #include <wx/string.h>
 //*)
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 //(*IdInit(TrueOrFalse)
 const long TrueOrFalse::ID_STATICBITMAP1 = wxNewId();
@@ -97,5 +97,5 @@ void TrueOrFalse::OnButton1Click(wxCommandEvent& event)
 
 void TrueOrFalse::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/events_editor/parameters");
 }

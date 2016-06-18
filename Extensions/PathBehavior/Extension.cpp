@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Path Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 /**
@@ -9,7 +9,7 @@ This project is released under the MIT License.
  * Victor Levasseur ( Created Path behavior editor and enhanced extension )
  */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "PathBehavior.h"
 #include "ScenePathDatas.h"

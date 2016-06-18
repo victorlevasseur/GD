@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #ifndef INSTRUCTION_H
@@ -48,7 +48,7 @@ public:
      */
     Instruction(gd::String type_, const std::vector <gd::Expression> & parameters_, bool inverted = false);
 
-    virtual ~Instruction();
+    virtual ~Instruction() {};
 
     /**
      * \brief Return the type of the instruction.

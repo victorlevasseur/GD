@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 /**
@@ -8,8 +8,8 @@
  */
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/SourceFile.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/SourceFile.h"
 
 TEST_CASE( "SourceFile", "[common]" ) {
     SECTION("Basics") {

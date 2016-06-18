@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #include "GDCore/CommonTools.h"
@@ -67,7 +67,7 @@ void AnalyticsSender::SendData(gd::String collection, SerializerElement & data)
     request.setMethod(sf::Http::Request::Post);
     request.setField("Content-Type", "application/json");
     request.setUri("/3.0/projects/"+projectId.ToLocale()+"/events/"+collection.ToLocale()+"?api_key="+writeKey.ToLocale());
-    request.setBody(Serializer::ToJSON(data));
+    request.setBody(Serializer::ToJSON(data).ToSfString());
 
     // Send the request
     sf::Http::Response response = Http.sendRequest(request, sf::seconds(2));

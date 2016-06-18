@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "NewProjectDialog.h"
@@ -18,7 +18,7 @@
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
 #endif
-#include "GDCore/IDE/CommonBitmapManager.h"
+#include "GDCore/IDE/wxTools/CommonBitmapProvider.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
 #include "GDCore/IDE/Analytics/AnalyticsSender.h"
 #include "GDCore/CommonTools.h"
@@ -240,7 +240,7 @@ void NewProjectDialog::RefreshTemplateList()
                 {
                     //Find the icon of the template
                     wxString iconFile = currentDir+"/"+filename+"/GDTemplateIcon.png";
-                    wxBitmap icon = wxFileExists(iconFile) ? wxBitmap(iconFile, wxBITMAP_TYPE_ANY) : gd::CommonBitmapManager::Get()->gdFileIcon32;
+                    wxBitmap icon = wxFileExists(iconFile) ? wxBitmap(iconFile, wxBITMAP_TYPE_ANY) : gd::CommonBitmapProvider::Get()->gdFileIcon32;
                     templateImageList->Add(icon);
 
                     templateList->InsertItem(0, name, templateImageList->GetImageCount()-1);

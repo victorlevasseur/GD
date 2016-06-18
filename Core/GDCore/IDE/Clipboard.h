@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #ifndef CLIPBOARD_H
@@ -12,9 +12,9 @@ namespace gd { class ExternalLayout; }
 #include "GDCore/Events/Event.h"
 #include "GDCore/Events/EventsList.h"
 #include "GDCore/Events/Instruction.h"
-#include "GDCore/PlatformDefinition/ObjectGroup.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCore/PlatformDefinition/InitialInstance.h"
+#include "GDCore/Project/ObjectGroup.h"
+#include "GDCore/Project/Object.h"
+#include "GDCore/Project/InitialInstance.h"
 #undef GetObject //Undefining an annoying macro changing GetObject in GetObjectA or GetObjectW
 
 namespace gd

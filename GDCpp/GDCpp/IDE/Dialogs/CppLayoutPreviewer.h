@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -8,10 +8,10 @@
 #define SCENEEDITORCANVAS_H
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "GDCore/PlatformDefinition/LayoutEditorPreviewer.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
+#include "GDCore/Project/LayoutEditorPreviewer.h"
+#include "GDCore/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
 namespace gd { class InitialInstancesContainer; }
 namespace gd { class Project; }
 namespace gd { class Layout; }

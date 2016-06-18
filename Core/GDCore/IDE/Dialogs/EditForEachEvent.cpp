@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -15,11 +15,11 @@
 //*)
 #include "GDCore/Events/Builtin/ForEachEvent.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectDialog.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/CommonTools.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 
 namespace gd
 {
@@ -128,7 +128,7 @@ void EditForEachEvent::OnobjectBtClick(wxCommandEvent& event)
 
 void EditForEachEvent::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/foreach_events"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/foreach_events");
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #include "GDCore/Events/Instruction.h"
@@ -58,11 +58,6 @@ void Instruction::SetParametersCount(std::size_t size)
         parameters.erase(parameters.begin()+parameters.size()-1);
     while(size > parameters.size())
         parameters.push_back(gd::Expression(""));
-}
-
-Instruction::~Instruction()
-{
-    //dtor
 }
 
 void Instruction::SetParameter(std::size_t nb, const gd::Expression & val)

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if !defined(EMSCRIPTEN)
@@ -9,7 +9,7 @@
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Serialization/Serializer.h"
 #include "GDCore/Serialization/Splitter.h"
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/IDE/wxTools/RecursiveMkDir.h"
 #include "GDCore/Tools/Log.h"
 #include "GDCore/String.h"
@@ -123,7 +123,7 @@ bool ProjectFileWriter::SaveToJSONFile(const gd::Project & project, const gd::St
     project.SerializeTo(rootElement);
 
     //Write JSON to file
-    std::string str = gd::Serializer::ToJSON(rootElement);
+    gd::String str = gd::Serializer::ToJSON(rootElement);
     std::ofstream ofs(filename.ToLocale().c_str());
     if (!ofs.is_open())
     {

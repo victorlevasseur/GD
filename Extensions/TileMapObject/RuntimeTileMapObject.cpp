@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Tile Map Extension
-Copyright (c) 2014-2015 Victor Levasseur (victorlevasseur52@gmail.com)
+Copyright (c) 2014-2016 Victor Levasseur (victorlevasseur52@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,26 +9,26 @@ This project is released under the MIT License.
 
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/PolygonCollision.h"
-#include "GDCpp/ObjectsListsTools.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/PolygonCollision.h"
+#include "GDCpp/Runtime/RuntimeObjectsListsTools.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/CommonTools.h"
 
 #include "TileMapObject.h"
 #include "TileMap.h"
 #include "TileSet.h"
 #include "TileMapTools.h"
 
-RuntimeTileMapObject::RuntimeTileMapObject(RuntimeScene & scene, const gd::Object & object) :
-    RuntimeObject(scene, object),
+RuntimeTileMapObject::RuntimeTileMapObject(RuntimeScene & scene, const TileMapObject & tileMapObject) :
+    RuntimeObject(scene, tileMapObject),
     tileSet(),
     tileMap(),
     vertexArray(sf::Quads),
@@ -36,8 +36,6 @@ RuntimeTileMapObject::RuntimeTileMapObject(RuntimeScene & scene, const gd::Objec
     oldY(0),
     needGeneration(false)
 {
-    const TileMapObject & tileMapObject = static_cast<const TileMapObject&>(object);
-
     tileSet = tileMapObject.tileSet;
     tileMap = tileMapObject.tileMap;
 
@@ -250,9 +248,4 @@ bool GD_EXTENSION_API SingleTileCollision(std::map<gd::String, std::vector<Runti
 
         return false;
     });
-}
-
-RuntimeObject * CreateRuntimeTileMapObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeTileMapObject(scene, object);
 }

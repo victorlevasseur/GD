@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -32,15 +32,15 @@
 #include "GDCore/Tools/Localization.h"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include "GDCore/PlatformDefinition/Project.h"
+#include "GDCore/Project/Project.h"
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/InstructionSentenceFormatter.h"
+#include "GDCore/IDE/Events/InstructionSentenceFormatter.h"
 #include "GDCore/IDE/PlatformManager.h"
 #include "GDCore/IDE/Dialogs/ParameterControlsHelper.h"
 #include "GDCore/IDE/PlatformLoader.h"
 #include "GDCore/Tools/VersionWrapper.h"
 #include "GDCore/Tools/Locale/LocaleManager.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/ProjectFileWriter.h"
 #include "GDCore/IDE/Analytics/AnalyticsSender.h"
 #include "GDCore/IDE/wxTools/GUIContentScaleFactor.h"
@@ -144,6 +144,9 @@ bool GDevelopIDEApp::OnInit()
     wxConfigBase::Set( config );
     cout << "* Config file set." << endl;
 
+    rebrander.LoadRebrandingConfigFromFile("branding/branding.json");
+    cout << "* Custom branding configuration loaded." << endl;
+
     //Set language
     {
         wxString wantedLanguage;
@@ -189,7 +192,7 @@ bool GDevelopIDEApp::OnInit()
     }
     cout << "* Language loaded" << endl;
 
-    #ifdef RELEASE
+    #if defined(RELEASE)
     {
         wxLogNull noLogPlease;
         singleInstanceChecker = new wxSingleInstanceChecker;
@@ -243,7 +246,7 @@ bool GDevelopIDEApp::OnInit()
     //Check if the last session terminated not normally.
     bool recoveringFromBug = false;
     #if defined(RELEASE)
-    if ( !parser.Found( wxT("noCrashCheck") )
+    if ( !parser.Found( wxT("noCrashCheck") ) && !rebrander.HasBranding()
         && wxFileExists(wxFileName::GetTempDir()+"/GameDevelopRunning.log")
         && !wxFileExists(wxFileName::GetTempDir()+"/ExtensionBeingLoaded.log") )
     {
@@ -277,7 +280,7 @@ bool GDevelopIDEApp::OnInit()
 
     //Splash screen
     wxBitmap bitmap;
-    bitmap.LoadFile( wxString("res/GD-Splashscreen.png"), wxBITMAP_TYPE_PNG );
+    bitmap.LoadFile(rebrander.ApplyBranding(wxString("res/GD-Splashscreen.png"), "Logo"), wxBITMAP_TYPE_PNG);
     SplashScreen * splash = new SplashScreen(bitmap, 2, 0, -1, wxNO_BORDER | wxFRAME_SHAPED);
     cout << "* Splash Screen created" << endl;
 
@@ -298,7 +301,6 @@ bool GDevelopIDEApp::OnInit()
     cout << "* Loading platforms and extensions:" << endl;
     bool loadExtensions = true;
 
-    #if defined(RELEASE)
     if ( !parser.Found( wxT("noCrashCheck") ) && wxFileExists(wxFileName::GetTempDir()+"/ExtensionBeingLoaded.log") )
     {
         int whattodo = 0;
@@ -314,7 +316,6 @@ bool GDevelopIDEApp::OnInit()
         if ( whattodo == 0 ) return false;
         else if ( whattodo == 1 ) loadExtensions = false;
     }
-    #endif
 
     if ( loadExtensions ) gd::PlatformLoader::LoadAllPlatformsInManager(".");
 
@@ -352,6 +353,10 @@ bool GDevelopIDEApp::OnInit()
     LogFileManager::Get()->InitalizeFromConfig();
     LogFileManager::Get()->WriteToLogFile("GDevelop initialization ended"),
 
+    //Branding rules
+    cout << "* Applying custom branding..." << endl;
+    rebrander.ApplyBranding(mainEditor);
+
     splash->Destroy();
     mainEditor->Show();
     cout << "* Initializing platforms..." << endl;
@@ -361,10 +366,12 @@ bool GDevelopIDEApp::OnInit()
     cout << "* Initialization ended." << endl;
 
     #if defined(MACOS)
-    gd::LogWarning(_("This is a beta version of GDevelop for Mac OS X.\n\nBugs may be present and only HTML5 games will work. Please report any feedback on www.forum.compilgames.net.\nThanks!"));
+    if (!rebrander.HasBranding())
+        gd::LogWarning(_("This is a beta version of GDevelop for Mac OS X.\n\nBugs may be present and only HTML5 games will work. Please report any feedback on www.forum.compilgames.net.\nThanks!"));
     #endif
 
     //Checking for updates
+    if (!rebrander.HasBranding())
     {
 
         wxString result;
@@ -393,7 +400,7 @@ bool GDevelopIDEApp::OnInit()
     gd::AnalyticsSender::Get()->SendProgramOpening();
 
     //Feedback reminder
-    if (!recoveringFromBug)
+    if (!recoveringFromBug && !rebrander.HasBranding())
     {
         int result = 3;
         config->Read( "Startup/Reminder", &result );

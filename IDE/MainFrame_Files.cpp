@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 
@@ -10,10 +10,10 @@
 #include <memory>
 #include <SFML/System.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/IDE/ProjectResourcesCopier.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/IDE/Project/ProjectResourcesCopier.h"
 #include "GDCore/IDE/ProjectExporter.h"
 #include "GDCore/IDE/wxTools/RecursiveMkDir.h"
 #include "GDCore/IDE/AbstractFileSystem.h"
@@ -76,7 +76,7 @@ void MainFrame::CreateNewProject()
             games.push_back(newProject);
             SetCurrentGame(games.size()-1);
             UpdateOpenedProjectsLogFile();
-            if ( startPage ) startPage->Refresh();
+            if (GetStartPage()) GetStartPage()->Refresh();
 
             //Ensure working directory is set to the IDE one.
             wxSetWorkingDirectory(mainFrameWrapper.GetIDEWorkingDirectory());
@@ -174,7 +174,7 @@ void MainFrame::Open( gd::String file )
 
         SetLastUsedFile( file );
         SetCurrentGame(games.size()-1);
-        if ( startPage ) startPage->Refresh();
+        if (GetStartPage()) GetStartPage()->Refresh();
 
         //Update the file logging the opened project
         UpdateOpenedProjectsLogFile();
@@ -354,11 +354,12 @@ void MainFrame::OnMenuCompilationSelected( wxCommandEvent& event )
 {
     if ( !CurrentGameIsValid() ) return;
 
-    long id =event.GetId();
+    long id = event.GetId();
     if ( idToPlatformExportMenuMap.find(id) == idToPlatformExportMenuMap.end() )
         return;
 
-    std::shared_ptr<gd::ProjectExporter> exporter = idToPlatformExportMenuMap[id]->GetProjectExporter();
+    std::shared_ptr<gd::ProjectExporter> exporter =
+        idToPlatformExportMenuMap[id].first->GetProjectExporters()[idToPlatformExportMenuMap[id].second];
     if ( !exporter ) return;
 
     exporter->ShowProjectExportDialog(*GetCurrentGame());

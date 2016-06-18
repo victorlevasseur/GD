@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 #include <SFML/System.hpp>
-#include "GDCpp/profile.h"
+#include "GDCpp/Runtime/profile.h"
 namespace gd { class BaseEvent; }
 
 /**

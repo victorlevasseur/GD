@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -47,7 +47,7 @@ public:
      * Serialize a SerializerElement from/to JSON.
      */
     ///@{
-	static std::string ToJSON(const SerializerElement & element);
+	static gd::String ToJSON(const SerializerElement & element);
 	static SerializerElement FromJSON(const std::string & json);
     static SerializerElement FromJSON(const gd::String & json)
     {

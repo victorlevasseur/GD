@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Platform Behavior Extension
-Copyright (c) 2014-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2014-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #if defined(GD_IDE_ONLY)
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Version.h"
 #include "GDCore/Tools/Localization.h"
 
@@ -51,6 +51,7 @@ public:
             autConditions["PlatformBehavior::IsOnLadder"].SetFunctionName("isOnLadder");
             autConditions["PlatformBehavior::IsJumping"].SetFunctionName("isJumping");
             autConditions["PlatformBehavior::IsFalling"].SetFunctionName("isFalling");
+            autConditions["PlatformBehavior::IsGrabbingPlatform"].SetFunctionName("isGrabbingPlatform");
 
             autConditions["PlatformBehavior::Gravity"].SetFunctionName("getGravity");
             autActions["PlatformBehavior::Gravity"].SetFunctionName("setGravity").SetGetter("getGravity");
@@ -78,6 +79,7 @@ public:
             autActions["PlatformBehavior::SimulateDownKey"].SetFunctionName("simulateDownKey");
             autActions["PlatformBehavior::SimulateLadderKey"].SetFunctionName("simulateLadderKey");
             autActions["PlatformBehavior::SimulateJumpKey"].SetFunctionName("simulateJumpKey");
+            autActions["PlatformBehavior::SimulateReleaseKey"].SetFunctionName("simulateReleaseKey");
             autActions["PlatformBehavior::SimulateControl"].SetFunctionName("simulateControl");
             autActions["PlatformBehavior::IgnoreDefaultControls"].SetFunctionName("ignoreDefaultControls");
         }

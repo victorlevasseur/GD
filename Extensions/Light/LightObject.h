@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Light Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef LightObject_H
 #define LightObject_H
 
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 
 #include <memory>
 #include <SFML/Graphics/Color.hpp>
@@ -92,7 +92,7 @@ class GD_EXTENSION_API RuntimeLightObject : public RuntimeObject
 {
 public :
 
-    RuntimeLightObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeLightObject(RuntimeScene & scene, const LightObject & lightObject);
     virtual ~RuntimeLightObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeLightObject(*this);}
 
@@ -154,8 +154,4 @@ private:
     sf::Color globalLightColor;
 };
 
-gd::Object * CreateLightObject(gd::String name);
-RuntimeObject * CreateRuntimeLightObject(RuntimeScene & scene, const gd::Object & object);
-
 #endif // LightObject_H
-

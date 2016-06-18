@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 /**
@@ -8,19 +8,19 @@
  */
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/ClassWithObjects.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/SceneStack.h"
+#include "GDCore/Project/ClassWithObjects.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Runtime/SceneStack.h"
 
 TEST_CASE( "SceneStack", "[game-engine]" ) {
 	RuntimeGame game;
 	game.InsertNewLayout("Scene 1", 0);
 	game.InsertNewLayout("Scene 2", 0);
-	SceneStack stack(game,  NULL, "");
+	SceneStack stack(game,  NULL);
 
 	SECTION("Pop on an empty stack") {
 		REQUIRE(stack.Pop() == std::shared_ptr<RuntimeScene>());
@@ -46,5 +46,19 @@ TEST_CASE( "SceneStack", "[game-engine]" ) {
 	SECTION("Step") {
 		auto scene = stack.Replace("Scene 1", true);
 		REQUIRE(stack.Step() == true);
+	}
+
+	SECTION("OnLoadScene") {
+		stack.OnLoadScene([](std::shared_ptr<RuntimeScene> scene) {
+			REQUIRE(scene->GetName() == "Scene 2");
+			return true;
+		});
+		stack.Push("Scene 2");
+
+		stack.OnLoadScene([](std::shared_ptr<RuntimeScene> scene) {
+			REQUIRE(scene->GetName() == "Scene 1");
+			return true;
+		});
+		stack.Replace("Scene 1", true);
 	}
 }

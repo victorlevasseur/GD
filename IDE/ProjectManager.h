@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #ifndef PROJECTMANAGER_H
@@ -12,6 +12,8 @@
 #include <wx/menu.h>
 #include <wx/panel.h>
 //*)
+#include <vector>
+#include <functional>
 #include <string>
 #include "GDCore/String.h"
 #include <wx/ribbon/bar.h>
@@ -49,6 +51,11 @@ public:
 	 * Refresh project tree
 	 */
     void Refresh();
+
+    /**
+     * Add a callback function called when the project manager is refreshed.
+     */
+    void OnRefreshed(std::function<void()> cb);
 
     static void CreateRibbonPage(wxRibbonPage * page);
     void ConnectEvents();
@@ -253,6 +260,7 @@ private:
 
     wxTreeItemId selectedItem;
     gd::String itemTextBeforeEditing;
+    std::vector<std::function<void()>> refreshCallbacks;
 
     static wxRibbonButtonBar * projectRibbonBar;
     static wxRibbonButtonBar * operationsRibbonBar;

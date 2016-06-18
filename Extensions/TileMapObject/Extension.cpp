@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Tile Map Extension
-Copyright (c) 2014-2015 Victor Levasseur (victorlevasseur52@gmail.com)
+Copyright (c) 2014-2016 Victor Levasseur (victorlevasseur52@gmail.com)
 This project is released under the MIT License.
 */
 /**
@@ -9,7 +9,7 @@ This project is released under the MIT License.
  * Florian Rival (Minor changes)
  */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "TileMapObject.h"
 #include "RuntimeTileMapObject.h"
@@ -24,11 +24,11 @@ void DeclareTileMapObjectExtension(gd::PlatformExtension & extension)
                               "Victor Levasseur and Florian Rival",
                               "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("TileMap",
+    gd::ObjectMetadata & obj = extension.AddObject<TileMapObject>(
+               "TileMap",
                _("Tile Map"),
                _("Displays a tile map"),
-               "CppPlatform/Extensions/TileMapIcon.png",
-               &CreateTileMapObject);
+               "CppPlatform/Extensions/TileMapIcon.png");
 
     #if defined(GD_IDE_ONLY)
     obj.SetIncludeFile("TileMapObject/RuntimeTileMapObject.h");
@@ -181,29 +181,34 @@ void DeclareTileMapObjectExtension(gd::PlatformExtension & extension)
 /**
  * \brief This class declares information about the extension.
  */
-class Extension : public ExtensionBase
+class TileMapObjectCppExtension : public ExtensionBase
 {
 public:
 
     /**
      * Constructor of an extension declares everything the extension contains: objects, actions, conditions and expressions.
      */
-    Extension()
+    TileMapObjectCppExtension()
     {
         DeclareTileMapObjectExtension(*this);
-        AddRuntimeObject(GetObjectMetadata("TileMapObject::TileMap"),
-            "RuntimeTileMapObject", CreateRuntimeTileMapObject);
+        AddRuntimeObject<TileMapObject, RuntimeTileMapObject>(
+            GetObjectMetadata("TileMapObject::TileMap"),
+            "RuntimeTileMapObject");
 
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
     };
 };
 
-#if !defined(EMSCRIPTEN)
+#if defined(ANDROID)
+extern "C" ExtensionBase * CreateGDCppTileMapObjectExtension() {
+    return new TileMapObjectCppExtension;
+}
+#elif !defined(EMSCRIPTEN)
 /**
  * Used by GDevelop to create the extension class
  * -- Do not need to be modified. --
  */
 extern "C" ExtensionBase * GD_EXTENSION_API CreateGDExtension() {
-    return new Extension;
+    return new TileMapObjectCppExtension;
 }
 #endif

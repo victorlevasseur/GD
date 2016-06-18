@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -49,7 +49,6 @@ public:
     int gridB; ///< Grid blue color in editor
     float zoomFactor; ///< Stores the zoom factor
     bool windowMask; ///< True if window mask displayed in editor
-    gd::String associatedLayout; ///< Only used for external layout: Contains the name of the layout used ( for loading objects ) when editing the external layout.
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 /**
@@ -8,17 +8,17 @@
  */
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/ClassWithObjects.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
+#include "GDCore/Project/ClassWithObjects.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
 
 TEST_CASE( "RuntimeScene", "[common]" ) {
 	SECTION("Basics") {
 		RuntimeGame game;
 		RuntimeScene scene(NULL, &game);
-		REQUIRE( scene.IsFirstLoop() == true );
-		REQUIRE( scene.GetTimeScale() == 1 );
+		REQUIRE( scene.GetTimeManager().IsFirstLoop() == true );
+		REQUIRE( scene.GetTimeManager().GetTimeScale() == 1 );
 		REQUIRE( scene.renderWindow == NULL );
 		REQUIRE( scene.game == &game );
 	}

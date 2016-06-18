@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Particle System Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -11,25 +11,25 @@ This project is released under the MIT License.
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Polygon2d.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/Polygon2d.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "ParticleEmitterObject.h"
 #include "ParticleSystemWrapper.h"
 #include <SPK.h>
 #include <SPK_GL.h>
 
 #if defined(GD_IDE_ONLY)
-#include "GDCpp/CommonTools.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "ParticleEmitterObjectEditor.h"
 #endif
@@ -483,11 +483,10 @@ void ParticleEmitterBase::UpdateLifeTime()
     particleSystem->particleModel->setLifeTime(particleLifeTimeMin,particleLifeTimeMax);
 }
 
-RuntimeParticleEmitterObject::RuntimeParticleEmitterObject(RuntimeScene & scene_, const gd::Object & object):
-    RuntimeObject(scene_, object),
+RuntimeParticleEmitterObject::RuntimeParticleEmitterObject(RuntimeScene & scene_, const ParticleEmitterObject & particleEmitterObject):
+    RuntimeObject(scene_, particleEmitterObject),
     hasSomeParticles(true)
 {
-    const ParticleEmitterObject & particleEmitterObject = static_cast<const ParticleEmitterObject&>(object);
     ParticleEmitterBase::operator=(particleEmitterObject);
 
     //Store a pointer to the scene
@@ -830,14 +829,4 @@ void ParticleEmitterBase::Init(const ParticleEmitterBase & other)
     particleAngleRandomness2 = other.particleAngleRandomness2;
     maxParticleNb = other.maxParticleNb;
     destroyWhenNoParticles = other.destroyWhenNoParticles;
-}
-
-gd::Object * CreateParticleEmitterObject(gd::String name)
-{
-    return new ParticleEmitterObject(name);
-}
-
-RuntimeObject * CreateRuntimeParticleEmitterObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeParticleEmitterObject(scene, object);
 }

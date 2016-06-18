@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -8,7 +8,7 @@
 #ifndef FULLPROJECTCOMPILER_H
 #define FULLPROJECTCOMPILER_H
 #include <string>
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 namespace gd { class Project; }
 
 namespace GDpriv

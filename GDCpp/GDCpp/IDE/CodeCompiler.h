@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -14,7 +14,7 @@
 #include <set>
 #include <SFML/System.hpp>
 #include <memory>
-#include "GDCpp/String.h"
+#include "GDCpp/Runtime/String.h"
 #include <wx/event.h>
 #include <wx/process.h>
 #include <wx/thread.h>

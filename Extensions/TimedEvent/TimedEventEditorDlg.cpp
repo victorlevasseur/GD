@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Timed Event Extension
-Copyright (c) 2011-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2011-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -17,9 +17,9 @@ This project is released under the MIT License.
 #include <wx/image.h>
 #include <wx/string.h>
 //*)
-#include "GDCpp/Project.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/CommonTools.h"
 
 //(*IdInit(TimedEventEditorDlg)
 const long TimedEventEditorDlg::ID_STATICBITMAP3 = wxNewId();

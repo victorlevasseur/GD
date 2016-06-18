@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Path Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -27,13 +27,13 @@ This project is released under the MIT License.
 #include <wx/textdlg.h>
 #include <wx/numdlg.h>
 #include <wx/filedlg.h>
-#include "GDCore/IDE/SkinHelper.h"
-#include "GDCore/IDE/CommonBitmapManager.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/Project.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/IDE/wxTools/CommonBitmapProvider.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/Project/Project.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/Project/Layout.h"
 #include "ScenePathDatas.h"
 #include "PathBehavior.h"
 
@@ -251,7 +251,7 @@ PathBehaviorEditor::PathBehaviorEditor(wxWindow* parent, gd::Project & game_, gd
 	StaticBoxSizer1->Add(FlexGridSizer4, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
 	FlexGridSizer11->Add(StaticBoxSizer1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText9 = new wxStaticText(this, ID_STATICTEXT10, _("These parameters are independent from the path."), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT10"));
-	wxFont StaticText9Font(wxDEFAULT,wxDEFAULT,wxFONTSTYLE_ITALIC,wxNORMAL,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	wxFont StaticText9Font(wxDEFAULT,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_ITALIC,wxFONTWEIGHT_NORMAL,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	StaticText9->SetFont(StaticText9Font);
 	FlexGridSizer11->Add(StaticText9, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer10->Add(FlexGridSizer11, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
@@ -573,7 +573,7 @@ void PathBehaviorEditor::OnPanel1Paint(wxPaintEvent& event)
     wxSize panelSize = previewPnl->GetSize();
 
     //Draw background
-    dc.SetBrush(gd::CommonBitmapManager::Get()->transparentBg);
+    dc.SetBrush(gd::CommonBitmapProvider::Get()->transparentBg);
     dc.DrawRectangle(0,0, panelSize.GetWidth(), panelSize.GetHeight());
 
     //Draw the image
@@ -595,7 +595,7 @@ void PathBehaviorEditor::OnPanel1Paint(wxPaintEvent& event)
     dc.SetPen(wxPen(wxColor(50, 57, 122)));
     dc.DrawLines(points.size(), &points[0]);
 
-    wxBitmap point(gd::CommonBitmapManager::Get()->point);
+    wxBitmap point(gd::CommonBitmapProvider::Get()->point);
 
     //Draw points
     for(std::size_t a = 0; a < path->size(); a++)

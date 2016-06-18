@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -8,7 +8,7 @@
 #include "GDCore/IDE/ExtensionsLoader.h"
 #include "GDCore/IDE/PlatformLoader.h"
 #include "GDCore/IDE/PlatformManager.h"
-#include "GDCore/PlatformDefinition/Platform.h"
+#include "GDCore/Extensions/Platform.h"
 #include "GDCore/Tools/DynamicLibrariesTools.h"
 #include "GDCore/Tools/Locale/LocaleManager.h"
 #include "GDCore/CommonTools.h"

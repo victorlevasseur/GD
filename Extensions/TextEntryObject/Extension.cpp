@@ -1,11 +1,11 @@
 /**
 
 GDevelop - TextEntry Object Extension
-Copyright (c) 2011-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2011-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "TextEntryObject.h"
 
@@ -18,11 +18,11 @@ void DeclareTextEntryObjectExtension(gd::PlatformExtension & extension)
         "Florian Rival",
         "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("TextEntry",
+    gd::ObjectMetadata & obj = extension.AddObject<TextEntryObject>(
+               "TextEntry",
                _("Text entry"),
                _("Invisible object used to get the text entered with the keyboard"),
-               "CppPlatform/Extensions/textentry.png",
-               &CreateTextEntryObject);
+               "CppPlatform/Extensions/textentry.png");
 
     #if defined(GD_IDE_ONLY)
     TextEntryObject::LoadEdittimeIcon();
@@ -97,8 +97,9 @@ public:
     Extension()
     {
         DeclareTextEntryObjectExtension(*this);
-        AddRuntimeObject(GetObjectMetadata("TextEntryObject::TextEntry"),
-            "RuntimeTextEntryObject", CreateRuntimeTextEntryObject);
+        AddRuntimeObject<TextEntryObject, RuntimeTextEntryObject>(
+            GetObjectMetadata("TextEntryObject::TextEntry"),
+            "RuntimeTextEntryObject");
 
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
     };

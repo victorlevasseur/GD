@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Physics Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -9,13 +9,13 @@ This project is released under the MIT License.
 #include <string>
 #include "Box2D/Box2D.h"
 #include "Triangulation/triangulate.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
 #include "PhysicsBehaviorEditor.h"
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Scene.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/Project/Layout.h"
 #include "RuntimeScenePhysicsDatas.h"
 
 #undef GetObject
@@ -68,7 +68,8 @@ void PhysicsBehavior::DoStepPreEvents(RuntimeScene & scene)
 
     if ( !runtimeScenesPhysicsDatas->stepped ) //Simulate the world, once at each frame
     {
-        runtimeScenesPhysicsDatas->StepWorld(static_cast<double>(scene.GetElapsedTime())/1000000.0, 6, 10);
+        runtimeScenesPhysicsDatas->StepWorld(static_cast<double>(scene.GetTimeManager().GetElapsedTime())
+            / 1000000.0, 6, 10);
         runtimeScenesPhysicsDatas->stepped = true;
     }
 

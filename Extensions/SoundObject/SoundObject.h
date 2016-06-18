@@ -7,8 +7,8 @@ This project is released under the MIT License.
 #ifndef SoundObject_H
 #define SoundObject_H
 
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -104,7 +104,7 @@ class GD_EXTENSION_API RuntimeSoundObject : public RuntimeObject
 {
 public :
 
-    RuntimeSoundObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeSoundObject(RuntimeScene & scene, const SoundObject & soundObject);
     RuntimeSoundObject(const RuntimeSoundObject & other);
     RuntimeSoundObject & operator=(const RuntimeSoundObject & other);
     virtual ~RuntimeSoundObject();
@@ -163,8 +163,4 @@ private:
     void Init(const RuntimeSoundObject &other);
 };
 
-gd::Object * CreateSoundObject(gd::String name);
-RuntimeObject * CreateRuntimeSoundObject(RuntimeScene & scene, const gd::Object & object);
-
 #endif // SoundObject_H
-

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -108,7 +108,7 @@ gd::String NativeFileSystem::GetTempDir()
 
 bool NativeFileSystem::WriteToFile(const gd::String & filename, const gd::String & content)
 {
-    std::ofstream file( filename.c_str() );
+    std::ofstream file( filename.ToLocale().c_str() );
     if ( file.is_open() ) {
         file << content.ToUTF8();
         file.close();
@@ -120,7 +120,7 @@ bool NativeFileSystem::WriteToFile(const gd::String & filename, const gd::String
 
 gd::String NativeFileSystem::ReadFile(const gd::String & file)
 {
-    std::ifstream t(file.c_str());
+    std::ifstream t(file.ToLocale().c_str());
     std::stringstream buffer;
     buffer << t.rdbuf();
     return gd::String::FromUTF8(buffer.str());

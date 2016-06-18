@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -50,9 +50,9 @@ public:
     virtual ~MainFrameWrapper() {};
 
     /**
-     * Return the pointer to the ribbon of the IDE.
+     * Change the current page of the ribbon.
      */
-    wxRibbonBar * GetRibbon() const { return ribbon; };
+    void SetRibbonPage(wxString pageName);
 
     /**
      * Return the pointer to the Scene ribbon's wxRibbonButtonBar of the main editor.
@@ -86,11 +86,6 @@ public:
      * Get pointer to the IDE infobar.
      */
     wxInfoBar * GetInfoBar() const { return infoBar; };
-
-    /**
-     * Return a pointer to the notebook holding editors
-     */
-    wxAuiNotebook * GetEditorsNotebook() { return editorsNotebook; }
 
     /**
      * Return the working directory of the IDE. ( i.e. IDE executable directory )

@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
@@ -8,7 +8,7 @@
 #define GDCore_ParameterControlsHelper_H
 #include <vector>
 #include <wx/event.h>
-#include "GDCore/Events/InstructionMetadata.h"
+#include "GDCore/Extensions/Metadata/InstructionMetadata.h"
 namespace gd { class Project; }
 namespace gd { class Layout; }
 class wxCommandEvent;

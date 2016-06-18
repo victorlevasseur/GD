@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Pathfinding Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 /**
@@ -10,13 +10,13 @@ This project is released under the MIT License.
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
-#include "GDCore/PlatformDefinition/ClassWithObjects.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/Object.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/RuntimeObject.h"
-#include "GDCpp/BuiltinExtensions/ObjectTools.h"
+#include "GDCore/Project/ClassWithObjects.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
+#include "GDCpp/Extensions/Builtin/ObjectTools.h"
 #include "../PathfindingBehavior.h"
 #include "../PathfindingObstacleBehavior.h"
 

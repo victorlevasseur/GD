@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 #if defined(GD_IDE_ONLY)
@@ -12,14 +12,14 @@
 #endif
 #include "ChangesNotifier.h"
 #include "GDCore/IDE/EventsChangesNotifier.h"
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/Layout.h"
-#include "GDCore/PlatformDefinition/ExternalEvents.h"
-#include "GDCpp/CppPlatform.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Project/Layout.h"
+#include "GDCore/Project/ExternalEvents.h"
+#include "GDCpp/Extensions/CppPlatform.h"
 #include "GDCpp/IDE/DependenciesAnalyzer.h"
-#include "GDCpp/Scene.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/Events/CodeCompilationHelpers.h"
+#include "GDCpp/Runtime/Project/Layout.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/IDE/CodeCompilationHelpers.h"
 
 void ChangesNotifier::OnObjectEdited(gd::Project & game, gd::Layout * scene, gd::Object & object) const
 {

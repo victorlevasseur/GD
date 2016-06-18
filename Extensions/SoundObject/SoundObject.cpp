@@ -10,18 +10,18 @@ This project is released under the MIT License.
 #endif
 #include <SFML/Graphics.hpp>
 #include "GDCore/Tools/Localization.h"
-#include "GDCpp/Object.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/Position.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/Project/InitialInstance.h"
+#include "GDCpp/Runtime/CommonTools.h"
 
 #include "SoundObject.h"
 #include "SoundWrapperBase.h"
 
 #if defined(GD_IDE_ONLY)
 #include "GDCore/IDE/AbstractFileSystem.h"
-#include "GDCore/IDE/ArbitraryResourceWorker.h"
+#include "GDCore/IDE/Project/ArbitraryResourceWorker.h"
 #include "GDCore/IDE/Dialogs/MainFrameWrapper.h"
 #include "GDCore/IDE/Dialogs/PropertyDescriptor.h"
 #include "SoundObjectEditor.h"
@@ -46,12 +46,10 @@ SoundObject::SoundObject(gd::String name_) :
 {
 }
 
-RuntimeSoundObject::RuntimeSoundObject(RuntimeScene & scene_, const gd::Object & object) :
-    RuntimeObject(scene_, object),
+RuntimeSoundObject::RuntimeSoundObject(RuntimeScene & scene_, const SoundObject & soundObject) :
+    RuntimeObject(scene_, soundObject),
     m_sound(NULL)
 {
-    const SoundObject & soundObject = static_cast<const SoundObject&>(object);
-
     SetSoundType(soundObject.GetSoundType());
     SetSoundFileName(soundObject.GetSoundFileName());
     SetVolume(soundObject.GetVolume());
@@ -352,14 +350,4 @@ void RuntimeSoundObject::SetPitch(float pitch)
 float RuntimeSoundObject::GetPitch() const
 {
     return m_sound->GetPitch();
-}
-
-RuntimeObject * CreateRuntimeSoundObject(RuntimeScene & scene, const gd::Object & object)
-{
-    return new RuntimeSoundObject(scene, object);
-}
-
-gd::Object * CreateSoundObject(gd::String name)
-{
-    return new SoundObject(name);
 }

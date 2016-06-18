@@ -1,11 +1,11 @@
 /**
 
 GDevelop - Light Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
-#include "GDCpp/ExtensionBase.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
 #include "GDCore/Tools/Version.h"
 #include "LightObstacleBehavior.h"
 #include "LightObject.h"
@@ -30,13 +30,14 @@ public:
                               "Florian Rival",
                               "Open source (MIT License)");
 
-        gd::ObjectMetadata & obj = AddObject("Light",
+        gd::ObjectMetadata & obj = AddObject<LightObject>(
+                   "Light",
                    _("Light"),
                    _("Emits light that can be stopped by objects"),
-                   "CppPlatform/Extensions/lightIcon32.png",
-                   &CreateLightObject);
+                   "CppPlatform/Extensions/lightIcon32.png");
 
-        AddRuntimeObject(obj, "RuntimeLightObject", CreateRuntimeLightObject);
+        AddRuntimeObject<LightObject, RuntimeLightObject>(
+            obj, "RuntimeLightObject");
 
         #if defined(GD_IDE_ONLY)
         LightObject::LoadEdittimeIcon();
@@ -173,7 +174,7 @@ public:
                        "CppPlatform/Extensions/lightIcon24.png",
                        "CppPlatform/Extensions/lightIcon16.png")
             .AddParameter("object", _("Object"), "Light")
-            
+
             .SetFunctionName("IsGlobalLight").SetIncludeFile("Light/LightObject.h");
 
         obj.AddExpression("Intensity", _("Intensity"), _("Intensity"), _("Setup"), "CppPlatform/Extensions/lightIcon16.png")

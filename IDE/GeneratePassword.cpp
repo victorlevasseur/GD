@@ -1,6 +1,6 @@
 /*
  * GDevelop IDE
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the GNU General Public License version 3.
  */
 #include "GeneratePassword.h"
@@ -12,7 +12,7 @@
 #include <wx/string.h>
 //*)
 #include "GDCore/Tools/HelpFileAccess.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include <string>
 #include <SFML/System.hpp>
 
@@ -126,7 +126,7 @@ namespace
 void GeneratePassword::OnCreerBtClick(wxCommandEvent& event)
 {
 
-    string carac = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^$ù*!§";
+    string carac = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^$ï¿½*!ï¿½";
     long number;
     longEdit->GetValue().ToLong(&number);
     if ( number < 1 ) return;
@@ -154,5 +154,5 @@ void GeneratePassword::OnOkBtClick(wxCommandEvent& event)
 
 void GeneratePassword::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://www.wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/events_editor/parameters"));
+    gd::HelpFileAccess::Get()->OpenPage("game_develop/documentation/manual/events_editor/parameters");
 }

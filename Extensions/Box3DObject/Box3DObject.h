@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Box 3D Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef BOX3DOBJECT_H
 #define BOX3DOBJECT_H
 
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 #include <memory>
 class SFMLTextureWrapper;
 class RuntimeScene;
@@ -85,7 +85,7 @@ class GD_EXTENSION_API RuntimeBox3DObject : public RuntimeObject
 {
 public :
 
-    RuntimeBox3DObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeBox3DObject(RuntimeScene & scene, const Box3DObject & box3DObject);
     virtual ~RuntimeBox3DObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeBox3DObject(*this);}
 
@@ -142,8 +142,4 @@ private:
     std::shared_ptr<SFMLTextureWrapper> backTexture;
 };
 
-RuntimeObject * CreateRuntimeBox3DObject(RuntimeScene & scene, const gd::Object & object);
-gd::Object * CreateBox3DObject(gd::String name);
-
 #endif // BOX3DOBJECT_H
-

@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Particle System Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 
 #ifndef PARTICLEEMITTEROBJECT_H
 #define PARTICLEEMITTEROBJECT_H
 
-#include "GDCpp/Object.h"
-#include "GDCpp/RuntimeObject.h"
+#include "GDCpp/Runtime/Project/Object.h"
+#include "GDCpp/Runtime/RuntimeObject.h"
 class ParticleSystemWrapper;
 class RuntimeScene;
 namespace gd { class ImageManager; }
@@ -248,7 +248,7 @@ class GD_EXTENSION_API RuntimeParticleEmitterObject : public RuntimeObject, publ
 {
 public :
 
-    RuntimeParticleEmitterObject(RuntimeScene & scene, const gd::Object & object);
+    RuntimeParticleEmitterObject(RuntimeScene & scene, const ParticleEmitterObject & particleEmitterObject);
     virtual ~RuntimeParticleEmitterObject() {};
     virtual RuntimeObject * Clone() const { return new RuntimeParticleEmitterObject(*this);}
 
@@ -283,8 +283,5 @@ private:
     bool hasSomeParticles;
     const RuntimeScene * scene; ///< Pointer to the scene. Initialized during LoadRuntimeResources call.
 };
-
-gd::Object * CreateParticleEmitterObject(gd::String name);
-RuntimeObject * CreateRuntimeParticleEmitterObject(RuntimeScene & scene, const gd::Object & object);
 
 #endif // PARTICLEEMITTEROBJECT_H

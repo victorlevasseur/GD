@@ -1,15 +1,15 @@
 /**
 
 GDevelop - Primitive Drawing Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 #include <SFML/Graphics.hpp>
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/RuntimeGame.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/CommonTools.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/CommonTools.h"
 #include "PrimitiveDrawingTools.h"
 
 namespace GDpriv

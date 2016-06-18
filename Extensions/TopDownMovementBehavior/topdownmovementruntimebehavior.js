@@ -1,6 +1,6 @@
 /**
 GDevelop - Top-down movement Behavior Extension
-Copyright (c) 2010-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2010-2016 Florian Rival (Florian.Rival@gmail.com)
  */
 
 /**
@@ -28,7 +28,6 @@ gdjs.TopDownMovementRuntimeBehavior = function(runtimeScene, behaviorData, owner
     this._xVelocity = 0;
     this._yVelocity = 0;
     this._angularSpeed = 0;
-    this._ignoreDefaultControls = false; ///< If set to true, do not track the default inputs.
     this._leftKey = false;
     this._rightKey = false;
     this._upKey = false;
@@ -95,7 +94,7 @@ gdjs.TopDownMovementRuntimeBehavior.prototype.doStepPreEvents = function(runtime
     var DOWNKEY = 40;
     var SHIFTKEY = 16;
     var object = this.owner;
-    var timeDelta = runtimeScene.getElapsedTime()/1000;
+    var timeDelta = runtimeScene.getTimeManager().getElapsedTime()/1000;
 
     //Get the player input:
     this._leftKey |= !this._ignoreDefaultControls && runtimeScene.getGame().getInputManager().isKeyPressed(LEFTKEY);

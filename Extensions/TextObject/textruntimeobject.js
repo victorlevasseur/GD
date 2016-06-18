@@ -1,10 +1,10 @@
 /*
  *  GDevelop JS Platform
- *  2013 Florian Rival (Florian.Rival@gmail.com)
+ *  2013-2016 Florian Rival (Florian.Rival@gmail.com)
  */
 
 /**
- * The textRuntimeObject displays a text on the screen.
+ * Displays a text on the screen.
  *
  * @namespace gdjs
  * @class TextRuntimeObject
@@ -15,59 +15,30 @@ gdjs.TextRuntimeObject = function(runtimeScene, objectData)
 {
     gdjs.RuntimeObject.call(this, runtimeScene, objectData);
 
-    this._runtimeScene = runtimeScene;
     this._characterSize = objectData.characterSize;
-    this._fontName = "Arial";
+    this._fontName = objectData.font || 'Arial';
     this._bold = objectData.bold;
     this._italic = objectData.italic;
     this._underlined = objectData.underlined;
     this._color = [objectData.color.r, objectData.color.g, objectData.color.b];
-    if ( objectData.font !== "" ) {
-        this._fontName = "\"gdjs_font_"+objectData.font+"\"";
-    }
 
     this._str = objectData.string;
 
-    if ( this._text === undefined ) this._text = new PIXI.Text(" ", {align:"left"});
-    this._text.anchor.x = 0.5;
-    this._text.anchor.y = 0.5;
-    runtimeScene.getLayer("").addChildToPIXIContainer(this._text, this.zOrder);
-
-    this._text.text = this._str.length === 0 ? " " : this._str;
-    this._justCreated = true; //Work around a PIXI.js bug. See updateTime method.
-    this._updateTextStyle();
-    this._updateTextPosition();
+    if (this._renderer)
+        gdjs.TextRuntimeObjectRenderer.call(this._renderer, this, runtimeScene);
+    else
+        this._renderer = new gdjs.TextRuntimeObjectRenderer(this, runtimeScene);
 };
 
 gdjs.TextRuntimeObject.prototype = Object.create( gdjs.RuntimeObject.prototype );
 gdjs.TextRuntimeObject.thisIsARuntimeObjectConstructor = "TextObject::Text";
 
-gdjs.TextRuntimeObject.prototype.onDeletedFromScene = function(runtimeScene) {
-    runtimeScene.getLayer(this.layer).removePIXIContainerChild(this._text);
-};
-
-/**
- * Update the style object's.
- * @method _updateTextStyle
- * @private
- */
-gdjs.TextRuntimeObject.prototype._updateTextStyle = function() {
-    style = {align:"left"};
-	style.font = "";
-    if ( this._italic ) style.font += "italic ";
-    if ( this._bold ) style.font += "bold ";
-    //if ( this._underlined ) style.font += "underlined "; Not supported :/
-    style.font += this._characterSize+"px"+" "+this._fontName;
-    style.fill = "rgb("+this._color[0]+","+this._color[1]+","+this._color[2]+")";
-    this._text.style = style;
+gdjs.TextRuntimeObject.prototype.exposeRendererObject = function(cb) {
+    this._renderer.exposeRendererObject(cb);
 };
 
 gdjs.TextRuntimeObject.prototype.updateTime = function() {
-    if (this._justCreated) { //Work around a PIXI.js bug:
-        this._text.updateText();
-        this._updateTextPosition(); //Width seems not to be correct when text is not rendered yet.
-        this._justCreated = false;
-    }
+    this._renderer.ensureUpToDate();
 };
 
 /**
@@ -76,9 +47,8 @@ gdjs.TextRuntimeObject.prototype.updateTime = function() {
  * @private
  */
 gdjs.TextRuntimeObject.prototype._updateTextPosition = function() {
-    this._text.position.x = this.x+this._text.width/2;
-    this._text.position.y = this.y+this._text.height/2;
     this.hitBoxesDirty = true;
+    this._renderer.updatePosition();
 };
 
 /**
@@ -106,7 +76,7 @@ gdjs.TextRuntimeObject.prototype.setY = function(y) {
  */
 gdjs.TextRuntimeObject.prototype.setAngle = function(angle) {
     gdjs.RuntimeObject.prototype.setAngle.call(this, angle);
-    this._text.rotation = gdjs.toRad(angle);
+    this._renderer.updateAngle();
 };
 
 /**
@@ -118,7 +88,7 @@ gdjs.TextRuntimeObject.prototype.setOpacity = function(opacity) {
     if ( opacity > 255 ) opacity = 255;
 
     this.opacity = opacity;
-    this._text.alpha = opacity / 255;
+    this._renderer.updateOpacity();
 };
 
 /**
@@ -146,8 +116,7 @@ gdjs.TextRuntimeObject.prototype.setString = function(str) {
     if ( str === this._str ) return;
 
     this._str = str;
-    this._text.text = str.length === 0 ? " " : str;
-    this._text.updateText(); //Work around a PIXI.js bug.
+    this._renderer.updateString();
     this._updateTextPosition();
 };
 
@@ -165,8 +134,9 @@ gdjs.TextRuntimeObject.prototype.getCharacterSize = function() {
  * @param newSize {Number} The new size for text.
  */
 gdjs.TextRuntimeObject.prototype.setCharacterSize = function(newSize) {
+    if (newSize <= 1) newSize = 1;
     this._characterSize = newSize;
-    this._updateTextStyle();
+    this._renderer.updateStyle();
 };
 
 /**
@@ -184,7 +154,7 @@ gdjs.TextRuntimeObject.prototype.isBold = function() {
  */
 gdjs.TextRuntimeObject.prototype.setBold = function(enable) {
     this._bold = enable;
-    this._updateTextStyle();
+    this._renderer.updateStyle();
 };
 
 /**
@@ -202,30 +172,7 @@ gdjs.TextRuntimeObject.prototype.isItalic = function() {
  */
 gdjs.TextRuntimeObject.prototype.setItalic = function(enable) {
     this._italic = enable;
-    this._updateTextStyle();
-};
-
-/**
- * Hide or show the object
- * @method hide
- * @param enable {Boolean} Set it to true to hide the object, false to show it.
- */
-gdjs.TextRuntimeObject.prototype.hide = function(enable) {
-    if ( enable === undefined ) enable = true;
-    this._hidden = enable;
-    this._text.visible = !enable;
-};
-
-/**
- * Set the layer of the object.
- * @method setLayer
- * @param {String} The new layer of the object
- */
-gdjs.TextRuntimeObject.prototype.setLayer = function(name) {
-    //We need to move the object from the pixi container of the layer
-    this._runtimeScene.getLayer(this.layer).removePIXIContainerChild(this._text);
-    this.layer = name;
-    this._runtimeScene.getLayer(this.layer).addChildToPIXIContainer(this._text, this.zOrder);
+    this._renderer.updateStyle();
 };
 
 /**
@@ -233,7 +180,7 @@ gdjs.TextRuntimeObject.prototype.setLayer = function(name) {
  * @method getWidth
  */
 gdjs.TextRuntimeObject.prototype.getWidth = function() {
-    return this._text.width;
+    return this._renderer.getWidth();
 };
 
 /**
@@ -241,7 +188,7 @@ gdjs.TextRuntimeObject.prototype.getWidth = function() {
  * @method getHeight
  */
 gdjs.TextRuntimeObject.prototype.getHeight = function() {
-    return this._text.height;
+    return this._renderer.getHeight();
 };
 
 /**
@@ -256,17 +203,5 @@ gdjs.TextRuntimeObject.prototype.setColor = function(str) {
     this._color[0] = parseInt(color[0], 10);
     this._color[1] = parseInt(color[1], 10);
     this._color[2] = parseInt(color[2], 10);
-    this._updateTextStyle();
-};
-
-/**
- * Set the Z order of the object.
- * @method setZOrder
- * @param z {Number} The new Z order position of the object
- */
-gdjs.TextRuntimeObject.prototype.setZOrder = function(z) {
-    if ( z !== this.zOrder ) {
-        this._runtimeScene.getLayer(this.layer).changePIXIContainerChildZOrder(this._text, z);
-        this.zOrder = z;
-    }
+    this._renderer.updateStyle();
 };

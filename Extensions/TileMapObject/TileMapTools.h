@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Tile Map Extension
-Copyright (c) 2014-2015 Victor Levasseur (victorlevasseur52@gmail.com)
+Copyright (c) 2014-2016 Victor Levasseur (victorlevasseur52@gmail.com)
 This project is released under the MIT License.
 */
 
@@ -10,7 +10,7 @@ This project is released under the MIT License.
 
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "GDCpp/Polygon2d.h"
+#include "GDCpp/Runtime/Polygon2d.h"
 
 class TileSet;
 class TileMap;

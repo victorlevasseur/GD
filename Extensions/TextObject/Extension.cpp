@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Text Object Extension
-Copyright (c) 2008-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2008-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 */
 /**
@@ -9,8 +9,8 @@ This project is released under the MIT License.
  * Victor Levasseur ( Bold/Italic/Underlined styles )
  */
 
-#include "GDCpp/ExtensionBase.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Version.h"
 #include "TextObject.h"
 
@@ -23,11 +23,11 @@ void DeclareTextObjectExtension(gd::PlatformExtension & extension)
                           "Florian Rival and Victor Levasseur",
                           "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("Text",
+    gd::ObjectMetadata & obj = extension.AddObject<TextObject>(
+               "Text",
                _("Text"),
                _("Displays a text"),
-               "CppPlatform/Extensions/texticon.png",
-               &CreateTextObject);
+               "CppPlatform/Extensions/texticon.png");
 
     #if defined(GD_IDE_ONLY)
     obj.SetIncludeFile("TextObject/TextObject.h");
@@ -281,14 +281,19 @@ public:
     Extension()
     {
         DeclareTextObjectExtension(*this);
-        AddRuntimeObject(GetObjectMetadata("TextObject::Text"),
-            "RuntimeTextObject", CreateRuntimeTextObject);
+        AddRuntimeObject<TextObject, RuntimeTextObject>(
+            GetObjectMetadata("TextObject::Text"),
+            "RuntimeTextObject");
 
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
     };
 };
 
-#if !defined(EMSCRIPTEN)
+#if defined(ANDROID)
+extern "C" ExtensionBase * CreateGDCppTextObjectExtension() {
+    return new Extension;
+}
+#elif !defined(EMSCRIPTEN)
 /**
  * Used by GDevelop to create the extension class
  * -- Do not need to be modified. --

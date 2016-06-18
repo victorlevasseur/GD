@@ -1,6 +1,6 @@
 /*
  * GDevelop Core
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -19,10 +19,10 @@
 #include <wx/settings.h>
 #include <algorithm>
 #include <memory>
-#include "GDCore/PlatformDefinition/Project.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
-#include "GDCore/PlatformDefinition/Platform.h"
-#include "GDCore/IDE/SkinHelper.h"
+#include "GDCore/Project/Project.h"
+#include "GDCore/Extensions/PlatformExtension.h"
+#include "GDCore/Extensions/Platform.h"
+#include "GDCore/IDE/wxTools/SkinHelper.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
 #include "GDCore/IDE/Dialogs/ProjectExtensionsDialog.h"
 #include "GDCore/IDE/Dialogs/ChooseObjectTypeDialog.h"
@@ -283,7 +283,7 @@ void ChooseObjectTypeDialog::OnmoreObjectsBtClick(wxCommandEvent& event)
 
 void ChooseObjectTypeDialog::OnhelpBtClick(wxCommandEvent& event)
 {
-    gd::HelpFileAccess::Get()->OpenURL(_("http://wiki.compilgames.net/doku.php/en/game_develop/documentation/manual/edit_object"));
+    gd::HelpFileAccess::Get()->OpenPage("en/game_develop/documentation/manual/edit_object");
 }
 
 void ChooseObjectTypeDialog::UpdateListColumnsWidth()

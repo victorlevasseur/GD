@@ -1,6 +1,6 @@
 /*
  * GDevelop C++ Platform
- * Copyright 2008-2015 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
+ * Copyright 2008-2016 Florian Rival (Florian.Rival@gmail.com). All rights reserved.
  * This project is released under the MIT License.
  */
 
@@ -14,24 +14,24 @@
 #include <unistd.h>
 #endif
 
-#include "GDCpp/CommonTools.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/ResourcesLoader.h"
-#include "GDCpp/FontManager.h"
-#include "GDCpp/SoundManager.h"
-#include "GDCpp/SceneNameMangler.h"
-#include "GDCpp/Project.h"
-#include "GDCpp/ImageManager.h"
-#include "GDCpp/CodeExecutionEngine.h"
-#include "GDCpp/CppPlatform.h"
-#include "GDCpp/ExtensionsLoader.h"
-#include "GDCpp/Log.h"
-#include "GDCpp/SceneStack.h"
-#include "GDCpp/Tools/AES.h"
-#include "GDCpp/Serialization/Serializer.h"
-#include "GDCpp/Serialization/SerializerElement.h"
-#include "GDCpp/tinyxml/tinyxml.h"
-#include "GDCpp/RuntimeGame.h"
+#include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/ResourcesLoader.h"
+#include "GDCpp/Runtime/FontManager.h"
+#include "GDCpp/Runtime/SoundManager.h"
+#include "GDCpp/Runtime/SceneNameMangler.h"
+#include "GDCpp/Runtime/Project/Project.h"
+#include "GDCpp/Runtime/ImageManager.h"
+#include "GDCpp/Runtime/CodeExecutionEngine.h"
+#include "GDCpp/Extensions/CppPlatform.h"
+#include "GDCpp/Runtime/ExtensionsLoader.h"
+#include "GDCpp/Runtime/Log.h"
+#include "GDCpp/Runtime/SceneStack.h"
+#include "GDCpp/Runtime/Tools/AES.h"
+#include "GDCpp/Runtime/Serialization/Serializer.h"
+#include "GDCpp/Runtime/Serialization/SerializerElement.h"
+#include "GDCpp/Runtime/TinyXml/tinyxml.h"
+#include "GDCpp/Runtime/RuntimeGame.h"
 #include "CompilationChecker.h"
 
 #include <stdlib.h>
@@ -88,6 +88,7 @@ int main( int argc, char *p_argv[] )
     //Load extensions
     gd::ExtensionsLoader::LoadAllExtensions(".", CppPlatform::Get());
     gd::ExtensionsLoader::ExtensionsLoadingDone(".");
+
     //Load resource file
     gd::ResourcesLoader * resLoader = gd::ResourcesLoader::Get();
     if (!resLoader->SetResourceFile( executablePath+"/"+executableNameOnly+".egd" )
@@ -140,16 +141,21 @@ int main( int argc, char *p_argv[] )
         return DisplayMessage("No scene to be loaded. Aborting.");
 
     //Loading the code
-    gd::String codeLibraryName = executablePath+"/"+executableNameOnly+"."+codeFileExtension;
-    Handle codeLibrary = gd::OpenLibrary(codeLibraryName.ToLocale().c_str());
-    if ( codeLibrary == NULL )
+    Handle codeLibrary = NULL;
+    gd::String codeLibraryName;
+    auto loadLibrary = [&codeLibraryName, &codeLibrary](gd::String path) {
+        codeLibraryName = path;
+        codeLibrary = gd::OpenLibrary(codeLibraryName.ToLocale().c_str());
+
+        return codeLibrary != NULL;
+    };
+
+    if (!loadLibrary(executablePath+"/"+executableNameOnly+"."+codeFileExtension) &&
+        !loadLibrary(executableNameOnly+"."+codeFileExtension) &&
+        !loadLibrary(executablePath+"/Code."+codeFileExtension) &&
+        !loadLibrary("Code."+codeFileExtension))
     {
-        codeLibraryName = executablePath+"/Code."+codeFileExtension;
-        Handle codeLibrary = gd::OpenLibrary(codeLibraryName.ToLocale().c_str());
-        if ( codeLibrary == NULL )
-        {
-            return DisplayMessage("Unable to load the execution engine for game. Aborting.");
-        }
+        return DisplayMessage("Unable to load the execution engine for game. Aborting.");
     }
 
     #if defined(WINDOWS)
@@ -172,24 +178,33 @@ int main( int argc, char *p_argv[] )
     runtimeGame.LoadFromProject(game);
 
     window.create(sf::VideoMode(game.GetMainWindowDefaultWidth(), game.GetMainWindowDefaultHeight(), 32),
-        "", sf::Style::Close);
+        "", sf::Style::Close, sf::ContextSettings(24, 8));
     window.setActive(true);
-    window.setFramerateLimit(game.GetMaximumFPS());
-    window.setVerticalSyncEnabled(game.IsVerticalSynchronizationEnabledByDefault());
 
     //Game main loop
     bool abort = false;
-    SceneStack sceneStack(runtimeGame, &window, codeLibraryName);
+    SceneStack sceneStack(runtimeGame, &window);
     sceneStack.OnError([&abort](gd::String error) {
         DisplayMessage(error);
         abort = true;
     });
+    sceneStack.OnLoadScene([&codeLibraryName](std::shared_ptr<RuntimeScene> scene) {
+        if (!codeLibraryName.empty() &&
+            !scene->GetCodeExecutionEngine()->LoadFromDynamicLibrary(codeLibraryName,
+            "GDSceneEvents"+gd::SceneNameMangler::GetMangledSceneName(scene->GetName())))
+        {
+            return false;
+        }
+
+        return true;
+    });
+
 
     sceneStack.Push(game.GetLayout(0).GetName());
     while (sceneStack.Step() && !abort)
         ;
 
-    SoundManager::Get()->DestroySingleton();
+    runtimeGame.GetSoundManager().ClearAllSoundsAndMusics();
     FontManager::Get()->DestroySingleton();
 
     gd::CloseLibrary(codeLibrary);
@@ -202,10 +217,19 @@ int main( int argc, char *p_argv[] )
  */
 gd::String GetCurrentWorkingDirectory()
 {
-    char path[2048];
-    getcwd(path, 2048);
+    #if defined(WINDOWS)
+    //getcwd on Windows do not work properly with accented characters (non ASCII) characters.
+    char buffer[MAX_PATH];
+    GetModuleFileName( NULL, buffer, MAX_PATH );
+    std::string::size_type pos = std::string( buffer ).find_last_of( "\\/" );
+    return gd::String::FromLocale(std::string( buffer ).substr( 0, pos));
+    #else
+    const auto MAX_LENGTH = 32767;
+    char path[MAX_LENGTH];
+    getcwd(path, MAX_LENGTH);
 
     return path;
+    #endif
 }
 
 #if defined(WINDOWS)

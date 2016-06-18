@@ -1,7 +1,7 @@
 /**
 
 GDevelop - Timed Event Extension
-Copyright (c) 2011-2015 Florian Rival (Florian.Rival@gmail.com)
+Copyright (c) 2011-2016 Florian Rival (Florian.Rival@gmail.com)
 This project is released under the MIT License.
 
 */
@@ -10,15 +10,15 @@ This project is released under the MIT License.
 #include "GDCore/Events/Serialization.h"
 #include "GDCore/Serialization/SerializerElement.h"
 #include "TimedEvent.h"
-#include "GDCpp/RuntimeScene.h"
-#include "GDCpp/tinyxml/tinyxml.h"
-#include "GDCore/Events/EventsCodeGenerator.h"
-#include "GDCore/Events/EventsCodeGenerationContext.h"
-#include "GDCore/Events/ExpressionsCodeGeneration.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
+#include "GDCpp/Runtime/TinyXml/tinyxml.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerator.h"
+#include "GDCore/Events/CodeGeneration/EventsCodeGenerationContext.h"
+#include "GDCore/Events/CodeGeneration/ExpressionsCodeGeneration.h"
 #include "GDCore/Events/Serialization.h"
-#include "GDCore/IDE/EventsRenderingHelper.h"
-#include "GDCore/IDE/EventsEditorItemsAreas.h"
-#include "GDCore/IDE/EventsEditorSelection.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsRenderingHelper.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorItemsAreas.h"
+#include "GDCore/IDE/Dialogs/EventsEditor/EventsEditorSelection.h"
 #include "GDCore/Tools/Localization.h"
 #include "TimedEventEditorDlg.h"
 
@@ -119,7 +119,7 @@ void TimedEvent::Render(wxDC & dc, int x, int y, unsigned int width, gd::EventsE
     dc.SetFont( renderingHelper->GetNiceFont().Bold()  );
     dc.SetTextForeground(wxColour(0,0,0));
     gd::String nameTxt;
-    if ( !name.empty() ) nameTxt = _(" (Nom : ")+name + ")";
+    if ( !name.empty() ) nameTxt = _(" (Name:  ")+name + ")";
     dc.DrawText( _("Delayed execution after ")+timeout.GetPlainString()+_(" seconds.")+" "+nameTxt, x + 4, y + 3 );
 
     //Draw conditions rectangle

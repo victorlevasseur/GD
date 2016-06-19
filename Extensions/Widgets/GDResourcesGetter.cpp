@@ -1,6 +1,6 @@
 #include "GDResourcesGetter.h"
 
-#include "GDCpp/FontManager.h"
+#include "GDCpp/Runtime/FontManager.h"
 
 GDResourcesGetter::Ptr GDResourcesGetter::create()
 {

@@ -9,8 +9,8 @@ This project is released under the MIT License.
  * Victor Levasseur ( Bold/Italic/Underlined styles )
  */
 
-#include "GDCpp/ExtensionBase.h"
-#include "GDCore/PlatformDefinition/PlatformExtension.h"
+#include "GDCpp/Extensions/ExtensionBase.h"
+#include "GDCore/Extensions/PlatformExtension.h"
 #include "GDCore/Tools/Version.h"
 #include "TextBoxObject.h"
 
@@ -23,11 +23,11 @@ void DeclareTextBoxObjectExtension(gd::PlatformExtension & extension)
                           "Victor Levasseur",
                           "Open source (MIT License)");
 
-    gd::ObjectMetadata & obj = extension.AddObject("TextBox",
+    gd::ObjectMetadata & obj = extension.AddObject<TextBoxObject>(
+               "TextBox",
                _("Textbox"),
                _("Displays a textbox widget"),
-               "CppPlatform/Extensions/texticon.png",
-               &CreateTextBoxObject);
+               "CppPlatform/Extensions/texticon.png");
 
     #if defined(GD_IDE_ONLY)
     obj.SetIncludeFile("TextBoxObject/TextBoxObject.h");
@@ -281,8 +281,9 @@ public:
     Extension()
     {
         DeclareTextBoxObjectExtension(*this);
-        AddRuntimeObject(GetObjectMetadata("Widgets::TextBox"),
-            "RuntimeTextBoxObject", CreateRuntimeTextBoxObject);
+        AddRuntimeObject<TextBoxObject, RuntimeTextBoxObject>(
+            GetObjectMetadata("Widgets::TextBox"),
+            "RuntimeTextBoxObject");
 
         GD_COMPLETE_EXTENSION_COMPILATION_INFORMATION();
     };

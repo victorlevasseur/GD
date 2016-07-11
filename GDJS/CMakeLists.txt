@@ -4,7 +4,7 @@ cmake_policy(SET CMP0015 NEW)
 project(GDJS)
 #Dependencies on external libraries:
 ###
-include_directories(${sfml_include_dir})
+include_directories(${SFML_INCLUDE_DIR})
 include_directories(${GDCORE_include_dir})
 IF(WIN32) #Special case for wxWidgets on Windows
 	include_directories(${wxwidgets_include_dir})
@@ -85,7 +85,7 @@ IF(EMSCRIPTEN)
 	#Nothing.
 ELSE()
 	target_link_libraries(GDJS GDCore)
-	target_link_libraries(GDJS ${sfml_LIBRARIES})
+	target_link_libraries(GDJS ${SFML_LIBRARIES})
 	target_link_libraries(GDJS ${wxWidgets_LIBRARIES}) #Add wxWidgets libraries if needed.
 	target_link_libraries(GDJS ${GTK_LIBRARIES}) #Add GTK libraries if needed (Linux only).
 ENDIF()

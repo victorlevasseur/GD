@@ -7,7 +7,7 @@ gd_set_option(NO_UPDATE_CHECKER FALSE BOOL "TRUE to remove the integrated update
 
 #Dependencies on external libraries:
 ###
-include_directories(${sfml_include_dir})
+include_directories(${SFML_INCLUDE_DIR})
 include_directories(${GDCORE_include_dir})
 include_directories(${GDCpp_include_dir})
 IF(WIN32) #Special case for wxWidgets on Windows
@@ -94,12 +94,12 @@ ENDIF()
 ###
 target_link_libraries(GDIDE GDCore)
 target_link_libraries(GDIDE GDCpp)
-target_link_libraries(GDIDE ${sfml_LIBRARIES})
+target_link_libraries(GDIDE ${SFML_LIBRARIES})
 target_link_libraries(GDIDE ${wxWidgets_LIBRARIES}) #Add wxWidgets libraries if needed.
 target_link_libraries(GDIDE ${GTK_LIBRARIES}) #Add GTK libraries if needed (Linux only).
 IF(WIN32)
-	target_link_libraries(GDIDE_exe ${sfml_LIBRARIES})
-	target_link_libraries(GDIDE_dev_exe ${sfml_LIBRARIES})
+	target_link_libraries(GDIDE_exe ${SFML_LIBRARIES})
+	target_link_libraries(GDIDE_dev_exe ${SFML_LIBRARIES})
 ENDIF(WIN32)
 
 #Pre build tasks

@@ -31,6 +31,9 @@
 #include "GDCore/Project/InitialInstancesContainer.h"
 #include "GDCore/Project/Object.h"
 #include "GDCore/CommonTools.h"
+#if defined(LINUX)
+#include <GL/glu.h>
+#endif
 
 using namespace std;
 

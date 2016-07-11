@@ -10,7 +10,7 @@ set(GDCpp_Runtime_lib_dir ${GD_base_dir}/Binaries/Output/${CMAKE_BUILD_TYPE}_${C
 
 #Dependencies on external libraries:
 ###
-include_directories(${sfml_include_dir})
+include_directories(${SFML_INCLUDE_DIR})
 include_directories(${GDCORE_include_dir})
 IF(WIN32) #Special case for wxWidgets on Windows
 	include_directories(${wxwidgets_include_dir})
@@ -121,7 +121,7 @@ IF(EMSCRIPTEN)
 	#Nothing.
 ELSE()
 	target_link_libraries(GDCpp GDCore)
-	target_link_libraries(GDCpp ${sfml_LIBRARIES})
+	target_link_libraries(GDCpp ${SFML_LIBRARIES})
 	target_link_libraries(GDCpp ${wxWidgets_LIBRARIES})
 	target_link_libraries(GDCpp ${GTK_LIBRARIES})
 ENDIF()
@@ -131,9 +131,9 @@ ENDIF()
 IF(EMSCRIPTEN)
 	#Nothing.
 ELSE()
+	target_link_libraries(GDCpp_Runtime ${SFML_LIBRARIES})
+	target_link_libraries(GDCpp_Runtime_exe ${SFML_LIBRARIES})
 	target_link_libraries(GDCpp_Runtime_exe GDCpp_Runtime)
-	target_link_libraries(GDCpp_Runtime ${sfml_LIBRARIES})
-	target_link_libraries(GDCpp_Runtime_exe ${sfml_LIBRARIES})
 ENDIF()
 
 #Post build tasks
@@ -165,5 +165,5 @@ if(BUILD_TESTS)
 	set_target_properties(GDCpp_tests PROPERTIES COMPILE_DEFINITIONS "${GDCpp_Runtime_exe_extra_definitions}")
 	set_target_properties(GDCpp_tests PROPERTIES BUILD_WITH_INSTALL_RPATH FALSE) #Allow finding dependencies directly from build path on Mac OS X.
 	target_link_libraries(GDCpp_tests GDCpp_Runtime)
-	target_link_libraries(GDCpp_tests ${sfml_LIBRARIES})
+	target_link_libraries(GDCpp_tests ${SFML_LIBRARIES})
 endif()

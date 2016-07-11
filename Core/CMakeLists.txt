@@ -14,7 +14,7 @@ set(GDCORE_lib_dir ${GD_base_dir}/Binaries/Output/${CMAKE_BUILD_TYPE}_${CMAKE_SY
 
 #Dependencies on external libraries:
 ###
-include_directories(${sfml_include_dir})
+include_directories(${SFML_INCLUDE_DIR})
 IF(WIN32) #Special case for wxWidgets on Windows
 	include_directories(${wxwidgets_include_dir})
 ELSEIF (NOT EMSCRIPTEN AND NOT NO_GUI)
@@ -89,7 +89,7 @@ set(RUNTIME_OUTPUT_PATH ${GD_base_dir}/Binaries/Output/${CMAKE_BUILD_TYPE}_${CMA
 IF(EMSCRIPTEN)
 	#Nothing.
 ELSE()
-	target_link_libraries(GDCore ${sfml_LIBRARIES})
+	target_link_libraries(GDCore ${SFML_LIBRARIES})
 	target_link_libraries(GDCore ${wxWidgets_LIBRARIES})
 	target_link_libraries(GDCore ${GTK_LIBRARIES})
 ENDIF()
@@ -106,7 +106,7 @@ if(BUILD_TESTS)
 	add_executable(GDCore_tests ${test_source_files})
 	set_target_properties(GDCore_tests PROPERTIES BUILD_WITH_INSTALL_RPATH FALSE) #Allow finding dependencies directly from build path on Mac OS X.
 	target_link_libraries(GDCore_tests GDCore)
-	target_link_libraries(GDCore_tests ${sfml_LIBRARIES})
+	target_link_libraries(GDCore_tests ${SFML_LIBRARIES})
 	target_link_libraries(GDCore_tests ${wxWidgets_LIBRARIES})
 	target_link_libraries(GDCore_tests ${GTK_LIBRARIES})
 endif()

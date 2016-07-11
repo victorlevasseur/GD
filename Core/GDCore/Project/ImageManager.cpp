@@ -9,6 +9,9 @@
 #include "GDCore/Tools/InvalidImage.h"
 #include "GDCore/Project/ResourcesManager.h"
 #undef LoadImage //thx windows.h
+#if defined(LINUX)
+#include <GL/glu.h>
+#endif
 
 namespace gd
 {

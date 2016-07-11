@@ -4,7 +4,7 @@
 # consist in a few lines containing calls to these functions.
 
 macro(gd_add_extension_includes)
-	include_directories(${sfml_include_dir})
+	include_directories(${SFML_INCLUDE_DIR})
 	include_directories(${GDCORE_include_dir})
 	include_directories(${GDCpp_include_dir})
 	IF(WIN32) #Special case for wxWidgets on Windows
@@ -120,7 +120,7 @@ function(gd_extension_link_libraries target_name)
 	ELSE()
 		target_link_libraries(${target_name} GDCore)
 		target_link_libraries(${target_name} GDCpp)
-		target_link_libraries(${target_name} ${sfml_LIBRARIES})
+		target_link_libraries(${target_name} ${SFML_LIBRARIES})
 		target_link_libraries(${target_name} ${wxWidgets_LIBRARIES}) #Add wxWidgets libraries if needed.
 		target_link_libraries(${target_name} ${GTK_LIBRARIES}) #Add GTK libraries if needed (Linux only).
 	ENDIF()
@@ -132,7 +132,7 @@ function(gdcpp_runtime_extension_link_libraries target_name)
 		#Nothing.
 	ELSE()
 		target_link_libraries(${target_name} GDCpp_Runtime)
-		target_link_libraries(${target_name} ${sfml_LIBRARIES})
+		target_link_libraries(${target_name} ${SFML_LIBRARIES})
 		IF(WIN32)
 			target_link_libraries(${target_name} ws2_32 user32 opengl32 glu32)
 		ENDIF(WIN32)
@@ -151,7 +151,7 @@ function(gdcpp_add_tests_extension_target gdcpp_tests_target_name test_source_fi
 		add_executable(${gdcpp_tests_target_name} ${test_source_files})
 		target_link_libraries(${gdcpp_tests_target_name} GDCpp_Runtime)
 		target_link_libraries(${gdcpp_tests_target_name} ${target_name})
-		target_link_libraries(${gdcpp_tests_target_name} ${sfml_LIBRARIES})
+		target_link_libraries(${gdcpp_tests_target_name} ${SFML_LIBRARIES})
 
 		set_target_properties(${gdcpp_tests_target_name} PROPERTIES BUILD_WITH_INSTALL_RPATH FALSE) #Allow finding dependencies directly from build path on Mac OS X.
 	endif()

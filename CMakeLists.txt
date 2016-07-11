@@ -18,6 +18,8 @@ gd_set_option(BUILD_IDE TRUE BOOL "TRUE to build the IDE")
 gd_set_option(BUILD_EXTENSIONS TRUE BOOL "TRUE to build the extensions")
 gd_set_option(BUILD_TESTS FALSE BOOL "TRUE to build the tests")
 gd_set_option(NO_GUI FALSE BOOL "TRUE to build without wxWidgets GUI")
+gd_set_option(USE_SYSTEM_SFML FALSE BOOL "TRUE to use the system SFML libraries")
+gd_set_option(PACKAGING_FLATPAK FALSE BOOL "TRUE to configure GDevelop to be built for Flatpak")
 
 #Setting up installation directory, for Linux (has to be done before "project" command).
 IF(NOT WIN32)
@@ -33,7 +35,7 @@ ENDIF()
 
 project(GDevelop)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-IF(NOT WIN32 AND NOT APPLE AND NOT BUILD_TESTS)
+IF(NOT WIN32 AND NOT APPLE AND NOT BUILD_TESTS AND NOT PACKAGING_FLATPAK)
 	SET(CMAKE_SKIP_BUILD_RPATH  TRUE) #Avoid errors when packaging for linux.
 ENDIF()
 IF(APPLE)
@@ -77,6 +79,11 @@ set(GD_base_dir ${CMAKE_CURRENT_SOURCE_DIR})
 
 #Add all the CMakeLists:
 ADD_SUBDIRECTORY(ExtLibs)
+
+IF(PACKAGING_FLATPAK)
+    link_directories("/app/lib")
+ENDIF()
+
 IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Core/CMakeLists.txt" AND BUILD_CORE)
 	ADD_SUBDIRECTORY(Core)
 ENDIF()

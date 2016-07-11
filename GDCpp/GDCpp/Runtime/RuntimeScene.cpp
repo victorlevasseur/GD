@@ -12,6 +12,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#if defined(LINUX)
+#include <GL/glu.h>
+#endif
 #include "GDCpp/Runtime/RuntimeScene.h"
 #include "GDCpp/Runtime/RuntimeGame.h"
 #include "GDCpp/Runtime/RuntimeLayer.h"
@@ -234,7 +237,7 @@ void RuntimeScene::Render()
                 //Prepare OpenGL rendering
                 #if !defined(ANDROID) //TODO: OpenGL
                 renderWindow->popGLStates();
-                
+
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(GetOpenGLFOV(), camera.GetWidth()/camera.GetHeight(), GetOpenGLZNear(), GetOpenGLZFar());

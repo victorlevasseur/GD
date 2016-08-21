@@ -131,7 +131,7 @@ lastErrorPos(gd::String::npos)
 	FlexGridSizer2->AddGrowableCol(0);
 	FlexGridSizer2->AddGrowableRow(0);
 	ExpressionEdit = new wxStyledTextCtrl(centerPanel,ID_CUSTOM1,wxDefaultPosition,wxSize(200,28),0,_T("ID_CUSTOM1"));
-	FlexGridSizer2->Add(ExpressionEdit, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer2->Add(ExpressionEdit, 1, wxEXPAND, 5);
 	OkBt = new wxButton(centerPanel, ID_BUTTON1, _("Ok"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON1"));
 	FlexGridSizer2->Add(OkBt, 1, wxALL|wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
 	FlexGridSizer7 = new wxFlexGridSizer(0, 3, 0, 0);
@@ -139,8 +139,8 @@ lastErrorPos(gd::String::npos)
 	FlexGridSizer7->AddGrowableRow(0);
 	errorTxt = new wxHyperlinkCtrl(centerPanel, ID_HYPERLINKCTRL1, _("No errors."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_LEFT|wxNO_BORDER, _T("ID_HYPERLINKCTRL1"));
 	errorTxt->SetToolTip(_("Click to position cursor on the error."));
-	FlexGridSizer7->Add(errorTxt, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer2->Add(FlexGridSizer7, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer7->Add(errorTxt, 0, wxEXPAND, 5);
+	FlexGridSizer2->Add(FlexGridSizer7, 0, wxEXPAND, 0);
 	FlexGridSizer17 = new wxFlexGridSizer(0, 3, 0, 0);
 	FlexGridSizer17->AddGrowableRow(0);
 	StaticBitmap2 = new wxStaticBitmap(centerPanel, ID_STATICBITMAP5, gd::SkinHelper::GetIcon("help", 16), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("ID_STATICBITMAP5"));
@@ -149,7 +149,7 @@ lastErrorPos(gd::String::npos)
 	HyperlinkCtrl1->SetToolTip(_("Display help about this window"));
 	FlexGridSizer17->Add(HyperlinkCtrl1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer17, 1, wxRIGHT|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5);
-	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(FlexGridSizer2, 1, wxEXPAND, 0);
 	centerPanel->SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(centerPanel);
 	FlexGridSizer1->SetSizeHints(centerPanel);
@@ -285,7 +285,7 @@ lastErrorPos(gd::String::npos)
 	FlexGridSizer4->AddGrowableCol(0);
 	FlexGridSizer4->AddGrowableRow(0);
 	ObjList = new wxTreeCtrl(objectsPanel, ID_TREECTRL1, wxDefaultPosition, wxSize(195,177), wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL1"));
-	FlexGridSizer4->Add(ObjList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer4->Add(ObjList, 1, wxEXPAND, 0);
 	AddPropBt = new wxButton(objectsPanel, ID_BUTTON10, _("Add"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON10"));
 	FlexGridSizer4->Add(AddPropBt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	objectsPanel->SetSizer(FlexGridSizer4);
@@ -297,7 +297,7 @@ lastErrorPos(gd::String::npos)
 	FlexGridSizer5->AddGrowableCol(0);
 	FlexGridSizer5->AddGrowableRow(0);
 	ValList = new wxTreeCtrl(freeFunctionsPanel, ID_TREECTRL2, wxDefaultPosition, wxSize(178,147), wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL2"));
-	FlexGridSizer5->Add(ValList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer5->Add(ValList, 1, wxEXPAND, 0);
 	AddValBt = new wxButton(freeFunctionsPanel, ID_BUTTON11, _("Add"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON11"));
 	FlexGridSizer5->Add(AddValBt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	freeFunctionsPanel->SetSizer(FlexGridSizer5);

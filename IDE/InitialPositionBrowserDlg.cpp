@@ -40,7 +40,7 @@ notUserSelection(false)
 	FlexGridSizer1->AddGrowableCol(0);
 	FlexGridSizer1->AddGrowableRow(0);
 	initialPositionsList = new wxListCtrl(this, ID_LISTCTRL1, wxDefaultPosition, wxSize(206,167), wxLC_REPORT, wxDefaultValidator, _T("ID_LISTCTRL1"));
-	FlexGridSizer1->Add(initialPositionsList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(initialPositionsList, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);

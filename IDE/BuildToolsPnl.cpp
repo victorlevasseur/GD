@@ -28,7 +28,7 @@ BuildToolsPnl::BuildToolsPnl(wxWindow* parent, ProjectManager * projectManager)
 	FlexGridSizer1->AddGrowableCol(0);
 	FlexGridSizer1->AddGrowableRow(0);
 	notebook = new wxNotebook(this, ID_NOTEBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
-	FlexGridSizer1->Add(notebook, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(notebook, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);
@@ -49,4 +49,3 @@ BuildToolsPnl::~BuildToolsPnl()
 	//(*Destroy(BuildToolsPnl)
 	//*)
 }
-

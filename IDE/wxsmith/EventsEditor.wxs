@@ -37,7 +37,7 @@
 									<handler function="OnliveEditText" entry="EVT_TEXT" />
 									<handler function="OnliveEditTextEnter" entry="EVT_TEXT_ENTER" />
 								</object>
-								<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxEXPAND</flag>
 								<option>1</option>
 							</object>
 							<object class="sizeritem">
@@ -142,7 +142,7 @@
 						</object>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
@@ -155,7 +155,7 @@
 					<handler function="OnscrollBarScroll" entry="EVT_COMMAND_SCROLL_THUMBTRACK" />
 					<handler function="OnscrollBarScroll" entry="EVT_COMMAND_SCROLL_CHANGED" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

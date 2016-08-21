@@ -40,7 +40,7 @@
 														<minsize>-1,-1</minsize>
 														<style>wxALIGN_CENTRE</style>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<option>1</option>
 												</object>
 												<object class="sizeritem">
@@ -60,7 +60,7 @@
 																<label>Florian &quot;4ian&quot; Rival</label>
 																<url>http://www.florianrival.com</url>
 															</object>
-															<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+															<flag>wxEXPAND</flag>
 															<option>1</option>
 														</object>
 													</object>
@@ -68,7 +68,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>20</border>
 											<option>1</option>
 										</object>
@@ -102,7 +102,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 									</object>
@@ -122,7 +122,7 @@
 												<size>272,51</size>
 												<style>wxTE_MULTILINE|wxTE_READONLY</style>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -140,7 +140,7 @@
 											<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="CustomHtmlWindow" variable="HtmlWindow1" member="yes">
 												<borders>1</borders>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -194,7 +194,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -239,7 +239,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -274,7 +274,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 									</object>
@@ -282,7 +282,7 @@
 								<label>Used technologies</label>
 							</object>
 						</object>
-						<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxEXPAND</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
@@ -296,7 +296,7 @@
 						<option>1</option>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

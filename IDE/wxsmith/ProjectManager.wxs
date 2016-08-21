@@ -26,7 +26,7 @@
 					<handler function="OnprojectsTreeSelectionChanged" entry="EVT_TREE_SEL_CHANGED" />
 					<handler function="OnprojectsTreeKeyDown" entry="EVT_TREE_KEY_DOWN" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

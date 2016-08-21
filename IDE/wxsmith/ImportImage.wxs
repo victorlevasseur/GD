@@ -39,7 +39,7 @@
 														<size>138,21</size>
 														<handler function="OnFileGIFEditText" entry="EVT_TEXT" />
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -53,7 +53,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -84,7 +84,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -106,7 +106,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -134,7 +134,7 @@
 											<object class="wxStaticText" name="ID_STATICTEXT10" variable="StaticText9" member="yes">
 												<label>GDevelop decompose spritesheets of characters&#x0A;with 4 directions with 4 images.</label>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -155,7 +155,7 @@
 														<size>138,21</size>
 														<handler function="OnfileRPGEditText" entry="EVT_TEXT" />
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -169,7 +169,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -200,7 +200,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -222,7 +222,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -259,7 +259,7 @@
 												</object>
 												<object class="sizeritem">
 													<object class="wxTextCtrl" name="ID_TEXTCTRL5" variable="fileSSEdit" member="yes" />
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -273,7 +273,7 @@
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -328,11 +328,11 @@
 																	<option>1</option>
 																</object>
 															</object>
-															<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+															<flag>wxEXPAND</flag>
 															<option>1</option>
 														</object>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -434,11 +434,11 @@
 																	<option>1</option>
 																</object>
 															</object>
-															<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+															<flag>wxEXPAND</flag>
 															<option>1</option>
 														</object>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -495,12 +495,12 @@
 															<option>1</option>
 														</object>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 										<object class="sizeritem">
@@ -537,11 +537,11 @@
 															<option>1</option>
 														</object>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -560,7 +560,7 @@
 												</object>
 												<object class="sizeritem">
 													<object class="wxTextCtrl" name="ID_TEXTCTRL14" variable="decomposeSSEdit" member="yes" />
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
 												</object>
@@ -590,19 +590,19 @@
 								<label>Generic spritesheet</label>
 							</object>
 						</object>
-						<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxEXPAND</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
 				<object class="wxStaticLine" name="ID_STATICLINE2" variable="StaticLine2" member="yes">
 					<size>10,-1</size>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
@@ -619,7 +619,7 @@
 						<option>1</option>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

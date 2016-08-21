@@ -116,7 +116,7 @@
 					<handler function="OnlayersListItemFocused" entry="EVT_LIST_ITEM_FOCUSED" />
 					<handler function="OnlayersListItemRClick" entry="EVT_LIST_ITEM_RIGHT_CLICK" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

@@ -14,7 +14,7 @@
 					<handler function="OninitialPositionsListItemDeselect" entry="EVT_LIST_ITEM_DESELECTED" />
 					<handler function="OninitialPositionsListKeyDown" entry="EVT_LIST_KEY_DOWN" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

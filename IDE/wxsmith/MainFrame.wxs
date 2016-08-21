@@ -16,7 +16,7 @@
 				<object class="wxBoxSizer" variable="ribbonSizer" member="no">
 					<orient>wxVERTICAL</orient>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
@@ -31,7 +31,7 @@
 								<handler function="OneditorsNotebookPageClose" entry="EVT_AUINOTEBOOK_PAGE_CLOSE" />
 								<handler function="OnNotebook1PageChanged" entry="EVT_AUINOTEBOOK_PAGE_CHANGED" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -40,12 +40,12 @@
 								<include_file>wx/infobar.h</include_file>
 								<style></style>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

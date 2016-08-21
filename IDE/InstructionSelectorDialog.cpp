@@ -104,13 +104,13 @@ InstructionSelectorDialog::InstructionSelectorDialog(wxWindow* parent, gd::Proje
     instructionsTree->SetMinSize(wxSize(300,-1));
     instructionsTree->SetToolTip(editingAction ? _("Choose the action to use") : _("Choose the condition to use"));
 
-    treeSizer->Add(instructionsTree, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    treeSizer->Add(instructionsTree, 1, wxEXPAND, 5);
 
     searchCtrl = new wxSearchCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL1"));
     searchCtrl->SetMinSize(wxSize(-1,24));
 
     treeSizer->Add(searchCtrl, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    topPartSizer->Add(treeSizer, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    topPartSizer->Add(treeSizer, 0, wxEXPAND, 0);
     rightPartSizer = new wxBoxSizer(wxVERTICAL);
     FlexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizer3->AddGrowableCol(1);
@@ -122,23 +122,23 @@ InstructionSelectorDialog::InstructionSelectorDialog(wxWindow* parent, gd::Proje
     wxFont instructionNameTxtFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
     instructionNameTxt->SetFont(instructionNameTxtFont);
     BoxSizer4->Add(instructionNameTxt, 1, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    FlexGridSizer3->Add(BoxSizer4, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
-    rightPartSizer->Add(FlexGridSizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer3->Add(BoxSizer4, 1, wxEXPAND, 0);
+    rightPartSizer->Add(FlexGridSizer3, 0, wxEXPAND, 0);
     BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     instructionDescriptionTxt = new wxStaticText(this, ID_STATICTEXT2, editingAction ? _("Choose an action in the list") : _("Choose a condition in the list"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
     BoxSizer3->Add(instructionDescriptionTxt, 1, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    rightPartSizer->Add(BoxSizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    rightPartSizer->Add(BoxSizer3, 0, wxEXPAND, 0);
     instructionHelpLinkCtrl = new wxHyperlinkCtrl(this, ID_INSTRUCTIONHELPLINKCTRL, _("Help on this ") + (editingAction ? _("action") : _("condition")), "");
     rightPartSizer->Add(instructionHelpLinkCtrl, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 0);
     BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
     StaticLine1 = new wxStaticLine(this, ID_STATICLINE1, wxDefaultPosition, wxSize(480,-1), wxLI_HORIZONTAL, _T("ID_STATICLINE1"));
     BoxSizer1->Add(StaticLine1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 3);
-    rightPartSizer->Add(BoxSizer1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    rightPartSizer->Add(BoxSizer1, 0, wxEXPAND, 0);
     GridSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
     GridSizer1->AddGrowableCol(1);
-    rightPartSizer->Add(GridSizer1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
-    topPartSizer->Add(rightPartSizer, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
-    BoxSizer6->Add(topPartSizer, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    rightPartSizer->Add(GridSizer1, 1, wxEXPAND, 0);
+    topPartSizer->Add(rightPartSizer, 1, wxEXPAND, 0);
+    BoxSizer6->Add(topPartSizer, 1, wxEXPAND, 0);
     BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 
     //Invert button:
@@ -156,7 +156,7 @@ InstructionSelectorDialog::InstructionSelectorDialog(wxWindow* parent, gd::Proje
     //Bottom part
     StaticLine2 = new wxStaticLine(this, ID_STATICLINE2, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("ID_STATICLINE2"));
     BoxSizer2->Add(StaticLine2, 1, wxTOP|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
-    BoxSizer6->Add(BoxSizer2, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    BoxSizer6->Add(BoxSizer2, 0, wxEXPAND, 0);
     FlexGridSizer2 = new wxFlexGridSizer(0, 3, 0, 0);
     FlexGridSizer2->AddGrowableCol(0);
     FlexGridSizer6 = new wxFlexGridSizer(0, 3, 0, 0);
@@ -178,7 +178,7 @@ InstructionSelectorDialog::InstructionSelectorDialog(wxWindow* parent, gd::Proje
     CancelBt = new wxButton(this, ID_BUTTON2, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON2"));
     BoxSizer5->Add(CancelBt, 1, wxALL|wxFIXED_MINSIZE|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer2->Add(BoxSizer5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    BoxSizer6->Add(FlexGridSizer2, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    BoxSizer6->Add(FlexGridSizer2, 0, wxEXPAND, 0);
     SetSizer(BoxSizer6);
     BoxSizer6->Fit(this);
     BoxSizer6->SetSizeHints(this);

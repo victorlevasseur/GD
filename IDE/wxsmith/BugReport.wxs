@@ -78,15 +78,15 @@
 															<option>1</option>
 														</object>
 													</object>
-													<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+													<flag>wxEXPAND</flag>
 													<option>1</option>
 												</object>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<option>1</option>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<border>5</border>
 									<option>1</option>
 								</object>
@@ -123,7 +123,7 @@
 										<style>wxTE_MULTILINE</style>
 										<handler function="OnUserReportEditText" entry="EVT_TEXT" />
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<border>5</border>
 									<option>1</option>
 								</object>
@@ -140,12 +140,12 @@
 										</object>
 										<object class="sizeritem">
 											<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="mailEdit" member="yes" />
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 								<object class="sizeritem">
@@ -157,7 +157,7 @@
 											<object class="wxStaticText" name="ID_STATICTEXT6" variable="StaticText6" member="yes">
 												<label>When you&apos;ve described the error, click on the button&#x0A;to automatically send the report.&#x0A;&#x0A;Thanks!</label>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -171,7 +171,7 @@
 											<option>1</option>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 								<object class="sizeritem">
@@ -202,7 +202,7 @@
 											<object class="wxStaticText" name="ID_STATICTEXT7" variable="StaticText7" member="yes">
 												<label>Here is a list of the projects opened during the last session:</label>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
@@ -210,12 +210,12 @@
 											<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="openedFilesEdit" member="yes">
 												<style>wxTE_MULTILINE|wxTE_READONLY</style>
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 											<option>1</option>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 								<object class="sizeritem">
@@ -256,7 +256,7 @@
 						<label>Load autosaves</label>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<border>5</border>
 				<option>1</option>
 			</object>

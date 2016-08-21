@@ -35,7 +35,7 @@
 									<option>1</option>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -43,7 +43,7 @@
 								<size>239,140</size>
 								<style>wxTE_MULTILINE|wxTE_RICH</style>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
@@ -58,7 +58,7 @@
 						</object>
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

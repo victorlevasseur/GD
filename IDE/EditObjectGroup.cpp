@@ -81,9 +81,9 @@ modificationCount(0)
 	AuiManager1->Update();
 	FlexGridSizer17->Add(Panel2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 0);
 	ObjetsList = new wxTreeCtrl(this, ID_TREECTRL1, wxDefaultPosition, wxSize(286,181), wxTR_MULTIPLE|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL1"));
-	FlexGridSizer17->Add(ObjetsList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer17->Add(ObjetsList, 1, wxEXPAND, 5);
 	StaticLine1 = new wxStaticLine(this, ID_STATICLINE1, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("ID_STATICLINE1"));
-	FlexGridSizer17->Add(StaticLine1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer17->Add(StaticLine1, 1, wxEXPAND, 0);
 	FlexGridSizer2 = new wxFlexGridSizer(0, 3, 0, 0);
 	FlexGridSizer2->AddGrowableCol(1);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
@@ -99,7 +99,7 @@ modificationCount(0)
 	AnnulerBt = new wxButton(this, ID_BUTTON2, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON2"));
 	FlexGridSizer2->Add(AnnulerBt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer17->Add(FlexGridSizer2, 1, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-	FlexGridSizer1->Add(FlexGridSizer17, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(FlexGridSizer17, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	MenuItem1 = new wxMenuItem((&ContextMenu), idAddObjet, _("Add an object"), wxEmptyString, wxITEM_NORMAL);
 	MenuItem1->SetBitmap(gd::SkinHelper::GetIcon("add", 16));

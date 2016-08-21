@@ -28,7 +28,7 @@
 					<handler function="OnobjectsListKeyDown" entry="EVT_TREE_KEY_DOWN" />
 					<handler function="OnobjectsListItemMenu" entry="EVT_TREE_ITEM_MENU" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
@@ -36,7 +36,7 @@
 					<style>wxNO_BORDER</style>
 					<handler function="OnsearchCtrlText" entry="EVT_TEXT" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

@@ -64,9 +64,9 @@ scene(scene_)
 		_("AxisPovY")
 	};
 	axisRadio = new wxRadioBox(this, ID_RADIOBOX1, _("Axis"), wxDefaultPosition, wxDefaultSize, 8, __wxRadioBoxChoices_1, 1, 0, wxDefaultValidator, _T("ID_RADIOBOX1"));
-	FlexGridSizer1->Add(axisRadio, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(axisRadio, 1, wxEXPAND, 5);
 	StaticLine1 = new wxStaticLine(this, ID_STATICLINE1, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("ID_STATICLINE1"));
-	FlexGridSizer1->Add(StaticLine1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(StaticLine1, 1, wxEXPAND, 0);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 4, 0, 0);
 	FlexGridSizer3->AddGrowableCol(1);
 	FlexGridSizer17 = new wxFlexGridSizer(0, 3, 0, 0);

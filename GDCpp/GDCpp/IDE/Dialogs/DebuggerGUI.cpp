@@ -93,7 +93,7 @@ DebuggerGUI::DebuggerGUI(wxWindow* parent, RuntimeScene &scene_, std::function<v
             sizer->AddGrowableCol(0);
             sizer->AddGrowableRow(0);
             wxListCtrl * extList = new wxListCtrl(extPanel, ID_EXTLIST, wxDefaultPosition, wxSize(249,203), wxLC_REPORT, wxDefaultValidator, extension->GetName());
-            sizer->Add(extList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+            sizer->Add(extList, 1, wxEXPAND, 5);
             extPanel->SetSizer(sizer);
             sizer->Fit(extPanel);
             sizer->SetSizeHints(extPanel);

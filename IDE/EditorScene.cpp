@@ -83,13 +83,13 @@ mainFrameWrapper(mainFrameWrapper_)
 	FlexGridSizer3->AddGrowableCol(0);
 	FlexGridSizer3->AddGrowableRow(0);
 	eventsEditor = new EventsEditor(eventsPanel, project, layout, mainFrameWrapper);
-	FlexGridSizer3->Add(eventsEditor, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer3->Add(eventsEditor, 1, wxEXPAND, 0);
 	eventsPanel->SetSizer(FlexGridSizer3);
 	FlexGridSizer3->Fit(eventsPanel);
 	FlexGridSizer3->SetSizeHints(eventsPanel);
 	notebook->AddPage(scenePanel, _("Scene"), false, gd::SkinHelper::GetIcon("scene", 16));
 	notebook->AddPage(eventsPanel, _("Events"), false, gd::SkinHelper::GetIcon("events", 16));
-	FlexGridSizer1->Add(notebook, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(notebook, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);

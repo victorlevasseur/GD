@@ -134,6 +134,9 @@ MainFrame::MainFrame( wxWindow* parent ) :
     mainFrameWrapper(NULL, NULL, this, NULL, NULL, NULL, &scenesLockingShortcuts, wxGetCwd()),
     projectManager(NULL)
 {
+    //Load wxAUI
+    m_mgr.SetManagedWindow( this );
+
     //(*Initialize(MainFrame)
     wxBoxSizer* ribbonSizer;
     wxMenuItem* MenuItem1;
@@ -153,19 +156,19 @@ MainFrame::MainFrame( wxWindow* parent ) :
     FlexGridSizer1->AddGrowableCol(0);
     FlexGridSizer1->AddGrowableRow(1);
     ribbonSizer = new wxBoxSizer(wxVERTICAL);
-    FlexGridSizer1->Add(ribbonSizer, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer1->Add(ribbonSizer, 1, wxEXPAND, 0);
     Panel1 = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
     FlexGridSizer2 = new wxFlexGridSizer(0, 1, 0, 0);
     FlexGridSizer2->AddGrowableCol(0);
     FlexGridSizer2->AddGrowableRow(0);
     editorsNotebook = new wxAuiNotebook(Panel1, ID_AUINOTEBOOK1, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_TOP|wxNO_BORDER);
-    FlexGridSizer2->Add(editorsNotebook, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer2->Add(editorsNotebook, 1, wxEXPAND, 0);
     infoBar = new wxInfoBar(Panel1,ID_CUSTOM1);
-    FlexGridSizer2->Add(infoBar, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer2->Add(infoBar, 1, wxEXPAND, 0);
     Panel1->SetSizer(FlexGridSizer2);
     FlexGridSizer2->Fit(Panel1);
     FlexGridSizer2->SetSizeHints(Panel1);
-    FlexGridSizer1->Add(Panel1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    //FlexGridSizer1->Add(Panel1, 1, wxEXPAND, 0);
     SetSizer(FlexGridSizer1);
     MenuItem1 = new wxMenuItem((&openContextMenu), ID_MENUITEM1, _("Open an example"), wxEmptyString, wxITEM_NORMAL);
     openContextMenu.Append(MenuItem1);
@@ -244,7 +247,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     MenuItem11 = new wxMenuItem((&disabledFileMenu), ID_MENUITEM3, _("Please stop the preview before continuing"), wxEmptyString, wxITEM_NORMAL);
     disabledFileMenu.Append(MenuItem11);
     MenuItem11->Enable(false);
-    SetSizer(FlexGridSizer1);
+    //SetSizer(FlexGridSizer1);
     Layout();
     Center();
 
@@ -446,9 +449,6 @@ MainFrame::MainFrame( wxWindow* parent ) :
     ribbonFileBt->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(MainFrame::OnRibbonFileBtEnter), NULL, this);
     ribbonFileBt->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainFrame::OnRibbonFileBtClick), NULL, this);
 
-    //Load wxAUI
-    m_mgr.SetManagedWindow( this );
-
     gd::SkinHelper::ApplyCurrentSkin(m_mgr);
     gd::SkinHelper::ApplyCurrentSkin(*editorsNotebook);
     gd::SkinHelper::ApplyCurrentSkin(*ribbon);
@@ -469,7 +469,7 @@ MainFrame::MainFrame( wxWindow* parent ) :
     buildToolsPnl = new BuildToolsPnl(this, projectManager);
 
     //Setup panes and load user configuration
-    m_mgr.AddPane( projectManager, wxAuiPaneInfo().Name( wxT( "PM" ) ).Caption( _( "Project manager" ) ).Left().MaximizeButton( true ).MinimizeButton( false ).MinSize(170,100) );
+    m_mgr.AddPane( projectManager, wxAuiPaneInfo().Name( wxT( "PM" ) ).Caption( _( "Project manager" ) ).Left().MaximizeButton( true ).MinimizeButton( false )/*.MinSize(170,100)*/ );
     m_mgr.AddPane( Panel1, wxAuiPaneInfo().Name( wxT( "EP" ) ).Caption( _( "Main editor" ) ).Center().CaptionVisible(false).CloseButton( false ).MaximizeButton( true ).MinimizeButton( false ) );
     m_mgr.AddPane( ribbon, wxAuiPaneInfo().Name( wxT( "RP" ) ).Caption( _( "Ribbon" ) ).Top().PaneBorder(false).CaptionVisible(false).Movable(false).Floatable(false).CloseButton( false ).MaximizeButton( false ).MinimizeButton( false ).Resizable(false) );
     m_mgr.AddPane( buildToolsPnl, wxAuiPaneInfo().Name( wxT( "CT" ) ).Caption( _( "Compilation tools" ) ).Bottom().MaximizeButton( true ).MinimizeButton( false ).Show(false).MinSize(120,130));

@@ -25,7 +25,7 @@
 										<size>200,28</size>
 										<minsize>200,28</minsize>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<border>5</border>
 									<option>1</option>
 								</object>
@@ -50,11 +50,11 @@
 												<style>wxHL_ALIGN_LEFT|wxNO_BORDER</style>
 												<handler function="OnerrorTxtClick" entry="EVT_HYPERLINK" />
 											</object>
-											<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+											<flag>wxEXPAND</flag>
 											<border>5</border>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 								</object>
 								<object class="sizeritem">
 									<object class="wxFlexGridSizer" variable="FlexGridSizer17" member="no">
@@ -85,7 +85,7 @@
 									<option>1</option>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
@@ -527,7 +527,7 @@
 								<handler function="OnObjListItemDoubleClicked" entry="EVT_TREE_ITEM_ACTIVATED" />
 								<handler function="OnObjListItemActivated" entry="EVT_TREE_SEL_CHANGED" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -575,7 +575,7 @@
 								<handler function="OnValListItemDoubleClicked" entry="EVT_TREE_ITEM_ACTIVATED" />
 								<handler function="OnValListItemActivated" entry="EVT_TREE_SEL_CHANGED" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">

@@ -141,9 +141,9 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     FlexGridSizer3->AddGrowableRow(0);
     resourcesTree = new wxTreeCtrl(corePanel, ID_TREECTRL1, wxDefaultPosition, wxSize(200,170), wxTR_EDIT_LABELS|wxTR_HIDE_ROOT|wxTR_MULTIPLE|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL1"));
     resourcesTree->SetToolTip(_("Right click on an image to access to more options"));
-    FlexGridSizer3->Add(resourcesTree, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer3->Add(resourcesTree, 1, wxEXPAND, 0);
     searchCtrl = new wxSearchCtrl(corePanel, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL1"));
-    FlexGridSizer3->Add(searchCtrl, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    FlexGridSizer3->Add(searchCtrl, 1, wxEXPAND, 5);
     corePanel->SetSizer(FlexGridSizer3);
     FlexGridSizer3->Fit(corePanel);
     FlexGridSizer3->SetSizeHints(corePanel);
@@ -155,7 +155,7 @@ resourceLibraryDialog(new gd::ResourceLibraryDialog(this))
     FlexGridSizer1->AddGrowableCol(0);
     FlexGridSizer1->AddGrowableRow(0);
     propertyGrid = new wxPropertyGridManager(propertiesPanel,ID_PROPGRID,wxDefaultPosition,wxDefaultSize,0,_T("ID_PROPGRID"));
-    FlexGridSizer1->Add(propertyGrid, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    FlexGridSizer1->Add(propertyGrid, 1, wxEXPAND, 0);
     propertiesPanel->SetSizer(FlexGridSizer1);
     FlexGridSizer1->Fit(propertiesPanel);
     FlexGridSizer1->SetSizeHints(propertiesPanel);

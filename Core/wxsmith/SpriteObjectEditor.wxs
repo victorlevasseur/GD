@@ -82,11 +82,11 @@
 											</object>
 										</object>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -103,7 +103,7 @@
 										<handler function="OnimagePanelMouseMove" entry="EVT_MOTION" />
 										<handler function="OnimagePanelResize" entry="EVT_SIZE" />
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 								<object class="sizeritem">
@@ -116,7 +116,7 @@
 										<handler function="OnyScrollBarScroll" entry="EVT_COMMAND_SCROLL" />
 										<handler function="OnyScrollBarScroll" entry="EVT_COMMAND_SCROLL_CHANGED" />
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 								</object>
 								<object class="sizeritem">
 									<object class="wxScrollBar" name="ID_SCROLLBAR2" variable="xScrollBar" member="yes">
@@ -127,11 +127,11 @@
 										<handler function="OnxScrollBarScroll" entry="EVT_COMMAND_SCROLL" />
 										<handler function="OnxScrollBarScroll" entry="EVT_COMMAND_SCROLL_CHANGED" />
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -148,7 +148,7 @@
 									<option>1</option>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
@@ -251,7 +251,7 @@
 								<handler function="OnanimationsTreeItemRightClick" entry="EVT_TREE_ITEM_RIGHT_CLICK" />
 								<handler function="OnanimationsTreeSelectionChanged" entry="EVT_TREE_SEL_CHANGED" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
@@ -283,7 +283,7 @@
 								<handler function="OnimagesListItemRClick" entry="EVT_LIST_ITEM_RIGHT_CLICK" />
 								<handler function="OnimagesListKeyDown" entry="EVT_LIST_KEY_DOWN" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
@@ -382,7 +382,7 @@
 									</object>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -391,7 +391,7 @@
 								<include_file>wx/treelist.h</include_file>
 								<style></style>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>
@@ -462,7 +462,7 @@
 									</object>
 								</object>
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
@@ -473,7 +473,7 @@
 								<handler function="OnpointsListItemSelect" entry="EVT_LIST_ITEM_SELECTED" />
 								<handler function="OnpointsListItemActivated" entry="EVT_LIST_ITEM_ACTIVATED" />
 							</object>
-							<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxEXPAND</flag>
 							<option>1</option>
 						</object>
 					</object>

@@ -20,7 +20,7 @@
 			</object>
 			<object class="sizeritem">
 				<object class="wxGauge" name="ID_GAUGE1" variable="progressGauge" member="yes" />
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
@@ -29,7 +29,7 @@
 					<style>wxTE_MULTILINE|wxTE_READONLY</style>
 					<handler function="OntasksLogEditText" entry="EVT_TEXT" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

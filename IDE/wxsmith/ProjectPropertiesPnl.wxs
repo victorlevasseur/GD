@@ -16,7 +16,7 @@
 					<fg>wxSYS_COLOUR_HIGHLIGHT</fg>
 					<bg>wxSYS_COLOUR_HIGHLIGHT</bg>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

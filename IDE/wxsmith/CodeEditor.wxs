@@ -12,7 +12,7 @@
 					<extra_code>//Style option seems to be not saved by wxSmith, add it if necessary.</extra_code>
 					<handler function="OntextEditorRightUp" entry="EVT_RIGHT_UP" />
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

@@ -54,14 +54,14 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     flexGridSizer35->AddGrowableCol(0);
     flexGridSizer35->AddGrowableRow(0);
     
-    flexGridSizer34->Add(flexGridSizer35, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer34->Add(flexGridSizer35, 1, wxEXPAND, 0);
     
     wxFlexGridSizer* flexGridSizer36 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer36->SetFlexibleDirection( wxBOTH );
     flexGridSizer36->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer36->AddGrowableCol(1);
     
-    flexGridSizer35->Add(flexGridSizer36, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer35->Add(flexGridSizer36, 1, wxEXPAND, 0);
     
     ID_STATICTEXT4 = new wxStaticText(m_panel61, wxID_ANY, _("Export folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -73,14 +73,14 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     flexGridSizer38->AddGrowableCol(0);
     flexGridSizer38->AddGrowableRow(0);
     
-    flexGridSizer36->Add(flexGridSizer38, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer36->Add(flexGridSizer38, 1, wxEXPAND, 0);
     
     exportFolderEdit = new wxTextCtrl(m_panel61, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     #if wxVERSION_NUMBER >= 3000
     exportFolderEdit->SetHint(wxT(""));
     #endif
     
-    flexGridSizer38->Add(exportFolderEdit, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer38->Add(exportFolderEdit, 1, wxEXPAND, 5);
     
     browseBt = new wxButton(m_panel61, wxID_ANY, _("..."), wxDefaultPosition, wxSize(30,-1), 0);
     
@@ -116,13 +116,13 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     
     wxStaticBoxSizer* staticBoxSizer45 = new wxStaticBoxSizer( new wxStaticBox(m_panel61, wxID_ANY, _("Note")), wxVERTICAL);
     
-    flexGridSizer34->Add(staticBoxSizer45, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer34->Add(staticBoxSizer45, 1, wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer46 = new wxFlexGridSizer(0, 1, 0, 0);
     flexGridSizer46->SetFlexibleDirection( wxBOTH );
     flexGridSizer46->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    staticBoxSizer45->Add(flexGridSizer46, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    staticBoxSizer45->Add(flexGridSizer46, 1, wxEXPAND, 0);
     
     ID_STATICTEXT3 = new wxStaticText(m_panel61, wxID_ANY, _("When the exportation is done, send the files to your website (you need a web hosting) and just go to the website to start the game."), wxDefaultPosition, wxSize(-1,-1), 0);
     ID_STATICTEXT3->Wrap(450);
@@ -194,7 +194,7 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     flexGridSizer364->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer364->AddGrowableCol(1);
     
-    flexGridSizer342->Add(flexGridSizer364, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer342->Add(flexGridSizer364, 1, wxEXPAND, 0);
     
     ID_STATICTEXT45 = new wxStaticText(m_panel611, wxID_ANY, _("Export folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -206,14 +206,14 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     flexGridSizer386->AddGrowableCol(0);
     flexGridSizer386->AddGrowableRow(0);
     
-    flexGridSizer364->Add(flexGridSizer386, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer364->Add(flexGridSizer386, 1, wxEXPAND, 0);
     
     cocosExportFolderEdit = new wxTextCtrl(m_panel611, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     #if wxVERSION_NUMBER >= 3000
     cocosExportFolderEdit->SetHint(wxT(""));
     #endif
     
-    flexGridSizer386->Add(cocosExportFolderEdit, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer386->Add(cocosExportFolderEdit, 1, wxEXPAND, 5);
     
     cocosExportBrowseBt = new wxButton(m_panel611, wxID_ANY, _("..."), wxDefaultPosition, wxSize(30,-1), 0);
     
@@ -234,14 +234,14 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     
     wxStaticBoxSizer* staticBoxSizer4515 = new wxStaticBoxSizer( new wxStaticBox(m_panel611, wxID_ANY, _("Note")), wxVERTICAL);
     
-    flexGridSizer342->Add(staticBoxSizer4515, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer342->Add(staticBoxSizer4515, 1, wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer4616 = new wxFlexGridSizer(0, 1, 0, 0);
     flexGridSizer4616->SetFlexibleDirection( wxBOTH );
     flexGridSizer4616->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer4616->AddGrowableCol(0);
     
-    staticBoxSizer4515->Add(flexGridSizer4616, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    staticBoxSizer4515->Add(flexGridSizer4616, 1, wxEXPAND, 0);
     
     ID_STATICTEXT31719 = new wxStaticText(m_panel611, wxID_ANY, _("When the exportation is done, send the files to your website (you need a web hosting) and just go to the website to start the game."), wxDefaultPosition, wxSize(-1,-1), 0);
     ID_STATICTEXT31719->Wrap(450);
@@ -265,7 +265,7 @@ BaseProjectExportDialog::BaseProjectExportDialog(wxWindow* parent, wxWindowID id
     flexGridSizer50->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer50->AddGrowableCol(0);
     
-    flexGridSizer33->Add(flexGridSizer50, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer33->Add(flexGridSizer50, 1, wxEXPAND, 0);
     
     wxFlexGridSizer* flexGridSizer51 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer51->SetFlexibleDirection( wxBOTH );
@@ -509,7 +509,7 @@ BaseCordovaPackageDialog::BaseCordovaPackageDialog(wxWindow* parent, wxWindowID 
     flexGridSizer5014->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer5014->AddGrowableCol(0);
     
-    flexGridSizer873->Add(flexGridSizer5014, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+    flexGridSizer873->Add(flexGridSizer5014, 1, wxEXPAND, 0);
     
     wxFlexGridSizer* flexGridSizer5115 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer5115->SetFlexibleDirection( wxBOTH );

@@ -78,11 +78,11 @@ mainFrameWrapper(mainFrameWrapper_)
 	FlexGridSizer2->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	parentSceneComboBox = new wxComboBox(contextPanel, ID_COMBOBOX1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX1"));
 	parentSceneComboBox->SetSelection( parentSceneComboBox->Append(_("No scene")) );
-	FlexGridSizer2->Add(parentSceneComboBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 3);
+	FlexGridSizer2->Add(parentSceneComboBox, 1, wxEXPAND, 3);
 	contextPanel->SetSizer(FlexGridSizer2);
 	FlexGridSizer2->Fit(contextPanel);
 	FlexGridSizer2->SetSizeHints(contextPanel);
-	FlexGridSizer4->Add(contextPanel, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer4->Add(contextPanel, 1, wxEXPAND, 0);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 1, 0, 0);
 	FlexGridSizer3->AddGrowableCol(0);
 	FlexGridSizer3->AddGrowableRow(0);
@@ -94,7 +94,7 @@ mainFrameWrapper(mainFrameWrapper_)
 	scrollBar1 = new wxScrollBar(layoutPanel, ID_SCROLLBAR1, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL, wxDefaultValidator, _T("ID_SCROLLBAR1"));
 	scrollBar1->SetScrollbar(2500, 10, 5000, 10);
 	layoutEditorCanvas = new gd::LayoutEditorCanvas(layoutPanel, project, emptyLayout, instanceContainer, externalLayout.GetAssociatedSettings(), mainFrameWrapper);
-	FlexGridSizer3->Add(layoutPanel, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer3->Add(layoutPanel, 1, wxEXPAND, 0);
 	helpPanel = new wxPanel(corePanel, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	helpPanel->SetBackgroundColour(wxColour(255,255,255));
 	helpSizer = new wxFlexGridSizer(0, 3, 0, 0);
@@ -107,11 +107,11 @@ mainFrameWrapper(mainFrameWrapper_)
 	helpSizer->Fit(helpPanel);
 	helpSizer->SetSizeHints(helpPanel);
 	FlexGridSizer3->Add(helpPanel, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer4->Add(FlexGridSizer3, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer4->Add(FlexGridSizer3, 1, wxEXPAND, 0);
 	corePanel->SetSizer(FlexGridSizer4);
 	FlexGridSizer4->Fit(corePanel);
 	FlexGridSizer4->SetSizeHints(corePanel);
-	FlexGridSizer1->Add(corePanel, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(corePanel, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);

@@ -160,7 +160,7 @@ void EventsEditor::Init(wxWindow* parent)
 	FlexGridSizer2->AddGrowableCol(0);
 	FlexGridSizer2->AddGrowableRow(0);
 	liveEdit = new wxTextCtrl(liveEditingPanel, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxSize(280,21), wxTE_PROCESS_ENTER, wxDefaultValidator, _T("ID_TEXTCTRL1"));
-	FlexGridSizer2->Add(liveEdit, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer2->Add(liveEdit, 1, wxEXPAND, 0);
 	parameterEditBt = new wxBitmapButton(liveEditingPanel, ID_BITMAPBUTTON1, gd::SkinHelper::GetIcon("edit", 16), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, _T("ID_BITMAPBUTTON1"));
 	FlexGridSizer2->Add(parameterEditBt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
 	liveEditingPanel->SetSizer(FlexGridSizer2);
@@ -194,10 +194,10 @@ void EventsEditor::Init(wxWindow* parent)
 	FlexGridSizer4->Add(addInstrBt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
 	listContextPanel->SetSizer(FlexGridSizer4);
 	FlexGridSizer4->SetSizeHints(listContextPanel);
-	FlexGridSizer1->Add(eventsPanel, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(eventsPanel, 1, wxEXPAND, 0);
 	scrollBar = new wxScrollBar(this, ID_SCROLLBAR1, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL, wxDefaultValidator, _T("ID_SCROLLBAR1"));
 	scrollBar->SetScrollbar(0, 1, 10, 1);
-	FlexGridSizer1->Add(scrollBar, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer1->Add(scrollBar, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer1);
 	deleteMenu = new wxMenuItem((&eventsContextMenu), deleteMenuItem, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
 	deleteMenu->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));

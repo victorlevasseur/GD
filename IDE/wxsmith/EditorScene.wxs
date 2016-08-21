@@ -67,7 +67,7 @@
 										<style></style>
 										<size>456,317</size>
 									</object>
-									<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxEXPAND</flag>
 									<option>1</option>
 								</object>
 							</object>
@@ -76,7 +76,7 @@
 						<icon code='gd::SkinHelper::GetIcon(&quot;events&quot;, 16)' />
 					</object>
 				</object>
-				<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxEXPAND</flag>
 				<option>1</option>
 			</object>
 		</object>

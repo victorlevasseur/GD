@@ -73,11 +73,11 @@ sceneCanvas(associatedCppLayoutPreviewer)
 	scaleMidTxt = new wxStaticText(this, ID_STATICTEXT9, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT9"));
 	GridSizer1->Add(scaleMidTxt, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	GridSizer1->Add(65,20,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer7->Add(GridSizer1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer7->Add(GridSizer1, 1, wxEXPAND, 0);
 	ratioGraphics = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxSize(395,130), wxSIMPLE_BORDER|wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	ratioGraphics->SetBackgroundColour(wxColour(255,255,255));
-	FlexGridSizer7->Add(ratioGraphics, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer2->Add(FlexGridSizer7, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer7->Add(ratioGraphics, 1, wxEXPAND, 5);
+	FlexGridSizer2->Add(FlexGridSizer7, 1, wxEXPAND, 0);
 	FlexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
 	FlexGridSizer8->AddGrowableCol(1);
 	FlexGridSizer8->AddGrowableRow(0);
@@ -86,7 +86,7 @@ sceneCanvas(associatedCppLayoutPreviewer)
 	FlexGridSizer8->Add(Panel1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	eventsTimeTxt = new wxStaticText(this, ID_STATICTEXT2, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
 	FlexGridSizer8->Add(eventsTimeTxt, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer2->Add(FlexGridSizer8, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer2->Add(FlexGridSizer8, 1, wxEXPAND, 0);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
 	FlexGridSizer3->AddGrowableCol(1);
 	FlexGridSizer3->AddGrowableRow(0);
@@ -95,7 +95,7 @@ sceneCanvas(associatedCppLayoutPreviewer)
 	FlexGridSizer3->Add(Panel2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	totalTimeTxt = new wxStaticText(this, ID_STATICTEXT1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
 	FlexGridSizer3->Add(totalTimeTxt, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer2->Add(FlexGridSizer3, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer2->Add(FlexGridSizer3, 1, wxEXPAND, 0);
 	FlexGridSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
 	FlexGridSizer1->AddGrowableCol(1);
 	FlexGridSizer1->AddGrowableRow(0);
@@ -104,7 +104,7 @@ sceneCanvas(associatedCppLayoutPreviewer)
 	FlexGridSizer1->Add(Panel3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	objectsCountTxt = new wxStaticText(this, ID_STATICTEXT3, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
 	FlexGridSizer1->Add(objectsCountTxt, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer2->Add(FlexGridSizer1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
+	FlexGridSizer2->Add(FlexGridSizer1, 1, wxEXPAND, 0);
 	SetSizer(FlexGridSizer2);
 	MenuItem3 = new wxMenu();
 	MenuItem1 = new wxMenuItem(MenuItem3, ID_MENUITEM1, _("Change the number of measure"), wxEmptyString, wxITEM_NORMAL);

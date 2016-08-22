@@ -109,7 +109,7 @@ InstructionSelectorDialog::InstructionSelectorDialog(wxWindow* parent, gd::Proje
     searchCtrl = new wxSearchCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL1"));
     searchCtrl->SetMinSize(wxSize(-1,24));
 
-    treeSizer->Add(searchCtrl, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    treeSizer->Add(searchCtrl, 1, wxEXPAND, 5);
     topPartSizer->Add(treeSizer, 0, wxEXPAND, 0);
     rightPartSizer = new wxBoxSizer(wxVERTICAL);
     FlexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);

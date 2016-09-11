@@ -8,6 +8,10 @@
 #include "GDCore/Project/ResourcesLoader.h"
 #include "GDCore/Tools/InvalidImage.h"
 #include "GDCore/Project/ResourcesManager.h"
+#include <SFML/OpenGL.hpp>
+#if !defined(ANDROID) && !defined(MACOS)
+#include <GL/glu.h>
+#endif
 #undef LoadImage //thx windows.h
 
 namespace gd
@@ -42,7 +46,9 @@ std::shared_ptr<SFMLTextureWrapper> ImageManager::GetSFMLTexture(const gd::Strin
     {
         ImageResource & image = dynamic_cast<ImageResource&>(resourcesManager->GetResource(name));
 
-        std::shared_ptr<SFMLTextureWrapper> texture(new SFMLTextureWrapper(ResourcesLoader::Get()->LoadSFMLTexture( image.GetFile() )));
+        std::shared_ptr<SFMLTextureWrapper> texture(new SFMLTextureWrapper());
+        ResourcesLoader::Get()->LoadSFMLImage( image.GetFile(), texture->image );
+        texture->texture.loadFromImage(texture->image);
         texture->texture.setSmooth(image.smooth);
 
         alreadyLoadedImages[name] = texture;
@@ -98,9 +104,9 @@ void ImageManager::ReloadImage(const gd::String & name) const
 
         std::cout << "ImageManager: Reload " << name << std::endl;
 
-        oldTexture->texture = ResourcesLoader::Get()->LoadSFMLTexture( image.GetFile() );
+        ResourcesLoader::Get()->LoadSFMLImage( image.GetFile(), oldTexture->image );
+        oldTexture->texture.loadFromImage(oldTexture->image);
         oldTexture->texture.setSmooth(image.smooth);
-        oldTexture->image = oldTexture->texture.copyToImage();
 
         return;
     }
@@ -192,7 +198,8 @@ OpenGLTextureWrapper::OpenGLTextureWrapper(std::shared_ptr<SFMLTextureWrapper> s
     #if !defined(ANDROID) //TODO: OpenGL
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, sfmlTexture->image.getSize().x, sfmlTexture->image.getSize().y, GL_RGBA, GL_UNSIGNED_BYTE, sfmlTexture->image.getPixelsPtr());
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sfmlTexture->image.getSize().x, sfmlTexture->image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, sfmlTexture->image.getPixelsPtr());
+    // glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     #endif

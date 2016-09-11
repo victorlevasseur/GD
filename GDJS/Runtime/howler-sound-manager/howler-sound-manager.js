@@ -51,7 +51,7 @@ gdjs.HowlerSound.prototype.stopped = function() {
 gdjs.HowlerSound.prototype.stop = function() {
 	this._paused = false;
 	this._stopped = true;
-	Howl.prototype.stop.call(this);
+	return Howl.prototype.stop.call(this);
 };
 gdjs.HowlerSound.prototype.canBeDestroyed = function() {
 	return this._canBeDestroyed;
@@ -249,16 +249,16 @@ gdjs.HowlerSoundManager.prototype.preloadAudio = function(onProgress, onComplete
 	resources = resources || this._resources;
 
     var files = [];
-    var that = this;
-    gdjs.iterateOverArray(resources, function(res) {
+	for(var i = 0, len = resources.length;i<len;++i) {
+		var res = resources[i];
         if ( res.file && res.kind === "audio" ) {
-        	that._availableResources[res.name] = res;
+        	this._availableResources[res.name] = res;
 
             if (files.indexOf(res.file) === -1) {
 	            files.push(res.file);
 	        }
         }
-    });
+    }
 
     if (files.length === 0) return onComplete();
 
@@ -274,7 +274,7 @@ gdjs.HowlerSoundManager.prototype.preloadAudio = function(onProgress, onComplete
         onProgress(loaded, files.length);
     }
 
-
+	var that = this;
     for(var i = 0;i<files.length;++i) {
         (function(audioFile) {
             console.log("Loading" + audioFile)

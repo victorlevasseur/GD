@@ -14,7 +14,8 @@
  */
 gdjs.evtTools.storage = gdjs.evtTools.storage || {
 	loadedFiles: new Hashtable(),
-	localStorage: typeof cc !== 'undefined' ? cc.sys.localStorage : localStorage
+	localStorage: typeof cc !== 'undefined' ? cc.sys.localStorage : localStorage,
+	fileUtils: null //Disabled for now
 };
 
 /**
@@ -31,11 +32,31 @@ gdjs.evtTools.storage.loadJSONFileFromStorage = function(filename) {
 	if ( gdjs.evtTools.storage.loadedFiles.containsKey(filename) )
 		return; //Already loaded.
 
-	var rawStr = localStorage.getItem("GDJS_"+filename);
-	if ( rawStr !== null )
-		gdjs.evtTools.storage.loadedFiles.put(filename, JSON.parse(rawStr));
-	else
-		gdjs.evtTools.storage.loadedFiles.put(filename, {});
+    var rawStr = null;
+    if (gdjs.evtTools.storage.fileUtils) {
+        var fileUtils = gdjs.evtTools.storage.fileUtils;
+
+        var fullPath = jsb.fileUtils.getWritablePath() + filename;
+        if (jsb.fileUtils.isFileExist(fullPath)) {
+            rawStr = jsb.fileUtils.getStringFromFile(fullPath);
+        } else {
+            console.log('File "' + filename + '" does not exist.');
+        }
+    } else {
+    	var localStorage = gdjs.evtTools.storage.localStorage;
+    	rawStr = localStorage.getItem("GDJS_"+filename);
+    }
+
+    try {
+        if ( rawStr !== null )
+            gdjs.evtTools.storage.loadedFiles.put(filename, JSON.parse(rawStr));
+        else
+            gdjs.evtTools.storage.loadedFiles.put(filename, {});
+    }
+    catch(e) {
+        console.log('Unable to load data from "' + filename + '"!');
+        gdjs.evtTools.storage.loadedFiles.put(filename, {});
+	}
 };
 
 /**
@@ -52,13 +73,25 @@ gdjs.evtTools.storage.unloadJSONFile = function(filename) {
 	if ( !gdjs.evtTools.storage.loadedFiles.containsKey(filename) )
 		return; //Not loaded.
 
-	var JSONobject = gdjs.evtTools.storage.loadedFiles.get(filename);
-	try {
-		localStorage.setItem("GDJS_"+filename, JSON.stringify(JSONobject));
-	}
-	catch(e) {
-		//TODO: Handle storage error.
-	}
+    var jsonObject = gdjs.evtTools.storage.loadedFiles.get(filename);
+    var rawStr = JSON.stringify(jsonObject);
+    if (gdjs.evtTools.storage.fileUtils) {
+        var fileUtils = gdjs.evtTools.storage.fileUtils;
+
+        var fullPath = jsb.fileUtils.getWritablePath() + filename;
+        if (!jsb.fileUtils.writeToFile(rawStr, fullPath)) {
+            console.log('Unable to save data to file "' + filename + '"!');
+        }
+
+    } else {
+    	var localStorage = gdjs.evtTools.storage.localStorage;
+    	try {
+    		localStorage.setItem("GDJS_"+filename, rawStr);
+    	} catch(e) {
+    		//TODO: Handle storage error.
+            console.log('Unable to save data to localStorage for "' + filename + '"!');
+    	}
+    }
 
 	 gdjs.evtTools.storage.loadedFiles.remove(filename);
 };
@@ -191,7 +224,7 @@ gdjs.evtTools.storage.readNumberFromJSONFile = function(filename, element, runti
 			return false;
 		}
 
-		if ( i == elemArray.length-1 && currentElem[elemArray[i]].value)
+		if ( i == elemArray.length-1 && typeof currentElem[elemArray[i]].value !== "undefined")
 			variable.setNumber(currentElem[elemArray[i]].value);
 		else
 			currentElem = currentElem[elemArray[i]];
@@ -217,7 +250,7 @@ gdjs.evtTools.storage.readStringFromJSONFile = function(filename, element, runti
 			return false;
 		}
 
-		if ( i == elemArray.length-1 && currentElem[elemArray[i]].str)
+		if ( i == elemArray.length-1 && typeof currentElem[elemArray[i]].str !== "undefined")
 			variable.setString(currentElem[elemArray[i]].str);
 		else
 			currentElem = currentElem[elemArray[i]];

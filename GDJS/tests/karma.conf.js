@@ -11,6 +11,7 @@ module.exports = function(config) {
       '../Runtime/gd.js',
       '../Runtime/libs/hshg.js',
       '../Runtime/cocos-renderers/cocos-director-manager.js',
+      '../Runtime/pixi-renderers/pixi.js',
       '../Runtime/pixi-renderers/*.js',
       '../Runtime/howler-sound-manager/howler.min.js',
       '../Runtime/howler-sound-manager/howler-sound-manager.js',
@@ -47,6 +48,8 @@ module.exports = function(config) {
       '../../Extensions/PlatformBehavior/platformerobjectruntimebehavior.js',
       '../../Extensions/PlatformBehavior/platformruntimebehavior.js',
       '../../Extensions/LinkedObjects/linkedobjects.js',
+      '../../Extensions/Inventory/inventory.js',
+      '../../Extensions/Inventory/inventorytools.js',
 
       //All tests files:
       './tests/init.js',

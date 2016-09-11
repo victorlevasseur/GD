@@ -21,8 +21,8 @@ gdjs.RuntimeSceneCocosRenderer = function(runtimeScene, runtimeGameRenderer)
             this._super();
             this.scheduleUpdate();
         },
-        update: function() {
-            runtimeGameRenderer.onSceneUpdated();
+        update: function(dt) {
+            runtimeGameRenderer.onSceneUpdated(dt*1000);
         }
     });
     this._cocosScene = new ContainerScene();
@@ -37,6 +37,12 @@ gdjs.RuntimeSceneCocosRenderer = function(runtimeScene, runtimeGameRenderer)
 gdjs.RuntimeSceneRenderer = gdjs.RuntimeSceneCocosRenderer; //Register the class to let the engine use it.
 
 gdjs.RuntimeSceneCocosRenderer.prototype.onSceneUnloaded = function() {
+    var layerNames = gdjs.staticArray(gdjs.RuntimeSceneCocosRenderer.prototype.onSceneUnloaded);
+    this._runtimeScene.getAllLayerNames(layerNames);
+    for(var i = 0;i < layerNames.length;++i) {
+        this._runtimeScene.getLayer(layerNames[i]).getRenderer().onSceneUnloaded();
+    }
+
     this._runtimeScene.getGame().getRenderer().getDirectorManager().onSceneUnloaded(this._cocosScene);
 };
 
@@ -51,6 +57,13 @@ gdjs.RuntimeSceneCocosRenderer.prototype.render = function() {
     var b = intColor & 255;
 
     this._cocosBgLayer.setColor(cc.color(r, g, b));
+
+    var layerNames = gdjs.staticArray(gdjs.RuntimeSceneCocosRenderer.prototype.onSceneUnloaded);
+    this._runtimeScene.getAllLayerNames(layerNames);
+    for(var i = 0;i < layerNames.length;++i) {
+        this._runtimeScene.getLayer(layerNames[i]).getRenderer().render();
+    }
+
     //this._renderProfileText(); //Uncomment to display profiling times
 };
 
@@ -98,7 +111,7 @@ gdjs.RuntimeSceneCocosRenderer.prototype.makeEventListeners = function() {
         },
     }), cc.EventListener.create({
 	    event: cc.EventListener.KEYBOARD,
-	    onKeyPressed:  function(keyCode){
+	    onKeyPressed: function(keyCode){
 		    that._runtimeScene.getGame().getInputManager().onKeyPressed(keyCode);
 	    },
 	    onKeyReleased: function(keyCode){
@@ -106,7 +119,7 @@ gdjs.RuntimeSceneCocosRenderer.prototype.makeEventListeners = function() {
 	    }
     }), cc.EventListener.create({
 	    event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-	    onTouchesBegan:  function(touches){
+	    onTouchesBegan: function(touches){
             for (var i = 0;i<touches.length;++i) {
                 var touch = touches[i];
 

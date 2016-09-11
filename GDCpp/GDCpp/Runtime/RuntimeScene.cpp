@@ -11,7 +11,6 @@
 #include <iomanip>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include "GDCpp/Runtime/RuntimeScene.h"
 #include "GDCpp/Runtime/RuntimeGame.h"
 #include "GDCpp/Runtime/RuntimeLayer.h"
@@ -30,9 +29,13 @@
 #include "GDCpp/Runtime/RuntimeContext.h"
 #include "GDCpp/Runtime/Project/Project.h"
 #include "GDCpp/Runtime/ManualTimer.h"
+#include "GDCpp/Runtime/Tools/OpenGLTools.h"
 #include "GDCpp/Extensions/CppPlatform.h"
 #include "GDCore/Tools/Localization.h"
 #include "GDCore/Tools/Log.h"
+#if !defined(ANDROID) && !defined(MACOS)
+#include <GL/glu.h>
+#endif
 
 #include "GDCpp/Runtime/CodeExecutionEngine.h"
 #if defined(GD_IDE_ONLY)
@@ -107,7 +110,7 @@ void RuntimeScene::SetupOpenGLProjection()
     glLoadIdentity();
 
     double windowRatio = static_cast<double>(renderWindow->getSize().x)/static_cast<double>(renderWindow->getSize().y);
-    gluPerspective(GetOpenGLFOV(), windowRatio, GetOpenGLZNear(), GetOpenGLZFar());
+    OpenGLTools::PerspectiveGL(GetOpenGLFOV(), windowRatio, GetOpenGLZNear(), GetOpenGLZFar());
     #endif
 }
 
@@ -234,10 +237,10 @@ void RuntimeScene::Render()
                 //Prepare OpenGL rendering
                 #if !defined(ANDROID) //TODO: OpenGL
                 renderWindow->popGLStates();
-                
+
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                gluPerspective(GetOpenGLFOV(), camera.GetWidth()/camera.GetHeight(), GetOpenGLZNear(), GetOpenGLZFar());
+                OpenGLTools::PerspectiveGL(GetOpenGLFOV(), camera.GetWidth()/camera.GetHeight(), GetOpenGLZNear(), GetOpenGLZFar());
                 #endif
 
                 const sf::FloatRect & viewport = camera.GetSFMLView().getViewport();

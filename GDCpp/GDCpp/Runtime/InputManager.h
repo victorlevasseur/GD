@@ -69,6 +69,15 @@ public:
     ///@}
 
 
+    /** \name Events
+     */
+    ///@{
+    /**
+     * \brief Get all the events from the last frame.
+     */
+    const std::vector<sf::Event>& GetLastFrameEvents() const { return lastFrameEvents; }
+    ///@}
+
     /** \name Keyboard
      */
     ///@{
@@ -140,6 +149,8 @@ public:
 
 private:
     sf::Window * window;
+
+    std::vector<sf::Event> lastFrameEvents;
 
     int lastPressedKey; ///< SFML key code of the last pressed key.
     bool keyWasPressed; ///< True if a key was pressed during the last step.

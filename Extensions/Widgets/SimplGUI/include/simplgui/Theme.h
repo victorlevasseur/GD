@@ -63,15 +63,19 @@ public:
     {
         Theme th;
 
-        th.setProperty<std::string>("font", ""); //SMALL PATCH !
+        th.setProperty<std::string>("font", "LiberationSans.ttf");
         th.setProperty<unsigned int>("font_size", 30);
 
-        th.setProperty<StateColor>("background_color", StateColor(sf::Color(255, 255, 255, 180), sf::Color(255, 255, 255, 255)));
-        th.setProperty<StateColor>("border_color", StateColor(sf::Color(0, 0, 0, 255), sf::Color(128, 128, 255, 255)));
+        th.setProperty<StateColor>("background_color", StateColor(sf::Color(255, 255, 255, 180)).setFocused(sf::Color(255, 255, 255, 255)));
+        th.setProperty<StateColor>("border_color", StateColor(sf::Color(0, 0, 0, 255)).setFocused(sf::Color(128, 128, 255, 255)));
         th.setProperty<float>("border_thickness", 2.f);
 
-        th.setProperty<StateColor>("selection_color", StateColor(sf::Color(100, 100, 255, 180), sf::Color(100, 100, 255, 255)));
-        th.setProperty<StateColor>("selection_border_color", StateColor(sf::Color(128, 128, 255, 180), sf::Color(128, 128, 255, 255)));
+        th.setProperty<StateColor>("button_background_color", StateColor(sf::Color(180, 180, 180, 255)).setFocusedAndClicked(sf::Color(200, 200, 200, 255)));
+        th.setProperty<StateColor>("button_border_color", StateColor(sf::Color(0, 0, 0, 255)).setFocusedAndClicked(sf::Color(128, 128, 128, 255)));
+        th.setProperty<float>("button_border_thickness", 2.f);
+
+        th.setProperty<StateColor>("selection_color", StateColor(sf::Color(100, 100, 255, 180)).setFocused(sf::Color(100, 100, 255, 255)));
+        th.setProperty<StateColor>("selection_border_color", StateColor(sf::Color(128, 128, 255, 180)).setFocused(sf::Color(128, 128, 255, 255)));
         th.setProperty<float>("selection_border_thickness", 1.f);
 
         th.setProperty<StateColor>("text_color", StateColor(sf::Color(0, 0, 0, 255)));

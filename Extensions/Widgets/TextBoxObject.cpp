@@ -18,6 +18,8 @@ This project is released under the MIT License.
 #include "GDCpp/Runtime/Project/InitialInstance.h"
 #include "GDCpp/Runtime/Polygon2d.h"
 #include "GDCpp/Runtime/CommonTools.h"
+#include "GDCpp/Runtime/RuntimeLayer.h"
+#include "GDCpp/Runtime/RuntimeScene.h"
 #include "GDCpp/Runtime/Serialization/SerializerElement.h"
 #include "TextBoxObject.h"
 #include "GDResourcesGetter.h"
@@ -113,6 +115,7 @@ void TextBoxObject::DrawInitialInstance(gd::InitialInstance & instance, sf::Rend
     renderTarget.draw(sfText);*/
 
     m_textbox->setPosition(instance.GetX(), instance.GetY());
+    //TODO:Size
     renderTarget.draw(*m_textbox);
 }
 
@@ -185,33 +188,103 @@ void TextBoxObject::SetFontFilename(const gd::String & fontFilename)
 
 RuntimeTextBoxObject::RuntimeTextBoxObject(RuntimeScene & scene, const gd::Object & object) :
     RuntimeObject(scene, object),
+    scene(scene),
     opacity(255),
     angle(0)
 {
     const TextBoxObject & textboxObject = static_cast<const TextBoxObject&>(object);
 
-    ChangeFont(textboxObject.GetFontFilename());
-    SetSmooth(textboxObject.IsSmoothed());
-    SetColor(textboxObject.GetColorR(), textboxObject.GetColorG(), textboxObject.GetColorB());
-    SetString(textboxObject.GetString());
-    SetCharacterSize(textboxObject.GetCharacterSize());
-    SetAngle(0);
-    SetBold(textboxObject.IsBold());
-    SetItalic(textboxObject.IsItalic());
-    SetUnderlined(textboxObject.IsUnderlined());
+    InitWidget();
+}
+
+void RuntimeTextBoxObject::InitWidget()
+{
+    m_textbox = simplgui::TextBox::create(GDResourcesGetter::create());
+    m_textbox->setPosition(sf::Vector2f(GetX(), GetY()));
+    m_textbox->setSize(sf::Vector2f(GetWidth(), GetHeight()));
+    m_textbox->setText(U"Text"); //TODO: Use the text from gd::Object
 }
 
 bool RuntimeTextBoxObject::Draw( sf::RenderTarget& renderTarget )
 {
     if ( hidden ) return true; //Don't draw anything if hidden
 
-    renderTarget.draw( text );
+    renderTarget.draw( *m_textbox );
     return true;
+}
+
+namespace
+{
+    std::vector<sf::View> GetViewsUnderMouse(sf::Vector2u windowSize, const RuntimeLayer &layer, sf::Vector2i mousePosition)
+    {
+        std::vector<sf::View> views;
+        for(std::size_t i = 0; i < layer.GetCameraCount(); ++i)
+        {
+            const RuntimeCamera &camera = layer.GetCamera(i);
+
+            sf::IntRect cameraViewport(
+                static_cast<float>(windowSize.x) * camera.GetSFMLView().getViewport().left,
+                static_cast<float>(windowSize.y) * camera.GetSFMLView().getViewport().top,
+                static_cast<float>(windowSize.x) * camera.GetSFMLView().getViewport().width,
+                static_cast<float>(windowSize.y) * camera.GetSFMLView().getViewport().height
+            );
+
+            if(cameraViewport.contains(mousePosition))
+                views.push_back(camera.GetSFMLView());
+        }
+
+        return views;
+    }
+
+    std::vector<simplgui::Event> GetEvents(const sf::RenderWindow &window, const RuntimeLayer &layer, const std::vector<sf::Event> &sfmlEvents)
+    {
+        std::vector<simplgui::Event> events;
+        for(auto &sfmlEvent : sfmlEvents)
+        {
+            if(sfmlEvent.type == sf::Event::MouseButtonPressed || sfmlEvent.type == sf::Event::MouseButtonReleased || sfmlEvent.type == sf::Event::MouseMoved)
+            {
+                sf::Vector2i mousePosition(
+                    sfmlEvent.type == sf::Event::MouseMoved ?
+                        sf::Vector2i(sfmlEvent.mouseMove.x, sfmlEvent.mouseMove.y) :
+                        sf::Vector2i(sfmlEvent.mouseButton.x, sfmlEvent.mouseButton.y)
+                );
+
+                for(auto &view : GetViewsUnderMouse(window.getSize(), layer, mousePosition))
+                {
+                    events.emplace_back(
+                        sfmlEvent,
+                        window,
+                        view
+                    );
+                }
+            }
+            else
+            {
+                events.emplace_back(
+                    sfmlEvent,
+                    window,
+                    layer.GetCamera(0).GetSFMLView()
+                );
+            }
+        }
+
+        return events;
+    }
+}
+
+void RuntimeTextBoxObject::UpdateTime(float dt)
+{
+    //Process the events
+    for(auto &event : GetEvents(*scene.renderWindow, scene.GetRuntimeLayer(GetLayer()), scene.GetInputManager().GetLastFrameEvents()))
+        m_textbox->processEvent(event);
+
+    //Update the textbox
+    m_textbox->update(sf::seconds(dt));
 }
 
 void RuntimeTextBoxObject::OnPositionChanged()
 {
-    text.setPosition( GetX()+text.getOrigin().x, GetY()+text.getOrigin().y );
+    m_textbox->setPosition(sf::Vector2f(GetX(), GetY()));
 }
 
 /**
@@ -249,7 +322,7 @@ float RuntimeTextBoxObject::GetDrawableY() const
  */
 float RuntimeTextBoxObject::GetWidth() const
 {
-    return text.getLocalBounds().width;
+    return 200.f;
 }
 
 /**
@@ -257,7 +330,7 @@ float RuntimeTextBoxObject::GetWidth() const
  */
 float RuntimeTextBoxObject::GetHeight() const
 {
-    return text.getLocalBounds().height + text.getLocalBounds().top;
+    return 48.f;
 }
 
 void RuntimeTextBoxObject::SetString(const gd::String & str)
@@ -304,11 +377,7 @@ void RuntimeTextBoxObject::ChangeFont(const gd::String & fontName_)
 {
     if ( !text.getFont() || fontName_ != fontName )
     {
-        fontName = fontName_;
-        text.setFont(*FontManager::Get()->GetFont(fontName));
-        text.setOrigin(text.getLocalBounds().width/2, text.getLocalBounds().height/2);
-        OnPositionChanged();
-        SetSmooth(smoothed); //Ensure texture smoothing is up to date.
+
     }
 }
 

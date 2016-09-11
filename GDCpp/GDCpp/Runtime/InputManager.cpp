@@ -7,6 +7,7 @@
 
 InputManager::InputManager(sf::Window * win) :
     window(win),
+    lastFrameEvents(),
     lastPressedKey(0),
     keyWasPressed(false),
     touchSimulateMouse(true),
@@ -24,6 +25,8 @@ void InputManager::SimulateMousePressed(sf::Vector2i pos)
 
 void InputManager::NextFrame()
 {
+    lastFrameEvents.clear();
+
     keyWasPressed = false;
     charactersEntered.clear();
 
@@ -50,6 +53,8 @@ void InputManager::NextFrame()
 
 void InputManager::HandleEvent(sf::Event & event)
 {
+    lastFrameEvents.push_back(event);
+
     if (event.type == sf::Event::KeyPressed)
     {
         if (!windowHasFocus && disableInputWhenNotFocused)

@@ -122,6 +122,8 @@ public :
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 
+    virtual void UpdateTime(float dt) override;
+
     virtual void OnPositionChanged();
 
     virtual float GetWidth() const;
@@ -179,11 +181,16 @@ public :
     #endif
 
 private:
+    void InitWidget();
+
     sf::Text text;
     gd::String fontName;
     float opacity;
     bool smoothed;
     float angle;
+
+    std::shared_ptr<simplgui::TextBox> m_textbox;
+    RuntimeScene &scene;
 };
 
 gd::Object * CreateTextBoxObject(gd::String name);

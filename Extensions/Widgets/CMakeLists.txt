@@ -23,7 +23,7 @@ ELSE()
 ENDIF()
 
 gd_add_extension_target(Widgets "${ide_source_files}")
-gdcpp_add_runtime_extension_target(Widgets_Runtime "${source_files}")
+gdcpp_add_runtime_extension_target(Widgets_Runtime "${source_files};${simplgui_src}")
 
 #Linker files for the IDE extension
 ###

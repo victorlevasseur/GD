@@ -12,37 +12,70 @@ class StateDepProperty
 public:
     /**
      * Create a StateDepProperty object and initialize each state properties
-     * (normal, focused, disabled, hovered) with **all**.
+     * with **all**.
      */
-    StateDepProperty(const T &all) : normal(all), focused(all), disabled(all), hovered(all) { }
-    
-    /**
-     * Create a StateDepProperty object and initialize the normal, hovered and
-     * disabled properties with **normal** and the focused property with **focused**.
-     */
-    StateDepProperty(const T &normal, const T &focused) : normal(normal), focused(focused), disabled(normal), hovered(normal) { }
-    
-    /**
-     * Create a StateDepProperty object and initialize the normal, hovered
-     * properties with **normal**, the focused property with **focused** and
-     * the disabled property with **disabled**.
-     */
-    StateDepProperty(const T &normal, const T &focused, const T &disabled) : normal(normal), focused(focused), disabled(disabled), hovered(normal) { }
-    
-    /**
-     * Create a StateDepProperty object and initialize the normal property with 
-     * **normal**, the focused property with **focused**, the disabled property 
-     * with **disabled** and the hovered property with **hovered**.
-     */
-    StateDepProperty(const T &normal, const T &focused, const T &disabled, const T &hovered) : normal(normal), focused(focused), disabled(disabled), hovered(hovered) { }
+    StateDepProperty(const T &all) : normal(all), hovered(all), focused(all), focusedAndHovered(all), focusedAndClicked(all), disabled(all), disabledAndHovered(all) { }
+
+    StateDepProperty& setAll(const T &all)
+    {
+        normal = all;
+        hovered = all;
+        focused = all;
+        focusedAndHovered = all;
+        focusedAndClicked = all;
+        disabled = all;
+        disabledAndHovered = all;
+        return *this;
+    }
+
+    StateDepProperty& setHovered(const T &_hovered)
+    {
+        hovered = _hovered;
+        return *this;
+    }
+
+    StateDepProperty& setFocused(const T &_focused)
+    {
+        focused = _focused;
+        focusedAndHovered = _focused;
+        focusedAndClicked = _focused;
+        return *this;
+    }
+
+    StateDepProperty& setFocusedAndHovered(const T &_focusedAndHovered)
+    {
+        focusedAndHovered = _focusedAndHovered;
+        return *this;
+    }
+
+    StateDepProperty& setFocusedAndClicked(const T &_focusedAndClicked)
+    {
+        focusedAndClicked = _focusedAndClicked;
+        return *this;
+    }
+
+    StateDepProperty& setDisabled(const T &_disabled)
+    {
+        disabled = _disabled;
+        disabledAndHovered = _disabled;
+        return *this;
+    }
+
+    StateDepProperty& setDisabledAndHovered(const T &_disabledAndHovered)
+    {
+        disabledAndHovered = _disabledAndHovered;
+        return *this;
+    }
 
     T normal;
-    T focused;
-    T disabled;
     T hovered;
+    T focused;
+    T focusedAndHovered;
+    T focusedAndClicked;
+    T disabled;
+    T disabledAndHovered;
 };
 
 }
 
 #endif
-

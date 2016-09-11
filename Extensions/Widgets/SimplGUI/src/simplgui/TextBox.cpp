@@ -11,8 +11,8 @@ std::shared_ptr<TextBox> TextBox::create(std::shared_ptr<ResourcesGetter> resGet
     return std::shared_ptr<TextBox>(new TextBox(resGetter));
 }
 
-TextBox::TextBox(std::shared_ptr<ResourcesGetter> resGetter) : 
-    Widget(resGetter), 
+TextBox::TextBox(std::shared_ptr<ResourcesGetter> resGetter) :
+    Widget(resGetter),
     onTextChanged(),
     m_string(),
     m_displayedStr(),
@@ -25,7 +25,7 @@ TextBox::TextBox(std::shared_ptr<ResourcesGetter> resGetter) :
     m_leftClicking(false)
 {
     setSize(sf::Vector2f(150.f, 40.f));
-    
+
     doThemeUpdate(); //Update the textbox appearance
 }
 
@@ -43,7 +43,7 @@ void TextBox::setSelection(int start, int len)
 {
     m_selectionStart = start;
     m_selectionLen = len;
-    
+
     if(m_selectionStart + m_selectionLen == static_cast<int>(m_string.size()) && !m_string.empty())
         ensureCharacterIsVisible(m_selectionStart + m_selectionLen - 1);
     else
@@ -53,7 +53,7 @@ void TextBox::setSelection(int start, int len)
 void TextBox::setText(const std::u32string &text)
 {
     m_string = text;
-    
+
     updateText();
     setSelection(0);
     needAutoSizeUpdate();
@@ -62,12 +62,12 @@ void TextBox::setText(const std::u32string &text)
 void TextBox::setHideCharacter(char32_t hideChar)
 {
     m_hideChar = hideChar;
-    
+
     updateText();
     needAutoSizeUpdate();
 }
 
-void TextBox::doProcessEvent(sf::Event event)
+void TextBox::doProcessEvent(simplgui::Event event)
 {
     if(isFocused())
     {
@@ -75,62 +75,62 @@ void TextBox::doProcessEvent(sf::Event event)
         sf::Transform globalTr = getGlobalTransform();
         sf::FloatRect widgetRect(sf::Vector2f(0.f, 0.f), getEffectiveSize());
         widgetRect = globalTr.transformRect(widgetRect);
-        
-        if(event.type == sf::Event::MouseButtonPressed)
+
+        if(event.type == simplgui::Event::MouseButtonPressed)
         {
             if(event.mouseButton.button == sf::Mouse::Left)
             {
                 if(widgetRect.contains(event.mouseButton.x, event.mouseButton.y))
                 {
-                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseButton.x, event.mouseButton.y));   
+                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseButton.x, event.mouseButton.y));
                     setSelection(getCharacterIndexAt(relativeMousePosition.x, relativeMousePosition.y));
                     m_leftClicking = true;
                 }
             }
-            
+
             needAutoSizeUpdate();
             updateText();
         }
-        else if(event.type == sf::Event::MouseMoved)
+        else if(event.type == simplgui::Event::MouseMoved)
         {
             if(m_leftClicking)
             {
                 if(widgetRect.contains(event.mouseMove.x, event.mouseMove.y))
                 {
-                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseMove.x, event.mouseMove.y));   
+                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseMove.x, event.mouseMove.y));
                     setSelection(m_selectionStart, getCharacterIndexAt(relativeMousePosition.x, relativeMousePosition.y) - m_selectionStart);
                 }
             }
-            
+
             needAutoSizeUpdate();
             updateText();
         }
-        else if(event.type == sf::Event::MouseButtonReleased)
+        else if(event.type == simplgui::Event::MouseButtonReleased)
         {
             if(event.mouseButton.button == sf::Mouse::Left && m_leftClicking)
             {
                 if(widgetRect.contains(event.mouseButton.x, event.mouseButton.y))
                 {
-                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseButton.x, event.mouseButton.y));   
+                    sf::Vector2f relativeMousePosition(globalTr.getInverse().transformPoint(event.mouseButton.x, event.mouseButton.y));
                     setSelection(m_selectionStart, getCharacterIndexAt(relativeMousePosition.x, relativeMousePosition.y) - m_selectionStart);
                 }
                 m_leftClicking = false;
             }
-            
+
             needAutoSizeUpdate();
             updateText();
         }
-        else if(event.type == sf::Event::TextEntered)
+        else if(event.type == simplgui::Event::TextEntered)
         {
             sf::Uint32 character = event.text.unicode;
             if(character > 30 && (character < 127 || character > 159))
             {
                 m_string.replace(
-                    std::min(m_selectionStart, m_selectionStart + m_selectionLen), 
-                    std::max(m_selectionLen, -m_selectionLen), 
+                    std::min(m_selectionStart, m_selectionStart + m_selectionLen),
+                    std::max(m_selectionLen, -m_selectionLen),
                     std::u32string(1, static_cast<char32_t>(character))
                     );
-                
+
                 setSelection(std::min(m_selectionStart + 1, m_selectionStart + m_selectionLen + 1));
             }
             else if(character == 8)
@@ -150,13 +150,13 @@ void TextBox::doProcessEvent(sf::Event event)
             }
             else //Avoid useless update (below) if the text is not processed
                 return;
-            
+
             needAutoSizeUpdate();
             updateText();
-            
-            onTextChanged.call(m_string);
+
+            onTextChanged.call(shared_from_this(), m_string);
         }
-        else if(event.type == sf::Event::KeyPressed)
+        else if(event.type == simplgui::Event::KeyPressed)
         {
             if(event.key.code == sf::Keyboard::Delete)
             {
@@ -166,14 +166,14 @@ void TextBox::doProcessEvent(sf::Event event)
                     {
                         m_string.replace(m_selectionStart, 1, U"");
                         setSelection(m_selectionStart);
-                        
+
                         needAutoSizeUpdate();
                         updateText();
                     }
                     else if(hasMultipleCharSelected())
                     {
                         eraseSelection();
-                        
+
                         needAutoSizeUpdate();
                         updateText();
                     }
@@ -233,11 +233,12 @@ sf::Vector2f TextBox::doCalculateAutoSize() const
 {
     if(!m_font)
         return sf::Vector2f(0.f, 0.f);
-        
+
+    sf::Vector2f currentTextSize = Renderer::getTextSize(m_string, *m_font, getTheme().getProperty<unsigned int>("font_size", 30));
     //Calculate the height using a custom text (so as the height is always correct even if the text is empty)
     sf::Vector2f textSize = Renderer::getTextSize(U"abfgjl", *m_font, getTheme().getProperty<unsigned int>("font_size", 30));
-    
-    return textSize + sf::Vector2f(6.f, 6.f);
+
+    return sf::Vector2f(currentTextSize.x, textSize.y) + sf::Vector2f(6.f, 6.f);
 }
 
 void TextBox::doThemeUpdate()
@@ -248,9 +249,9 @@ void TextBox::doThemeUpdate()
         return;
     }
     std::shared_ptr<ResourcesGetter> resGetter(getResourcesGetter());
-        
+
     m_font = resGetter->loadFont(getTheme().getProperty<std::string>("font", "Liberation.ttf"));
-    
+
     updateText();
     needAutoSizeUpdate();
 }
@@ -270,20 +271,20 @@ void TextBox::draw(sf::RenderTarget &target, sf::RenderStates) const
             isFocused() ? getTheme().getProperty<StateColor>("text_color").normal : sf::Color::Transparent,
             sf::Color::Transparent,
             getGlobalTransform()
-        );     
+        );
     }
     else
     {
         Renderer::drawSelectionRectangle(
-            target, 
-            shared_from_this(), 
+            target,
+            shared_from_this(),
             sf::FloatRect(
-                {getCharacterPosition(m_selectionStart).x, 3.f}, 
+                {getCharacterPosition(m_selectionStart).x, 3.f},
                 {getCharacterPosition(m_selectionLen + m_selectionStart).x - getCharacterPosition(m_selectionStart).x, getEffectiveSize().y - 6.f}
             )
         );
     }
-    
+
     //Draw the text
     Renderer::drawText(target, shared_from_this(), m_displayedStr, *m_font, sf::Vector2f(3.f, 3.f));
 }
@@ -299,16 +300,16 @@ void TextBox::updateText()
     m_displayedStr.clear();
     unsigned int textSize = getTheme().getProperty<unsigned int>("font_size", 30);
 
-    for(auto it = strToDisplay.begin() + m_firstDisplayedCharIndex; 
+    for(auto it = strToDisplay.begin() + m_firstDisplayedCharIndex;
         it != strToDisplay.end() && (3.f + Renderer::getTextSize(m_displayedStr, *m_font, textSize).x < (getSize().x == AUTO_SIZE ? getMaxSize().x : getSize().x) - 6.f);
         ++it)
     {
         m_displayedStr.push_back(*it);
     }
-    
-    if(3.f + Renderer::getTextSize(m_displayedStr, *m_font, textSize).x >= (getSize().x == AUTO_SIZE ? getMaxSize().x : getSize().x) - 6.f)
+
+    if(m_displayedStr.size() > 0 && 3.f + Renderer::getTextSize(m_displayedStr, *m_font, textSize).x >= (getSize().x == AUTO_SIZE ? getMaxSize().x : getSize().x) - 6.f)
         m_displayedStr.erase(m_displayedStr.size()-1);
-        
+
     m_lastDisplayedCharIndex = m_displayedStr.size() > 0 ? m_firstDisplayedCharIndex + m_displayedStr.size()-1 : 0;
 }
 
@@ -329,7 +330,7 @@ void TextBox::ensureCharacterIsVisible(unsigned int pos)
         needAutoSizeUpdate();
         updateText();
     }
-    
+
     //Try to avoid a blank space on the right of the TextBox if the text is too much offsetted
     while(m_lastDisplayedCharIndex >= m_string.size() - 1 && m_firstDisplayedCharIndex > 0)
     {
@@ -359,34 +360,33 @@ sf::Vector2f TextBox::getCharacterPosition(int index) const
 int TextBox::getCharacterIndexAt(float x, float) const
 {
     unsigned int charIndex = 0;
-    
+
     if(m_displayedStr.empty())
         return 0;
-    
+
     auto getCharAt = std::bind(Renderer::getCharPosInText, m_displayedStr, *m_font, getTheme().getProperty<unsigned int>("font_size", 30), std::placeholders::_1);
     sf::Vector2f textSize = Renderer::getTextSize(m_displayedStr, *m_font, getTheme().getProperty<unsigned int>("font_size", 30));
-    
-    while((getCharAt(charIndex).x + 3.f /* the margin */ + (charIndex < (m_lastDisplayedCharIndex - m_firstDisplayedCharIndex) ? 
-                getCharAt(charIndex+1).x + 3.f : 
-                (textSize.x + 3.f)))/2.f < x && 
+
+    while((getCharAt(charIndex).x + 3.f /* the margin */ + (charIndex < (m_lastDisplayedCharIndex - m_firstDisplayedCharIndex) ?
+                getCharAt(charIndex+1).x + 3.f :
+                (textSize.x + 3.f)))/2.f < x &&
         charIndex < (m_lastDisplayedCharIndex - m_firstDisplayedCharIndex + 1))
     {
         ++charIndex;
     }
-    
+
     return charIndex + m_firstDisplayedCharIndex;
 }
 
 void TextBox::eraseSelection()
 {
     m_string.replace(
-        std::min(m_selectionStart, m_selectionStart + m_selectionLen), 
-        std::max(m_selectionLen, -m_selectionLen), 
+        std::min(m_selectionStart, m_selectionStart + m_selectionLen),
+        std::max(m_selectionLen, -m_selectionLen),
         U""
     );
-                        
+
     setSelection(m_selectionStart + std::min(0, m_selectionLen));
 }
 
 }
-

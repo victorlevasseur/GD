@@ -7,7 +7,7 @@ namespace simplgui
 namespace tools
 {
 
-sf::String getSfString(const std::u32string &str)
+static sf::String getSfString(const std::u32string &str)
 {
     if(str.empty())
         return sf::String();
@@ -20,4 +20,3 @@ sf::String getSfString(const std::u32string &str)
 }
 
 #endif
-

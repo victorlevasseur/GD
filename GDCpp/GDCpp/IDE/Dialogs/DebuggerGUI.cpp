@@ -222,7 +222,7 @@ void DebuggerGUI::UpdateGUI()
     }
 
     //Arbre des objets : Création des objets
-    if ( mustRecreateTree )
+    /*if ( mustRecreateTree )
     {
         m_objectsTree->DeleteAllItems();
         m_objectsTree->AddRoot(_("objects"));
@@ -244,10 +244,10 @@ void DebuggerGUI::UpdateGUI()
         }
 
         m_objectsTree->ExpandAll();
-    }
+    }*/
 
     //Ajout des objets
-    RuntimeObjList allObjects = scene.objectsInstances.GetAllObjects();
+    /*RuntimeObjNonOwningPtrList allObjects = scene.objectsInstances.GetAllObjects();
     for(std::size_t i = 0;i<allObjects.size();++i)
     {
         std::weak_ptr<RuntimeObject> weakPtrToObject = allObjects[i];
@@ -357,7 +357,7 @@ void DebuggerGUI::UpdateGUI()
     {
         m_objectList->SetItem(baseItemCount+i, 0, it->first);
         m_objectList->SetItem(baseItemCount+i, 1, it->second->IsStructure() ? _("(Structure)") : it->second->GetString());
-    }
+    }*/
 }
 
 void DebuggerGUI::OnobjectsTreeSelectionChanged(wxTreeEvent& event)
@@ -370,7 +370,7 @@ void DebuggerGUI::OnobjectsTreeSelectionChanged(wxTreeEvent& event)
  */
 void DebuggerGUI::OnobjectListItemActivated(wxListEvent& event)
 {
-    if ( !m_objectsTree->GetSelection().IsOk() )
+    /*if ( !m_objectsTree->GetSelection().IsOk() )
         return;
 
     //Obtain the shared_ptr to the object
@@ -425,7 +425,7 @@ void DebuggerGUI::OnobjectListItemActivated(wxListEvent& event)
                                                 _("Editing a variable"),
                                                 object->GetVariables().Get(name).GetString());
         object->GetVariables().Get(name).SetString(newValue);
-    }
+    }*/
 }
 
 /**
@@ -498,7 +498,7 @@ void DebuggerGUI::UpdateListCtrlColumnsWidth()
  */
 void DebuggerGUI::RecreateListForObject(const RuntimeObjSPtr & object)
 {
-    m_objectList->DeleteAllItems();
+    /*m_objectList->DeleteAllItems();
     std::size_t currentLine = 0;
     gd::String name, uselessValue;
 
@@ -537,7 +537,7 @@ void DebuggerGUI::RecreateListForObject(const RuntimeObjSPtr & object)
     //pour ajouter les variables.
     baseItemCount = m_objectList->GetItemCount();
 
-    objectChanged = false;
+    objectChanged = false;*/
 }
 
 /**
@@ -545,7 +545,7 @@ void DebuggerGUI::RecreateListForObject(const RuntimeObjSPtr & object)
  */
 void DebuggerGUI::OndeleteBtClick(wxCommandEvent& event)
 {
-    if ( !m_objectsTree->GetSelection().IsOk() )
+    /*if ( !m_objectsTree->GetSelection().IsOk() )
         return;
 
     //Obtain the shared_ptr to the object
@@ -560,7 +560,7 @@ void DebuggerGUI::OndeleteBtClick(wxCommandEvent& event)
         }
     }
 
-    if ( object != std::shared_ptr<RuntimeObject>() ) object->DeleteFromScene(scene);
+    if ( object != std::shared_ptr<RuntimeObject>() ) object->DeleteFromScene(scene);*/
 }
 
 /**
@@ -603,7 +603,7 @@ void DebuggerGUI::OnAddVarGlobalBtClick( wxCommandEvent & event )
 
 void DebuggerGUI::OnAddObjBtClick( wxCommandEvent & event )
 {
-    gd::ChooseObjectDialog dialog( this, *scene.game, scene, false );
+    /*gd::ChooseObjectDialog dialog( this, *scene.game, scene, false );
     if ( dialog.ShowModal() != 1 ) return;
 
     gd::String objectWanted = dialog.GetChosenObject();
@@ -635,7 +635,7 @@ void DebuggerGUI::OnAddObjBtClick( wxCommandEvent & event )
 
     scene.objectsInstances.AddObject(newObject);
 
-    return;
+    return;*/
 }
 
 #endif

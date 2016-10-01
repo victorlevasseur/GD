@@ -16,6 +16,11 @@ RuntimeObject * ObjInstancesHolder::AddObject(RuntimeObjSPtr && object)
         it->get()
     );
 
+#if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
+    if(!debugger.expired())
+        debugger.lock()->OnRuntimeObjectAdded(it->get());
+#endif
+
     return it->get();
 }
 
@@ -36,6 +41,10 @@ void ObjInstancesHolder::ObjectNameHasChanged(const RuntimeObject * object)
         {
             if ( list[i].get() == object )
             {
+#if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
+                if(!debugger.expired())
+                    debugger.lock()->OnRuntimeObjectAboutToBeRemoved(list[i].get());
+#endif
                 theObject = std::move(list[i]);
                 list.erase(list.begin()+i);
                 break;
@@ -61,6 +70,11 @@ void ObjInstancesHolder::Init(const ObjInstancesHolder & other)
 {
     objectsInstances.clear();
     objectsInstancesRefs.clear();
+
+#if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
+    debugger = std::weak_ptr<BaseDebugger>(); //Do not affect the other's debugger
+#endif
+
     for (auto it = other.objectsInstances.cbegin() ;
         it != other.objectsInstances.cend(); ++it )
     {

@@ -62,7 +62,7 @@ public:
      * return new MyObject(*this);
      * \endcode
      */
-    virtual gd::Object * Clone() const { return new gd::Object(*this); }
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new gd::Object(*this)); }
 
     /** \name Common properties
      * Members functions related to common properties

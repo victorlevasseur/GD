@@ -219,7 +219,7 @@ public :
 
     ParticleEmitterObject(gd::String name_);
     virtual ~ParticleEmitterObject() {};
-    virtual gd::Object * Clone() const { return new ParticleEmitterObject(*this);}
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new ParticleEmitterObject(*this)); }
 
     #if defined(GD_IDE_ONLY)
     virtual void DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarget & renderTarget, gd::Project & project, gd::Layout & layout);

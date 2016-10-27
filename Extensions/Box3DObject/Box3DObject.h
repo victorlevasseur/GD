@@ -33,7 +33,7 @@ public :
 
     Box3DObject(gd::String name_);
     virtual ~Box3DObject();
-    virtual gd::Object * Clone() const { return new Box3DObject(*this);}
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new Box3DObject(*this)) ;}
 
     #if defined(GD_IDE_ONLY)
     virtual void LoadResources(gd::Project & project, gd::Layout & layout);

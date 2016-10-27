@@ -32,7 +32,7 @@ public :
 
     PanelSpriteObject(gd::String name_);
     virtual ~PanelSpriteObject();
-    virtual gd::Object * Clone() const { return new PanelSpriteObject(*this);}
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new PanelSpriteObject(*this)) ;}
 
     #if defined(GD_IDE_ONLY)
     virtual void LoadResources(gd::Project & project, gd::Layout & layout);

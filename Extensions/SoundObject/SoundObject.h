@@ -42,7 +42,7 @@ public :
 
     SoundObject(gd::String name_);
     virtual ~SoundObject() {};
-    virtual gd::Object * Clone() const { return new SoundObject(*this);}
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new SoundObject(*this)); }
 
     #if defined(GD_IDE_ONLY)
     virtual void DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarget & renderTarget, gd::Project & project, gd::Layout & layout);

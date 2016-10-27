@@ -32,7 +32,7 @@ class GD_EXTENSION_API TextEntryObject : public gd::Object
 public :
     TextEntryObject(gd::String name_);
     virtual ~TextEntryObject() {};
-    virtual gd::Object * Clone() const { return new TextEntryObject(*this); }
+    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new TextEntryObject(*this)); }
 
     #if defined(GD_IDE_ONLY)
     virtual void DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarget & renderTarget, gd::Project & project, gd::Layout & layout);

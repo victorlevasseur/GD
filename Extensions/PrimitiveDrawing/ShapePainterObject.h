@@ -139,7 +139,7 @@ class GD_EXTENSION_API RuntimeShapePainterObject : public RuntimeObject, public 
 public:
     RuntimeShapePainterObject(RuntimeScene & scene, const ShapePainterObject & shapePainterObject);
     virtual ~RuntimeShapePainterObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeShapePainterObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeShapePainterObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

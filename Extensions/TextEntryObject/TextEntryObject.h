@@ -54,7 +54,7 @@ public :
 
     RuntimeTextEntryObject(RuntimeScene & scene, const TextEntryObject & textEntryObject);
     virtual ~RuntimeTextEntryObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeTextEntryObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeTextEntryObject>(*this);}
 
     #if defined(GD_IDE_ONLY)
     virtual void GetPropertyForDebugger (std::size_t propertyNb, gd::String & name, gd::String & value) const;

@@ -250,7 +250,7 @@ public :
 
     RuntimeParticleEmitterObject(RuntimeScene & scene, const ParticleEmitterObject & particleEmitterObject);
     virtual ~RuntimeParticleEmitterObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeParticleEmitterObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeParticleEmitterObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

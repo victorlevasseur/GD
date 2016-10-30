@@ -108,7 +108,7 @@ public :
     RuntimeSoundObject(const RuntimeSoundObject & other);
     RuntimeSoundObject & operator=(const RuntimeSoundObject & other);
     virtual ~RuntimeSoundObject();
-    virtual RuntimeSoundObject * Clone() const { return new RuntimeSoundObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeSoundObject>(*this);}
 
     virtual bool ExtraInitializationFromInitialInstance(const gd::InitialInstance & position);
 

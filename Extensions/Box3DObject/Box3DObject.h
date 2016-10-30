@@ -87,7 +87,7 @@ public :
 
     RuntimeBox3DObject(RuntimeScene & scene, const Box3DObject & box3DObject);
     virtual ~RuntimeBox3DObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeBox3DObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeBox3DObject>(*this);}
 
     virtual bool ExtraInitializationFromInitialInstance(const gd::InitialInstance & position);
     virtual bool Draw(sf::RenderTarget & renderTarget);

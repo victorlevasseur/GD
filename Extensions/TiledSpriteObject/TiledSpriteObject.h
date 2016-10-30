@@ -74,7 +74,7 @@ public :
 
     RuntimeTiledSpriteObject(RuntimeScene & scene, const TiledSpriteObject & tiledSpriteObject);
     virtual ~RuntimeTiledSpriteObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeTiledSpriteObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeTiledSpriteObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

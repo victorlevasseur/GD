@@ -94,7 +94,7 @@ public :
 
     RuntimeLightObject(RuntimeScene & scene, const LightObject & lightObject);
     virtual ~RuntimeLightObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeLightObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeLightObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

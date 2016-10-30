@@ -91,7 +91,7 @@ public :
 
     RuntimePanelSpriteObject(RuntimeScene & scene, const PanelSpriteObject & panelSpriteObject);
     virtual ~RuntimePanelSpriteObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimePanelSpriteObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimePanelSpriteObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

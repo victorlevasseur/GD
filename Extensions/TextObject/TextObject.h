@@ -110,7 +110,7 @@ public :
 
     RuntimeTextObject(RuntimeScene & scene, const TextObject & textObject);
     virtual ~RuntimeTextObject() {};
-    virtual RuntimeObject * Clone() const { return new RuntimeTextObject(*this);}
+    virtual std::unique_ptr<RuntimeObject> Clone() const { return gd::make_unique<RuntimeTextObject>(*this);}
 
     virtual bool Draw(sf::RenderTarget & renderTarget);
 

@@ -44,7 +44,7 @@ public :
 
     SpriteObject(gd::String name_);
     virtual ~SpriteObject();
-    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new SpriteObject(*this)); }
+    virtual std::unique_ptr<gd::Object> Clone() const { return gd::make_unique<SpriteObject>(*this); }
 
     #if defined(GD_IDE_ONLY)
     virtual bool GenerateThumbnail(const gd::Project & project, wxBitmap & thumbnail) const;

@@ -4,6 +4,8 @@
  *
  * This file is from https://isocpp.org/files/papers/N3656.txt
  */
+#ifndef GDCORE_MAKEUNIQUE_H
+#define GDCORE_MAKEUNIQUE_H
 
 #include <memory>
 
@@ -43,3 +45,5 @@ template<class T, class... Args>
     make_unique(Args&&...) = delete;
 
 }
+
+#endif

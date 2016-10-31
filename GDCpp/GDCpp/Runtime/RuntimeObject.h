@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "GDCore/Tools/MakeUnique.hpp"
+#include "GDCore/Tools/MakeUnique.h"
 #include "GDCpp/Runtime/RuntimeVariablesContainer.h"
 #include "GDCpp/Runtime/Force.h"
 #include "GDCpp/Runtime/String.h"

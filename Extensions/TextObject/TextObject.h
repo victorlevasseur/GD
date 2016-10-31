@@ -34,7 +34,7 @@ public :
 
     TextObject(gd::String name_);
     virtual ~TextObject();
-    virtual std::unique_ptr<gd::Object> Clone() const { return std::unique_ptr<gd::Object>(new TextObject(*this)); }
+    virtual std::unique_ptr<gd::Object> Clone() const { return gd::make_unique<TextObject>(*this); }
 
     #if defined(GD_IDE_ONLY)
     virtual void DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarget & renderTarget, gd::Project & project, gd::Layout & layout);

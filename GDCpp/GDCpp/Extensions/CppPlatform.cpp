@@ -142,8 +142,7 @@ std::unique_ptr<RuntimeObject> CppPlatform::CreateRuntimeObject(RuntimeScene & s
     }
 
     //Create a new object with the type we want.
-    RuntimeObject * newObject = runtimeObjCreationFunctionTable[type](scene, object);
-    return std::unique_ptr<RuntimeObject>(newObject);
+    return runtimeObjCreationFunctionTable[type](scene, object);
 }
 
 #if defined(GD_IDE_ONLY)

@@ -89,10 +89,10 @@ std::unique_ptr<gd::Object> Platform::CreateObject(gd::String type, const gd::St
     }
 
     //Create a new object with the type we want.
-    gd::Object * object = (creationFunctionTable.find(type)->second)(name);
+    std::unique_ptr<gd::Object> object = (creationFunctionTable.find(type)->second)(name);
     object->SetType(type);
 
-    return std::unique_ptr<gd::Object> (object);
+    return std::unique_ptr<gd::Object>(std::move(object));
 }
 
 std::unique_ptr<gd::Behavior> Platform::CreateBehavior(const gd::String & behaviorType) const

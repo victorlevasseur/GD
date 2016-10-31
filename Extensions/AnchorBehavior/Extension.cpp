@@ -26,8 +26,8 @@ void DeclareAnchorBehaviorExtension(gd::PlatformExtension & extension)
           "",
           "CppPlatform/Extensions/AnchorIcon.png",
           "AnchorBehavior",
-          std::shared_ptr<gd::Behavior>(new AnchorBehavior),
-          std::shared_ptr<gd::BehaviorsSharedData>(new gd::BehaviorsSharedData));
+          std::make_shared<AnchorBehavior>(),
+          std::make_shared<gd::BehaviorsSharedData>());
 
     #if defined(GD_IDE_ONLY)
 

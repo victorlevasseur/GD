@@ -135,12 +135,12 @@ std::shared_ptr<gd::BaseEvent> Platform::CreateEvent(const gd::String & eventTyp
 #if !defined(GD_NO_WX_GUI)
 std::shared_ptr<gd::LayoutEditorPreviewer> Platform::GetLayoutPreviewer(gd::LayoutEditorCanvas & editor) const
 {
-    return std::shared_ptr<gd::LayoutEditorPreviewer>(new gd::LayoutEditorPreviewer);
+    return std::make_shared<gd::LayoutEditorPreviewer>();
 }
 
 std::vector<std::shared_ptr<gd::ProjectExporter>> Platform::GetProjectExporters() const
 {
-    return std::vector<std::shared_ptr<gd::ProjectExporter>>{std::shared_ptr<gd::ProjectExporter>(new gd::ProjectExporter)};
+    return std::vector<std::shared_ptr<gd::ProjectExporter>>{std::make_shared<gd::ProjectExporter>()};
 }
 #endif
 

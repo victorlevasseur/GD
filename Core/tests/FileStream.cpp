@@ -9,6 +9,8 @@
 #include "catch.hpp"
 #include "GDCore/CommonTools.h"
 #include "GDCore/Tools/FileStream.h"
+
+#include <chrono>
 #include <fstream>
 #include <memory>
 
@@ -84,5 +86,37 @@ TEST_CASE( "FileStream", "[common][fstream]" ) {
 
 		REQUIRE(f.is_open() == true);
 		REQUIRE(f.tellg() > 0);
+	}
+
+	SECTION("Benchmark") {
+		auto stdStart = std::chrono::high_resolution_clock::now();
+
+		std::fstream file;
+		for(auto i = 0; i < 10000; ++i)
+		{
+			file.open("aaa.txt", std::ios_base::in|std::ios_base::binary);
+			file.close();
+		}
+
+		auto stdEnd = std::chrono::high_resolution_clock::now();
+
+		auto stdDuration = stdEnd - stdStart;
+
+		auto gdStart = std::chrono::high_resolution_clock::now();
+
+		gd::FileStream file2;
+		for(auto i = 0; i < 10000; ++i)
+		{
+			file2.open("aaa.txt", std::ios_base::in|std::ios_base::binary);
+			file2.close();
+		}
+
+		auto gdEnd = std::chrono::high_resolution_clock::now();
+
+		auto gdDuration = gdEnd - gdStart;
+
+		WARN( "std::fstream opening/closing (10000 times): " << std::chrono::duration_cast<std::chrono::microseconds>(stdDuration).count() << "us" );
+		WARN( "gd::FileStream opening/closing (10000 times): " << std::chrono::duration_cast<std::chrono::microseconds>(gdDuration).count() << "us" );
+		WARN( "--> Perf comparison: " << ((float)std::chrono::duration_cast<std::chrono::microseconds>(stdDuration).count() / (float)std::chrono::duration_cast<std::chrono::microseconds>(gdDuration).count()) );
 	}
 }

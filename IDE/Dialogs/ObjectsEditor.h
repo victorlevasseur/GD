@@ -227,7 +227,9 @@ private:
 
     ObjectListDialogsHelper listsHelper; ///< The helper used for rendering lists.
     wxTreeItemId objectsRootItem;
+    wxTreeItemId globalObjectsRootItem;
     wxTreeItemId groupsRootItem;
+    wxTreeItemId globalGroupsRootItem;
 
     gd::String renamedItemOldName;
     wxTreeItemId lastSelectedItem;

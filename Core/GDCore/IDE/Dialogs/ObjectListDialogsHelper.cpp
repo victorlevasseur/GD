@@ -82,14 +82,17 @@ std::vector<gd::String> ObjectListDialogsHelper::GetMatchingObjects() const
 }
 
 #if !defined(GD_NO_WX_GUI)
-void ObjectListDialogsHelper::RefreshList(wxTreeCtrl * objectsList, wxTreeItemId * objectsRootItem_, wxTreeItemId * groupsRootItem_)
+void ObjectListDialogsHelper::RefreshList(wxTreeCtrl * objectsList, wxTreeItemId * objectsRootItem_, wxTreeItemId * globalObjectsRootItem_, wxTreeItemId * groupsRootItem_, wxTreeItemId * globalGroupsRootItem_)
 {
     // Save the expanded folders
-    std::vector<gd::String> expandedObjectsFolders;
-    for(const auto & pair : objectsFolderItems)
+    std::vector<std::pair<gd::String, gd::String>> expandedObjectsFolders;
+    for(const auto & folders : objectsFolderItems)
     {
-        if(objectsList->IsExpanded(pair.second))
-            expandedObjectsFolders.push_back(pair.first);
+        for(const auto & pair : folders.second)
+        {
+            if(objectsList->IsExpanded(pair.second))
+                expandedObjectsFolders.push_back(std::make_pair(gd::String(objectsList->GetItemText(folders.first)), pair.first));
+        }
     }
 
     objectsFolderItems.clear();
@@ -106,29 +109,45 @@ void ObjectListDialogsHelper::RefreshList(wxTreeCtrl * objectsList, wxTreeItemId
     objectsList->GetImageList()->Add(gd::SkinHelper::GetIcon("open", 24));
 
     wxTreeItemId objectsRootItem = objectsList->AppendItem(objectsList->GetRootItem(), _("Objects"), 0);
+    wxTreeItemId globalObjectsRootItem = objectsList->AppendItem(objectsList->GetRootItem(), _("Global objects"), 0);
     wxTreeItemId groupsRootItem = objectsList->AppendItem(objectsList->GetRootItem(), _("Groups"), 1);
+    wxTreeItemId globalGroupsRootItem = objectsList->AppendItem(objectsList->GetRootItem(), _("Global groups"), 1);
 
-    AddObjectsToList(objectsList, objectsRootItem, layout, false);
-    if ( groupsAllowed ) AddGroupsToList(objectsList, groupsRootItem, layout.GetObjectGroups(), false);
-    AddObjectsToList(objectsList, objectsRootItem, project, true);
-    if ( groupsAllowed ) AddGroupsToList(objectsList, groupsRootItem, project.GetObjectGroups(), true);
+    objectsList->SetItemBold(objectsRootItem);
+    objectsList->SetItemBold(globalObjectsRootItem);
+    objectsList->SetItemBold(groupsRootItem);
+    objectsList->SetItemBold(globalGroupsRootItem);
+
+    AddObjectsToList(objectsList, objectsRootItem, globalObjectsRootItem, layout, false);
+    if ( groupsAllowed ) AddGroupsToList(objectsList, groupsRootItem, globalGroupsRootItem, layout.GetObjectGroups(), false);
+    AddObjectsToList(objectsList, objectsRootItem, globalObjectsRootItem, project, true);
+    if ( groupsAllowed ) AddGroupsToList(objectsList, groupsRootItem, globalGroupsRootItem, project.GetObjectGroups(), true);
 
     objectsList->Expand(objectsRootItem);
+    objectsList->Expand(globalObjectsRootItem);
     objectsList->Expand(groupsRootItem);
+    objectsList->Expand(globalGroupsRootItem);
 
     // Expand the folders previously expanded
+    std::map<gd::String, wxTreeItemId> dontKnowHowToNameIt; // Just to associate the text of the roots with their items to reexpand the correct folders
+    dontKnowHowToNameIt[_("Objects")] = objectsRootItem;
+    dontKnowHowToNameIt[_("Global objects")] = globalObjectsRootItem;
+    dontKnowHowToNameIt[_("Groups")] = groupsRootItem;
+    dontKnowHowToNameIt[_("Global groups")] = globalGroupsRootItem;
     for(const auto & folder : expandedObjectsFolders)
     {
-        if(objectsFolderItems.count(folder) > 0)
-            objectsList->Expand(objectsFolderItems[folder]);
+        if(objectsFolderItems.count(dontKnowHowToNameIt[folder.first]) > 0 && objectsFolderItems.at(dontKnowHowToNameIt[folder.first]).count(folder.second) > 0)
+            objectsList->Expand(objectsFolderItems[dontKnowHowToNameIt[folder.first]][folder.second]);
     }
 
     //If asked, return the root items for the objects and groups.
     if (objectsRootItem_) *objectsRootItem_ = objectsRootItem;
+    if (globalObjectsRootItem_) *globalObjectsRootItem_ = globalObjectsRootItem;
     if (groupsRootItem_) *groupsRootItem_ = groupsRootItem;
+    if (globalGroupsRootItem_) *globalGroupsRootItem_ = globalGroupsRootItem;
 }
 
-wxTreeItemId ObjectListDialogsHelper::AddObjectsToList(wxTreeCtrl * objectsList, wxTreeItemId rootItem, const gd::ClassWithObjects & objects, bool globalObjects)
+wxTreeItemId ObjectListDialogsHelper::AddObjectsToList(wxTreeCtrl * objectsList, wxTreeItemId layoutRootItem, wxTreeItemId globalRootItem, const gd::ClassWithObjects & objects, bool globalObjects)
 {
     bool searching = searchText.empty() ? false : true;
 
@@ -141,7 +160,7 @@ wxTreeItemId ObjectListDialogsHelper::AddObjectsToList(wxTreeCtrl * objectsList,
         if ((objectTypeAllowed.empty() || objects.GetObject(i).GetType() == objectTypeAllowed ) &&
             ( !searching || (searching && name.CaseFold().find(searchText.CaseFold()) != gd::String::npos)) )
         {
-            wxTreeItemId item = objectsList->AppendItem(GetOrMakeObjectsFolderItem(objects.GetObject(i).GetFolder(), objectsList, rootItem), "theobject");
+            wxTreeItemId item = objectsList->AppendItem(GetOrMakeObjectsFolderItem(objects.GetObject(i).GetFolder(), objectsList, globalObjects ? globalRootItem : layoutRootItem), "theobject");
             MakeObjectItem(objectsList, item, objects.GetObject(i), globalObjects);
 
             lastAddedItem = item;
@@ -151,7 +170,7 @@ wxTreeItemId ObjectListDialogsHelper::AddObjectsToList(wxTreeCtrl * objectsList,
     return lastAddedItem;
 }
 
-wxTreeItemId ObjectListDialogsHelper::AddGroupsToList(wxTreeCtrl * objectsList, wxTreeItemId rootItem, const std::vector <ObjectGroup> & groups, bool globalGroups)
+wxTreeItemId ObjectListDialogsHelper::AddGroupsToList(wxTreeCtrl * objectsList, wxTreeItemId layoutRootItem, wxTreeItemId globalRootItem, const std::vector <ObjectGroup> & groups, bool globalGroups)
 {
     bool searching = searchText.empty() ? false : true;
 
@@ -161,7 +180,7 @@ wxTreeItemId ObjectListDialogsHelper::AddGroupsToList(wxTreeCtrl * objectsList, 
         if (( objectTypeAllowed.empty() || gd::GetTypeOfObject(project, layout, groups[i].GetName()) == objectTypeAllowed ) &&
             ( !searching || (searching && groups[i].GetName().CaseFold().find(searchText.CaseFold()) != gd::String::npos)) )
         {
-            wxTreeItemId item = objectsList->AppendItem(rootItem, "thegroup");
+            wxTreeItemId item = objectsList->AppendItem(globalGroups ? globalRootItem : layoutRootItem, "thegroup");
             MakeGroupItem(objectsList, item, groups[i], globalGroups);
 
             lastAddedItem = item;
@@ -176,7 +195,6 @@ void ObjectListDialogsHelper::MakeGroupItem(wxTreeCtrl * objectsList, wxTreeItem
     objectsList->SetItemText(item, group.GetName());
     objectsList->SetItemImage(item, 1);
     objectsList->SetItemData(item, new gd::TreeItemStringData(globalGroup ? "GlobalGroup" : "LayoutGroup"));
-    if ( globalGroup ) objectsList->SetItemBold(item, true);
 
     if (hasGroupExtraRendering) groupExtraRendering(item);
 }
@@ -186,7 +204,6 @@ void ObjectListDialogsHelper::MakeObjectItem(wxTreeCtrl * objectsList, wxTreeIte
     objectsList->SetItemText(item, object.GetName());
     objectsList->SetItemImage(item, MakeObjectItemThumbnail(objectsList, object));
     objectsList->SetItemData(item, new gd::TreeItemStringData(globalObject ? "GlobalObject" : "LayoutObject"));
-    if (globalObject) objectsList->SetItemBold(item, true);
 }
 
 int ObjectListDialogsHelper::MakeObjectItemThumbnail(wxTreeCtrl * objectsList, const gd::Object & object)
@@ -208,23 +225,21 @@ int ObjectListDialogsHelper::MakeObjectItemThumbnail(wxTreeCtrl * objectsList, c
 
 wxTreeItemId ObjectListDialogsHelper::GetObjectsFolderItem(const gd::String & folder, wxTreeItemId rootItem) const
 {
-    if(objectsFolderItems.count(folder) > 0)
-        return objectsFolderItems.at(folder);
+    if(objectsFolderItems.count(rootItem) > 0 && objectsFolderItems.at(rootItem).count(folder) > 0)
+        return objectsFolderItems.at(rootItem).at(folder);
     else if(folder == "")
         return rootItem;
     else
         return wxTreeItemId();
 }
 
-gd::String ObjectListDialogsHelper::GetObjectsFolderFromItem(wxTreeItemId item) const
+gd::String ObjectListDialogsHelper::GetObjectsFolderFromItem(wxTreeCtrl * objectsList, wxTreeItemId item) const
 {
-    for(auto & pair : objectsFolderItems)
-    {
-        if(pair.second == item)
-            return pair.first;
-    }
+    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
+    if( !data || data->GetString() != "ObjectsFolder")
+        return "";
 
-    return "";
+    return data->GetSecondString();
 }
 
 wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem)
@@ -269,8 +284,9 @@ wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::Strin
                 2, -1,
                 new gd::TreeItemStringData("ObjectsFolder", folder));
         }
+        objectsList->SetItemBold(folderItem);
 
-        objectsFolderItems[folder] = folderItem;
+        objectsFolderItems[rootItem][folder] = folderItem;
 
         return folderItem;
     }

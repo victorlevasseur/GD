@@ -58,8 +58,8 @@ namespace
     class ObjectsListDnd : public wxTextDropTarget
     {
     public:
-        ObjectsListDnd(wxTreeCtrl *ctrl, wxTreeItemId objectsRootItem_, wxTreeItemId groupsRootItem_, gd::Project & project_, gd::Layout & layout_)
-         : treeCtrl(ctrl), objectsRootItem(objectsRootItem_), groupsRootItem(groupsRootItem_), project(project_), layout(layout_) {};
+        ObjectsListDnd(wxTreeCtrl *ctrl, wxTreeItemId objectsRootItem_, wxTreeItemId globalObjectsRootItem_, wxTreeItemId groupsRootItem_, wxTreeItemId globalGroupsRootItem_, gd::Project & project_, gd::Layout & layout_)
+         : treeCtrl(ctrl), objectsRootItem(objectsRootItem_), globalObjectsRootItem(globalObjectsRootItem_), groupsRootItem(groupsRootItem_), globalGroupsRootItem(globalGroupsRootItem_), project(project_), layout(layout_) {};
 
         virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& text)
         {
@@ -115,7 +115,7 @@ namespace
 
                 treeCtrl->Expand(itemUnderMouse);
             }
-            else if( itemUnderMouse == objectsRootItem ||
+            else if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem ||
                 (data && (data->GetString() == "ObjectsFolder" || data->GetString() == "LayoutObject" || data->GetString() == "GlobalObject")) )
             {
                 gd::String folder;
@@ -128,9 +128,11 @@ namespace
                 gd::ClassWithObjects & currentObjectsList = layout.HasObjectNamed(objectName) ?
                     dynamic_cast<gd::ClassWithObjects&>(layout) : dynamic_cast<gd::ClassWithObjects&>(project);
 
-                if( itemUnderMouse == objectsRootItem )
+                if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem )
                 {
                     //TODO: Create a uniquely named folder
+                    if( itemUnderMouse == objectsRootItem && isGlobal || itemUnderMouse == globalObjectsRootItem && !isGlobal )
+                        return false;
                     folder = _("NewFolder");
                     insertionPosInNewFolder = 0;
                 }
@@ -159,20 +161,16 @@ namespace
                     {
                         insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectPositionInFolder( folder, hoveredObjectsList, hoveredObjectName );
                     }
-                    else if(isGlobal) // and !isHoveredGlobal
+                    else
                     {
-                        insertionPosInNewFolder = 0;
-                    }
-                    else if(!isGlobal) // and isHoveredGlobal
-                    {
-                        insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectsCount( folder, currentObjectsList );
+                        return false;
                     }
                 }
 
                 // Change the folder of the object
                 gd::ObjectsFolderHelper::ChangeObjectFolder( currentObjectsList, objectName, folder, insertionPosInNewFolder );
             }
-            else if( itemUnderMouse == groupsRootItem )
+            else if( itemUnderMouse == groupsRootItem || itemUnderMouse == globalGroupsRootItem )
             {
                 //Create a new group
                 gd::ObjectGroup newGroup;
@@ -189,7 +187,7 @@ namespace
                 objectsGroups.push_back(newGroup);
 
                 //Add the group item
-                wxTreeItemId itemAdded = treeCtrl->AppendItem( groupsRootItem, name, 1 );
+                wxTreeItemId itemAdded = treeCtrl->AppendItem( itemUnderMouse, name, 1 );
                 treeCtrl->SetItemData( itemAdded, new gd::TreeItemStringData("LayoutGroup") );
 
                 //Add the object item into the group item
@@ -218,7 +216,9 @@ namespace
     private:
         wxTreeCtrl *treeCtrl;
         wxTreeItemId objectsRootItem;
+        wxTreeItemId globalObjectsRootItem;
         wxTreeItemId groupsRootItem;
+        wxTreeItemId globalGroupsRootItem;
 
         gd::Project & project;
         gd::Layout & layout;
@@ -501,8 +501,8 @@ void ObjectsEditor::Refresh()
         this->UpdateGroup(groupItem);
     });
     listsHelper.SetSearchText(searchCtrl->GetValue());
-    listsHelper.RefreshList(objectsList, &objectsRootItem, &groupsRootItem);
-    objectsList->SetDropTarget(new ObjectsListDnd(objectsList, objectsRootItem, groupsRootItem, project, layout));
+    listsHelper.RefreshList(objectsList, &objectsRootItem, &globalObjectsRootItem, &groupsRootItem, &globalGroupsRootItem);
+    objectsList->SetDropTarget(new ObjectsListDnd(objectsList, objectsRootItem, globalObjectsRootItem, groupsRootItem, globalGroupsRootItem, project, layout));
     if (onRefreshedCb) onRefreshedCb();
 }
 
@@ -1499,8 +1499,12 @@ void ObjectsEditor::OnobjectsListBeginDrag(wxTreeEvent& event)
 
     if ( data->GetString() == "GlobalObject" || data->GetString() == "LayoutObject" )
     {
-        objectsList->SetItemText(objectsRootItem, _("Create a new folder"));
+        if(data->GetString() == "LayoutObject")
+            objectsList->SetItemText(objectsRootItem, _("Create a new folder"));
+        else
+            objectsList->SetItemText(globalObjectsRootItem, _("Create a new folder"));
         objectsList->SetItemText(groupsRootItem, _("Create a new group"));
+        objectsList->SetItemText(globalGroupsRootItem, _("Create a new global group"));
 
         gd::Object * object = GetSelectedObject();
         if ( !object ) return;
@@ -1509,6 +1513,11 @@ void ObjectsEditor::OnobjectsListBeginDrag(wxTreeEvent& event)
         wxDropSource dragSource( this );
         dragSource.SetData( objectName );
         dragSource.DoDragDrop( true );
+
+        objectsList->SetItemText(objectsRootItem, _("Objects"));
+        objectsList->SetItemText(globalObjectsRootItem, _("Global objects"));
+        objectsList->SetItemText(groupsRootItem, _("Groups"));
+        objectsList->SetItemText(globalGroupsRootItem, _("Global groups"));
 
         Refresh();
     }

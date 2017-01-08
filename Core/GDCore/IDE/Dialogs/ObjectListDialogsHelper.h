@@ -83,8 +83,11 @@ public:
      * \aram objectsRootItem Optional pointer to a wxTreeItemId which will be filled with the item being the root item for objects.
      * \aram groupsRootItem Optional pointer to a wxTreeItemId which will be filled with the item being the root item for groups.
      */
-    void RefreshList(wxTreeCtrl * objectsList, wxTreeItemId * objectsRootItem = NULL,
-        wxTreeItemId * groupsRootItem = NULL);
+    void RefreshList(wxTreeCtrl * objectsList,
+        wxTreeItemId * objectsRootItem = nullptr,
+        wxTreeItemId * globalObjectsRootItem = nullptr,
+        wxTreeItemId * groupsRootItem = nullptr,
+        wxTreeItemId * globalGroupsRootItem = nullptr);
 
     /**
      * \brief Format the specified wxTreeItemId for the object (label, thumbnail...).
@@ -98,7 +101,7 @@ public:
 
     wxTreeItemId GetObjectsFolderItem(const gd::String & folder, wxTreeItemId rootItem) const;
 
-    gd::String GetObjectsFolderFromItem(wxTreeItemId item) const;
+    gd::String GetObjectsFolderFromItem(wxTreeCtrl * objectsList, wxTreeItemId item) const;
 
     /**
      * \brief Set a callback that will be called whenever a group item is being rendered.
@@ -113,8 +116,8 @@ public:
 
 private:
     #if !defined(GD_NO_WX_GUI)
-    wxTreeItemId AddObjectsToList(wxTreeCtrl * tree, wxTreeItemId rootItem, const gd::ClassWithObjects & objects, bool globalObjects);
-    wxTreeItemId AddGroupsToList(wxTreeCtrl * tree, wxTreeItemId rootItem, const std::vector <gd::ObjectGroup> & groups, bool globalGroup);
+    wxTreeItemId AddObjectsToList(wxTreeCtrl * tree, wxTreeItemId layoutRootItem, wxTreeItemId globalRootItem, const gd::ClassWithObjects & objects, bool globalObjects);
+    wxTreeItemId AddGroupsToList(wxTreeCtrl * tree, wxTreeItemId layoutRootItem, wxTreeItemId globalRootItem, const std::vector <gd::ObjectGroup> & groups, bool globalGroup);
 
     /**
      * \brief Generate the thumnail for the specified object, add it to the image list of the
@@ -136,7 +139,10 @@ private:
     bool groupsAllowed;
 
     #if !defined(GD_NO_WX_GUI)
-    std::map<gd::String, wxTreeItemId> objectsFolderItems;
+    ///      the root item       folder "path"   folder item
+    ///          \/                   \/             \/
+    std::map<wxTreeItemId, std::map<gd::String, wxTreeItemId>> objectsFolderItems;
+    // The root item is one of objectsRootItem, globalObjectsRootItem, ...
     #endif
 
     bool hasGroupExtraRendering;

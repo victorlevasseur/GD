@@ -1133,8 +1133,16 @@ void ObjectsEditor::OnMoveupSelected(wxCommandEvent& event)
         if ( index >= objects.GetObjectsCount() )
             return;
 
-        if ( index >= 1 )
-            objects.SwapObjects(index, index-1);
+        // Find the previous object in the same folder to swap it
+        std::size_t destination = index - 1;
+        // Note: size_t is unsigned, so we test for the upperbound even if we want to check if > 0
+        while( destination < objects.GetObjectsCount() && objects.GetObject(destination).GetFolder() != objects.GetObject(index).GetFolder() )
+            --destination;
+
+        if( destination >= objects.GetObjectsCount() ) // The object is already the first of the folder
+            return;
+
+        objects.SwapObjects(index, destination);
     }
 
     Refresh();
@@ -1159,15 +1167,22 @@ void ObjectsEditor::OnMoveDownSelected(wxCommandEvent& event)
         if ( index >= objects.GetObjectsCount() )
             return;
 
-        if ( static_cast<unsigned>(index+1) < objects.GetObjectsCount() )
-            objects.SwapObjects(index, index+1);
+        // Find the next object in the same folder to swap it
+        std::size_t destination = index + 1;
+        while( destination < objects.GetObjectsCount() && objects.GetObject(destination).GetFolder() != objects.GetObject(index).GetFolder() )
+            ++destination;
+
+        if( destination >= objects.GetObjectsCount() ) // The object is already the last of the folder
+            return;
+
+        objects.SwapObjects(index, destination);
     }
 
     Refresh();
     SelectItem(objectsRootItem, name, dataStr, dataStr2); //Select again the moved item
 }
 
-void ObjectsEditor::SelectItem(wxTreeItemId parent, gd::String name, gd::String dataStr1, gd::String dataStr2)
+bool ObjectsEditor::SelectItem(wxTreeItemId parent, gd::String name, gd::String dataStr1, gd::String dataStr2)
 {
     wxTreeItemId item = objectsList->GetLastChild(parent);
     while ( item.IsOk() )
@@ -1180,11 +1195,18 @@ void ObjectsEditor::SelectItem(wxTreeItemId parent, gd::String name, gd::String 
                 && itemData->GetSecondString() == dataStr2)
             {
                 objectsList->SelectItem(item);
-                return;
+                return true;
+            }
+            else
+            {
+                if(SelectItem(item, name, dataStr1, dataStr2))
+                    return true; // We found the item as a child of the current one
             }
         }
         item = objectsList->GetPrevSibling(item);
     }
+
+    return false;
 }
 
 void ObjectsEditor::OnCopySelected(wxCommandEvent& event)
@@ -1331,6 +1353,7 @@ void ObjectsEditor::OnSetGlobalSelected(wxCommandEvent& event)
         if ( !object ) return;
 
         gd::String objectName = object->GetName();
+        gd::String secondData = data->GetSecondString();
 
         unsigned int searchSameNames = nameChecker.HasObjectOrGroupNamed(objectName, true);
         if ( searchSameNames != gd::ObjectOrGroupFinder::No && ((searchSameNames & gd::ObjectOrGroupFinder::InLayout) != searchSameNames) )
@@ -1354,19 +1377,10 @@ void ObjectsEditor::OnSetGlobalSelected(wxCommandEvent& event)
             project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectAdded(project, NULL, project.GetObject(objectName));
         }
 
-        //Delete the old item
-        objectsList->Delete(lastSelectedItem);
+        Refresh();
 
-        //Add the new item
-        wxTreeItemId newItem;
-        wxTreeItemId lastGlobalItem = GetLastGlobalObjectItem();
-        if(lastGlobalItem.IsOk())
-            newItem = objectsList->InsertItem(objectsRootItem, lastGlobalItem, objectName);
-        else
-            newItem = objectsList->AppendItem(objectsRootItem, objectName);
-
-        listsHelper.MakeObjectItem(objectsList, newItem, project.GetObject(objectName), true);
-        objectsList->SelectItem(newItem);
+        // Select the globalized object (now it's first string data is "GlobalObject")
+        SelectItem(objectsRootItem, objectName, "GlobalObject", secondData);
     }
     //Group clicked?
     else if ( data->GetString() == "LayoutGroup" )
@@ -1489,7 +1503,7 @@ wxTreeItemId ObjectsEditor::GetLastLayoutObjectItem() const
 
     gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
 
-    while(item.IsOk() && (!data || data->GetString() == "LayoutObject"))
+    while(item.IsOk() && (!data || data->GetString() == "ObjectsFolder" || data->GetString() == "LayoutObject"))
     {
         item = objectsList->GetNextSibling(item);
         data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));

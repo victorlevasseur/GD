@@ -9,6 +9,7 @@
 
 #include "GDCore/String.h"
 #include <functional>
+#include <map>
 #include <vector>
 namespace gd { class Project; }
 namespace gd { class Layout; }
@@ -95,6 +96,10 @@ public:
      */
     void MakeGroupItem(wxTreeCtrl * objectsList, wxTreeItemId item, const gd::ObjectGroup & group, bool globalGroup);
 
+    wxTreeItemId GetObjectsFolderItem(const gd::String & folder, wxTreeItemId rootItem) const;
+
+    gd::String GetObjectsFolderFromItem(wxTreeItemId item) const;
+
     /**
      * \brief Set a callback that will be called whenever a group item is being rendered.
      * \see gd::ObjectListDialogsHelper::MakeGroupItem
@@ -118,6 +123,10 @@ private:
      * \param object The object for which thumbnail should be generated.
      */
     int MakeObjectItemThumbnail(wxTreeCtrl * objectsList, const gd::Object & object);
+
+    wxTreeItemId GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem);
+
+    wxTreeItemId GetLastObjectsFolderItem(wxTreeCtrl * objectsList, const gd::String & inFolder, wxTreeItemId rootItem) const;
     #endif
 
     const Project & project;
@@ -125,6 +134,10 @@ private:
     gd::String objectTypeAllowed;
     gd::String searchText;
     bool groupsAllowed;
+
+    #if !defined(GD_NO_WX_GUI)
+    std::map<gd::String, wxTreeItemId> objectsFolderItems;
+    #endif
 
     bool hasGroupExtraRendering;
     std::function<void(wxTreeItemId)> groupExtraRendering;

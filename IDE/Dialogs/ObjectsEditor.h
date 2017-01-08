@@ -16,6 +16,7 @@
 #include <wx/ribbon/toolbar.h>
 #include <wx/srchctrl.h>
 #include <functional>
+#include <map>
 #include <string>
 #include <vector>
 #include "GDCore/Project/Object.h"
@@ -199,7 +200,7 @@ private:
     gd::Object * GetSelectedObject();
     gd::ObjectGroup * GetSelectedGroup();
     void UpdateAssociatedPropertiesPanel();
-    void SelectItem(wxTreeItemId parent, gd::String name, gd::String dataStr1, gd::String dataStr2);
+    bool SelectItem(wxTreeItemId parent, gd::String name, gd::String dataStr1, gd::String dataStr2);
 
     wxTreeItemId GetLastLayoutObjectItem() const;
     wxTreeItemId GetLastGlobalObjectItem() const;

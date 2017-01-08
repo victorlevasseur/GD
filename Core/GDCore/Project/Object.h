@@ -86,6 +86,14 @@ public:
     /** \brief Return the type of the object.
      */
     const gd::String & GetType() const { return type; }
+
+    /** \brief Change the folder of the object.
+     */
+    void SetFolder(const gd::String & folder_) { folder = folder_; }
+
+    /** \brief Return the folder of the object.
+     */
+    const gd::String & GetFolder() const { return folder; }
     ///@}
 
     #if defined(GD_IDE_ONLY)
@@ -306,6 +314,8 @@ protected:
     gd::String                             type; ///< Which type is the object. ( To test if we can do something reserved to some objects with it )
     std::map<gd::String, std::unique_ptr<gd::Behavior> > behaviors; ///<Contains all behaviors of the object. Behaviors are the ownership of the object
     gd::VariablesContainer                  objectVariables; ///<List of the variables of the object
+
+    gd::String                              folder;
 
     /**
      * \brief Derived objects can redefine this method to load custom attributes.

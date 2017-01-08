@@ -33,6 +33,7 @@ void Object::Init(const gd::Object & object)
 {
     name = object.name;
     type = object.type;
+    folder = object.folder;
     objectVariables = object.objectVariables;
 
     behaviors.clear();
@@ -153,6 +154,8 @@ void Object::DrawInitialInstance(gd::InitialInstance & instance, sf::RenderTarge
 void Object::UnserializeFrom(gd::Project & project, const SerializerElement & element)
 {
     //Name and type are already loaded.
+    SetFolder( element.GetStringAttribute("folder", "") );
+
     objectVariables.UnserializeFrom(element.GetChild("variables", 0, "Variables"));
 
     //Compatibility with GD <= 3.3
@@ -210,6 +213,7 @@ void Object::SerializeTo(SerializerElement & element) const
 {
     element.SetAttribute( "name", GetName() );
     element.SetAttribute( "type", GetType() );
+    element.SetAttribute( "folder", GetFolder() );
     objectVariables.SerializeTo(element.AddChild("variables"));
 
     SerializerElement & behaviorsElement = element.AddChild("behaviors");

@@ -37,6 +37,21 @@ public:
     ClassWithObjects();
     virtual ~ClassWithObjects();
 
+    /** \name Iterators
+     * Iterators related member functions.
+     */
+    ///@{
+
+    std::vector < std::unique_ptr<gd::Object> >::const_iterator cbegin() const { return initialObjects.cbegin(); }
+    std::vector < std::unique_ptr<gd::Object> >::const_iterator begin() const { return initialObjects.begin(); }
+    std::vector < std::unique_ptr<gd::Object> >::iterator begin() { return initialObjects.begin(); }
+
+    std::vector < std::unique_ptr<gd::Object> >::const_iterator cend() const { return initialObjects.cend(); }
+    std::vector < std::unique_ptr<gd::Object> >::const_iterator end() const { return initialObjects.end(); }
+    std::vector < std::unique_ptr<gd::Object> >::iterator end() { return initialObjects.end(); }
+
+    ///@}
+
     /** \name Objects management
      * Members functions related to objects management.
      */
@@ -99,11 +114,14 @@ public:
      */
     gd::Object & InsertObject(const gd::Object & object, std::size_t position);
 
+    gd::Object & InsertObject(std::unique_ptr<gd::Object> && object, std::size_t position);
+
     /**
      * \brief Delete an object.
      * \param name The name of the object to be deleted.
+     * \return The deleted object (do nothing with the return value and the object will be destroyed)
      */
-    void RemoveObject(const gd::String & name);
+    std::unique_ptr<gd::Object> RemoveObject(const gd::String & name);
 
     /**
      * \brief Swap the position of the specified objects.

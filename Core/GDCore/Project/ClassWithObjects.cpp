@@ -103,9 +103,14 @@ gd::Object & ClassWithObjects::InsertNewObject(gd::Project & project, const gd::
 
 gd::Object & ClassWithObjects::InsertObject(const gd::Object & object, std::size_t position)
 {
+    return InsertObject( std::unique_ptr<gd::Object>(object.Clone()), position );
+}
+
+gd::Object & ClassWithObjects::InsertObject(std::unique_ptr<gd::Object> && object, std::size_t position)
+{
     gd::Object & newlyCreatedObject = *(*(initialObjects.insert(
         position < initialObjects.size() ? initialObjects.begin() + position : initialObjects.end(),
-        std::unique_ptr<gd::Object>(object.Clone())
+        std::move(object)
     )));
 
     return newlyCreatedObject;
@@ -122,12 +127,16 @@ void ClassWithObjects::SwapObjects(std::size_t firstObjectIndex, std::size_t sec
     );
 }
 
-void ClassWithObjects::RemoveObject(const gd::String & name)
+std::unique_ptr<gd::Object> ClassWithObjects::RemoveObject(const gd::String & name)
 {
-    std::vector< std::unique_ptr<gd::Object> >::iterator object = find_if(initialObjects.begin(), initialObjects.end(), bind2nd(ObjectHasName(), name));
-    if ( object == initialObjects.end() ) return;
+    std::vector< std::unique_ptr<gd::Object> >::iterator object = std::find_if(initialObjects.begin(), initialObjects.end(), bind2nd(ObjectHasName(), name));
+    if ( object == initialObjects.end() ) return std::unique_ptr<gd::Object>();
+
+    std::unique_ptr<gd::Object> deletedObject = std::move(*object);
 
     initialObjects.erase(object);
+
+    return deletedObject;
 }
 
 }

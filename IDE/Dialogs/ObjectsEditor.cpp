@@ -6,6 +6,9 @@
 #include <wx/image.h>
 #include <wx/string.h>
 //*)
+
+#include <set>
+
 #include <wx/toolbar.h>
 #include <wx/textdlg.h>
 #include <wx/help.h>
@@ -96,7 +99,6 @@ namespace
                 if ( group != groups->end() && !group->Find(objectName))
                 {
                     //Add the object in the group
-                    std::cout << "Adding " << objectName << " to group" << std::endl;
                     group->AddObject(objectName);
                     for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                         project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupEdited(
@@ -156,7 +158,6 @@ namespace
 
                     folder = hoveredObject.GetFolder();
                     // If both are local or global, then insert the moved object to the position of the hovered object
-                    // Overwise, insert it at the end if the hovered object is global or at the beginning if it's global
                     if(isHoveredGlobal == isGlobal)
                     {
                         insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectPositionInFolder( folder, hoveredObjectsList, hoveredObjectName );
@@ -176,7 +177,7 @@ namespace
                 gd::ObjectGroup newGroup;
                 newGroup.AddObject(text);
 
-                std::vector<gd::ObjectGroup> & objectsGroups = layout.GetObjectGroups();
+                std::vector<gd::ObjectGroup> & objectsGroups = itemUnderMouse == groupsRootItem ? layout.GetObjectGroups() : project.GetObjectGroups();
 
                 gd::String name = gd::NewNameGenerator::Generate(text + "Group", [&objectsGroups](const gd::String & name){
                     return std::find_if(objectsGroups.begin(), objectsGroups.end(), std::bind2nd(gd::GroupHasTheSameName(), name))
@@ -186,22 +187,10 @@ namespace
                 newGroup.SetName(name);
                 objectsGroups.push_back(newGroup);
 
-                //Add the group item
-                wxTreeItemId itemAdded = treeCtrl->AppendItem( itemUnderMouse, name, 1 );
-                treeCtrl->SetItemData( itemAdded, new gd::TreeItemStringData("LayoutGroup") );
-
-                //Add the object item into the group item
-                wxTreeItemId objectItem = treeCtrl->AppendItem( itemAdded, text, 0 );
-                treeCtrl->SetItemTextColour(objectItem, wxColour(128, 128, 128));
-                treeCtrl->SetItemData(objectItem, new gd::TreeItemStringData("ObjectInGroup"));
-
                 //Notify the game of the new group
                 for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                     project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, &layout, name);
                 gd::LogStatus( _( "The group was correctly added." ) );
-
-                //Expand the new group item
-                treeCtrl->Expand(itemAdded);
 
                 return true;
             }
@@ -497,12 +486,39 @@ void ObjectsEditor::ConnectEvents()
 
 void ObjectsEditor::Refresh()
 {
+    // Remember which groups are expanded
+    std::set<wxString> expandedGroups;
+    wxTreeItemIdValue cookie;
+    for( wxTreeItemId groupItem = objectsList->GetFirstChild(groupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(groupsRootItem, cookie) )
+    {
+        if( objectsList->IsExpanded( groupItem ) )
+            expandedGroups.insert( objectsList->GetItemText( groupItem ) );
+    }
+    for( wxTreeItemId groupItem = objectsList->GetFirstChild(globalGroupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(globalGroupsRootItem, cookie) )
+    {
+        if( objectsList->IsExpanded( groupItem ) )
+            expandedGroups.insert( objectsList->GetItemText( groupItem ) );
+    }
+
     listsHelper.SetGroupExtraRendering([this](wxTreeItemId groupItem) {
         this->UpdateGroup(groupItem);
     });
     listsHelper.SetSearchText(searchCtrl->GetValue());
     listsHelper.RefreshList(objectsList, &objectsRootItem, &globalObjectsRootItem, &groupsRootItem, &globalGroupsRootItem);
     objectsList->SetDropTarget(new ObjectsListDnd(objectsList, objectsRootItem, globalObjectsRootItem, groupsRootItem, globalGroupsRootItem, project, layout));
+
+    // Expand the previously expanded tree items
+    for( wxTreeItemId groupItem = objectsList->GetFirstChild(groupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(groupsRootItem, cookie) )
+    {
+        if( expandedGroups.count( objectsList->GetItemText( groupItem ) ) > 0 )
+            objectsList->Expand( groupItem );
+    }
+    for( wxTreeItemId groupItem = objectsList->GetFirstChild(globalGroupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(globalGroupsRootItem, cookie) )
+    {
+        if( expandedGroups.count( objectsList->GetItemText( groupItem ) ) > 0 )
+            objectsList->Expand( groupItem );
+    }
+
     if (onRefreshedCb) onRefreshedCb();
 }
 
@@ -572,7 +588,10 @@ void ObjectsEditor::OnobjectsListItemMenu(wxTreeEvent& event)
     {
         PopupMenu( &multipleContextMenu );
     }
-    else if (lastSelectedItem == objectsRootItem || lastSelectedItem == groupsRootItem)
+    else if (lastSelectedItem == objectsRootItem ||
+        lastSelectedItem == globalObjectsRootItem ||
+        lastSelectedItem == groupsRootItem ||
+        lastSelectedItem == globalGroupsRootItem)
         PopupMenu( &emptyContextMenu );
     else if ( data && (data->GetString() == "GlobalObject" || data->GetString() == "LayoutObject") )
     {

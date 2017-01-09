@@ -110,7 +110,6 @@ void ObjectsFolderHelper::ChangeObjectFolder(gd::ClassWithObjects & objectsConta
 
     // Third step:
     // Insert it as "newPositionInFolder" relative to the newFolder
-    std::cout << GetObjectAbsolutePosition( newFolder, objectsContainer, newPositionInFolder ) << std::endl;
     objectsContainer.InsertObject( std::move(object), GetObjectAbsolutePosition( newFolder, objectsContainer, newPositionInFolder ) );
 }
 

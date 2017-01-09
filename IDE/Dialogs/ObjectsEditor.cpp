@@ -1574,110 +1574,22 @@ void ObjectsEditor::UpdateAssociatedPropertiesPanel()
 
 wxTreeItemId ObjectsEditor::GetLastLayoutObjectItem() const
 {
-    wxTreeItemIdValue cookie;
-
-    wxTreeItemId item = objectsList->GetFirstChild(objectsRootItem, cookie);
-    if(!item.IsOk())
-        return wxTreeItemId();
-
-    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-
-    while(item.IsOk() && (!data || data->GetString() == "ObjectsFolder" || data->GetString() == "LayoutObject"))
-    {
-        item = objectsList->GetNextSibling(item);
-        data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-    }
-
-    if(!data || !item.IsOk())
-        return objectsList->GetLastChild(objectsRootItem);
-
-    item = objectsList->GetPrevSibling(item);
-
-    return item;
+    return objectsList->GetLastChild( objectsRootItem );
 }
 
 wxTreeItemId ObjectsEditor::GetLastGlobalObjectItem() const
 {
-    wxTreeItemIdValue cookie;
-
-    wxTreeItemId item;
-    wxTreeItemId lastLayoutItem = GetLastLayoutObjectItem();
-    if(!lastLayoutItem.IsOk())
-        item = objectsList->GetFirstChild(objectsRootItem, cookie);
-    else
-        item = objectsList->GetNextSibling(item);
-
-    if(!item.IsOk())
-        return wxTreeItemId();
-
-    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-
-    while(item.IsOk() && (!data || data->GetString() == "GlobalObject"))
-    {
-        item = objectsList->GetNextSibling(item);
-        data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-    }
-
-    if(!data || !item.IsOk())
-        return objectsList->GetLastChild(objectsRootItem);
-
-    item = objectsList->GetPrevSibling(item);
-
-    return item;
+    return objectsList->GetLastChild( globalObjectsRootItem );
 }
 
 wxTreeItemId ObjectsEditor::GetLastLayoutGroupItem() const
 {
-    wxTreeItemIdValue cookie;
-
-    wxTreeItemId item = objectsList->GetFirstChild(groupsRootItem, cookie);
-    if(!item.IsOk())
-        return wxTreeItemId();
-
-    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-
-    while(item.IsOk() && (!data || data->GetString() == "LayoutGroup"))
-    {
-        item = objectsList->GetNextSibling(item);
-        data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-    }
-
-    if(!data || !item.IsOk())
-        return objectsList->GetLastChild(groupsRootItem);
-
-    item = objectsList->GetPrevSibling(item);
-
-    return item;
+    return objectsList->GetLastChild( groupsRootItem );
 }
 
 wxTreeItemId ObjectsEditor::GetLastGlobalGroupItem() const
 {
-    wxTreeItemIdValue cookie;
-
-    wxTreeItemId item;
-    wxTreeItemId lastLayoutItem = GetLastLayoutGroupItem();
-    if(!lastLayoutItem.IsOk())
-        item = objectsList->GetFirstChild(groupsRootItem, cookie);
-    else
-        item = objectsList->GetNextSibling(item);
-
-    if(!item.IsOk())
-        return wxTreeItemId();
-
-    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-
-    while(item.IsOk() && (!data || data->GetString() == "GlobalGroup"))
-    {
-        item = objectsList->GetNextSibling(item);
-        data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(item));
-    }
-
-    if(!data || !item.IsOk())
-        return objectsList->GetLastChild(groupsRootItem);
-
-    item = objectsList->GetPrevSibling(item);
-
-    return item;
+    return objectsList->GetLastChild( globalGroupsRootItem );
 }
 
 bool ObjectsEditor::HasGroupNamed(gd::String name, const std::vector<gd::ObjectGroup> & groups) const

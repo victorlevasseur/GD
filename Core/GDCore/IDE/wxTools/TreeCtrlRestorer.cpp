@@ -32,7 +32,7 @@ void TreeCtrlRestorer::SaveItemState(const wxTreeCtrl * treeCtrl, wxTreeItemId i
     std::size_t itemHash = hashFunction( treeCtrl, item );
 
     TreeCtrlRestorerItem & itemRestoredItem = parentRestoredItem.children[itemHash];
-    itemRestoredItem.expanded = treeCtrl->IsExpanded( item );
+    itemRestoredItem.expanded = treeCtrl->IsExpanded( item ) || !treeCtrl->ItemHasChildren( item ); // To expand items that may newly contain a new child item
     itemRestoredItem.selected = treeCtrl->IsSelected( item );
 
     wxTreeItemIdValue cookie;

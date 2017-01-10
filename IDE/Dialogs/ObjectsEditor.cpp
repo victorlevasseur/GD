@@ -490,7 +490,17 @@ void ObjectsEditor::Refresh()
 {
     gd::TreeCtrlRestorer restorer( [](const wxTreeCtrl * ctrl, wxTreeItemId item) -> std::size_t
     {
-        return std::hash<std::string>{}( gd::String( ctrl->GetItemText( item ) ).ToUTF8() ); //TODO: Add data string and second string to the hash
+        std::size_t itemNameHash = std::hash<std::string>{}( gd::String( ctrl->GetItemText( item ) ).ToUTF8() );
+
+        gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>( ctrl->GetItemData( item ) );
+        if( !data )
+            return itemNameHash;
+
+        std::size_t seed = itemNameHash;
+        seed ^= std::hash<std::string>{}( data->GetString().ToUTF8() ) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= std::hash<std::string>{}( data->GetSecondString().ToUTF8() ) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+        return seed;
     });
 
     restorer.SaveState( objectsList );

@@ -19,6 +19,7 @@ namespace gd
 struct TreeCtrlRestorerItem
 {
     bool expanded;
+    bool selected;
     std::map<std::size_t, TreeCtrlRestorerItem> children;
 };
 

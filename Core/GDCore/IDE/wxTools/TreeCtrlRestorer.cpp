@@ -12,6 +12,7 @@ TreeCtrlRestorer::TreeCtrlRestorer(ItemHashFunction hashFunction) :
 void TreeCtrlRestorer::SaveState(const wxTreeCtrl * treeCtrl)
 {
     treeRoot.expanded = false;
+    treeRoot.selected = false;
     treeRoot.children.clear();
 
     SaveItemState( treeCtrl, treeCtrl->GetRootItem(), treeRoot );
@@ -31,6 +32,7 @@ void TreeCtrlRestorer::SaveItemState(const wxTreeCtrl * treeCtrl, wxTreeItemId i
 
     TreeCtrlRestorerItem & itemRestoredItem = parentRestoredItem.children[itemHash];
     itemRestoredItem.expanded = treeCtrl->IsExpanded( item );
+    itemRestoredItem.selected = treeCtrl->IsSelected( item );
 
     wxTreeItemIdValue cookie;
     for( wxTreeItemId childItem = treeCtrl->GetFirstChild(item, cookie); childItem.IsOk(); childItem = treeCtrl->GetNextChild(item, cookie) )
@@ -46,8 +48,13 @@ void TreeCtrlRestorer::RestoreItemState(wxTreeCtrl * treeCtrl, wxTreeItemId item
     if( parentRestoredItem.children.count( itemHash ) > 0 )
     {
         const TreeCtrlRestorerItem & itemRestoredItem = parentRestoredItem.children.at( itemHash );
-        if( itemRestoredItem.expanded )
+        if( itemRestoredItem.expanded && !treeCtrl->IsExpanded( item ) )
             treeCtrl->Expand( item );
+        else if( !itemRestoredItem.expanded && treeCtrl->IsExpanded( item ) )
+            treeCtrl->Collapse( item );
+
+        if( treeCtrl->IsSelected( item ) != itemRestoredItem.selected )
+            treeCtrl->SelectItem( item, itemRestoredItem.selected );
 
         wxTreeItemIdValue cookie;
         for( wxTreeItemId childItem = treeCtrl->GetFirstChild(item, cookie); childItem.IsOk(); childItem = treeCtrl->GetNextChild(item, cookie) )

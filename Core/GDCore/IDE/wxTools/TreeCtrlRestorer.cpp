@@ -1,3 +1,4 @@
+#if defined(GD_IDE_ONLY) && !defined(GD_NO_WX_GUI)
 #include "GDCore/IDE/wxTools/TreeCtrlRestorer.h"
 
 namespace gd
@@ -65,3 +66,5 @@ void TreeCtrlRestorer::RestoreItemState(wxTreeCtrl * treeCtrl, wxTreeItemId item
 }
 
 }
+
+#endif

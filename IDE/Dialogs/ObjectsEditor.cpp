@@ -7,6 +7,7 @@
 #include <wx/string.h>
 //*)
 
+#include <functional>
 #include <set>
 
 #include <wx/toolbar.h>
@@ -34,6 +35,7 @@
 #include "GDCore/Tools/HelpFileAccess.h"
 #include "GDCore/IDE/wxTools/TreeItemStringData.h"
 #include "GDCore/IDE/wxTools/SkinHelper.h"
+#include "GDCore/IDE/wxTools/TreeCtrlRestorer.h"
 #include "GDCore/IDE/Clipboard.h"
 #include "GDCore/IDE/NewNameGenerator.h"
 #include "GDCore/IDE/Events/EventsRefactorer.h"
@@ -486,19 +488,12 @@ void ObjectsEditor::ConnectEvents()
 
 void ObjectsEditor::Refresh()
 {
-    // Remember which groups are expanded
-    std::set<wxString> expandedGroups;
-    wxTreeItemIdValue cookie;
-    for( wxTreeItemId groupItem = objectsList->GetFirstChild(groupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(groupsRootItem, cookie) )
+    gd::TreeCtrlRestorer restorer( [](const wxTreeCtrl * ctrl, wxTreeItemId item) -> std::size_t
     {
-        if( objectsList->IsExpanded( groupItem ) )
-            expandedGroups.insert( objectsList->GetItemText( groupItem ) );
-    }
-    for( wxTreeItemId groupItem = objectsList->GetFirstChild(globalGroupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(globalGroupsRootItem, cookie) )
-    {
-        if( objectsList->IsExpanded( groupItem ) )
-            expandedGroups.insert( objectsList->GetItemText( groupItem ) );
-    }
+        return std::hash<std::string>{}( gd::String( ctrl->GetItemText( item ) ).ToUTF8() ); //TODO: Add data string and second string to the hash
+    });
+
+    restorer.SaveState( objectsList );
 
     listsHelper.SetGroupExtraRendering([this](wxTreeItemId groupItem) {
         this->UpdateGroup(groupItem);
@@ -507,17 +502,7 @@ void ObjectsEditor::Refresh()
     listsHelper.RefreshList(objectsList, &objectsRootItem, &globalObjectsRootItem, &groupsRootItem, &globalGroupsRootItem);
     objectsList->SetDropTarget(new ObjectsListDnd(objectsList, objectsRootItem, globalObjectsRootItem, groupsRootItem, globalGroupsRootItem, project, layout));
 
-    // Expand the previously expanded tree items
-    for( wxTreeItemId groupItem = objectsList->GetFirstChild(groupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(groupsRootItem, cookie) )
-    {
-        if( expandedGroups.count( objectsList->GetItemText( groupItem ) ) > 0 )
-            objectsList->Expand( groupItem );
-    }
-    for( wxTreeItemId groupItem = objectsList->GetFirstChild(globalGroupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(globalGroupsRootItem, cookie) )
-    {
-        if( expandedGroups.count( objectsList->GetItemText( groupItem ) ) > 0 )
-            objectsList->Expand( groupItem );
-    }
+    restorer.RestoreState( objectsList );
 
     if (onRefreshedCb) onRefreshedCb();
 }

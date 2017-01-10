@@ -84,17 +84,6 @@ std::vector<gd::String> ObjectListDialogsHelper::GetMatchingObjects() const
 #if !defined(GD_NO_WX_GUI)
 void ObjectListDialogsHelper::RefreshList(wxTreeCtrl * objectsList, wxTreeItemId * objectsRootItem_, wxTreeItemId * globalObjectsRootItem_, wxTreeItemId * groupsRootItem_, wxTreeItemId * globalGroupsRootItem_)
 {
-    // Save the expanded folders
-    std::vector<std::pair<gd::String, gd::String>> expandedObjectsFolders;
-    for(const auto & folders : objectsFolderItems)
-    {
-        for(const auto & pair : folders.second)
-        {
-            if(objectsList->IsExpanded(pair.second))
-                expandedObjectsFolders.push_back(std::make_pair(gd::String(objectsList->GetItemText(folders.first)), pair.first));
-        }
-    }
-
     objectsFolderItems.clear();
 
     objectsList->DeleteAllItems();
@@ -127,18 +116,6 @@ void ObjectListDialogsHelper::RefreshList(wxTreeCtrl * objectsList, wxTreeItemId
     objectsList->Expand(globalObjectsRootItem);
     objectsList->Expand(groupsRootItem);
     objectsList->Expand(globalGroupsRootItem);
-
-    // Expand the folders previously expanded
-    std::map<gd::String, wxTreeItemId> dontKnowHowToNameIt; // Just to associate the text of the roots with their items to reexpand the correct folders
-    dontKnowHowToNameIt[_("Objects")] = objectsRootItem;
-    dontKnowHowToNameIt[_("Global objects")] = globalObjectsRootItem;
-    dontKnowHowToNameIt[_("Groups")] = groupsRootItem;
-    dontKnowHowToNameIt[_("Global groups")] = globalGroupsRootItem;
-    for(const auto & folder : expandedObjectsFolders)
-    {
-        if(objectsFolderItems.count(dontKnowHowToNameIt[folder.first]) > 0 && objectsFolderItems.at(dontKnowHowToNameIt[folder.first]).count(folder.second) > 0)
-            objectsList->Expand(objectsFolderItems[dontKnowHowToNameIt[folder.first]][folder.second]);
-    }
 
     //If asked, return the root items for the objects and groups.
     if (objectsRootItem_) *objectsRootItem_ = objectsRootItem;

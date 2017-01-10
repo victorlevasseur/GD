@@ -1,3 +1,9 @@
+/*
+ * GDevelop Core
+ * Copyright 2016 Victor Levasseur (victorlevasseur52@gmail.com).
+ * This project is released under the MIT License.
+ */
+
 #include "ObjectsFolderHelper.h"
 
 #include <algorithm>

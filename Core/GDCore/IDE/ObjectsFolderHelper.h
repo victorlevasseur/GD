@@ -7,6 +7,8 @@
 #ifndef GDCORE_OBJECTSFOLDERHELPER_H
 #define GDCORE_OBJECTSFOLDERHELPER_H
 
+#include <vector>
+
 #include "GDCore/String.h"
 
 namespace gd { class ClassWithObjects; }
@@ -45,20 +47,7 @@ public:
      *
      * \return the number of objects in the specified folder
      */
-    static std::size_t GetObjectsCount(const gd::String & folder, const gd::ClassWithObjects & objectsContainer);
-
-    /**
-     * Get the number of objects in a folder, considering a
-     * gd::Layout (layout objects) and a gd::Project (global objects).
-     *
-     * \param folder the folder
-     * \param layout a layout
-     * \param project a project
-     *
-     * \return the number of objects in the specified folder in the layout
-     * and the project
-     */
-    static std::size_t GetObjectsCount(const gd::String & folder, const gd::Layout & layout, const gd::Project & project);
+    static std::size_t GetObjectsCount(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, bool subFolders = false);
 
     /**
      * Get an object according to its position in a folder.
@@ -69,7 +58,7 @@ public:
      *
      * \return the specified object
      */
-    static const gd::Object & GetObjectAt(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder);
+    static const gd::Object & GetObjectAt(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder, bool subFolders = false);
 
     /**
      * Get an object according to its position in a folder.
@@ -80,7 +69,7 @@ public:
      *
      * \return the specified object
      */
-    static gd::Object & GetObjectAt(const gd::String & folder, gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder);
+    static gd::Object & GetObjectAt(const gd::String & folder, gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder, bool subFolders = false);
 
     /**
      * Get an object index relative to its folder.
@@ -91,7 +80,7 @@ public:
      *
      * \return the index (position) of the object in the folder, npos if not in the folder
      */
-    static std::size_t GetObjectPositionInFolder(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, const gd::String & objectName);
+    static std::size_t GetObjectPositionInFolder(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, const gd::String & objectName, bool subFolders = false);
 
     /**
      * Get an object absolute index (index in its container).
@@ -102,7 +91,7 @@ public:
      *
      * \return the absolute index of the object in the container
      */
-    static std::size_t GetObjectAbsolutePosition(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder);
+    static std::size_t GetObjectAbsolutePosition(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder, bool subFolders = false);
 
     /**
      * Move an object at a relative position in a specified folder.
@@ -120,6 +109,27 @@ public:
      * be just moved in that folder.
      */
     static void ChangeObjectFolder(gd::ClassWithObjects & objectsContainer, const gd::String & objectName, const gd::String & newFolder, std::size_t newPositionInFolder = gd::String::npos);
+
+    /**
+     * Checks if a folder exists.
+     *
+     * This function checks if at least one object in inside a folder or one
+     * of its subfolders.
+     *
+     * \param objectsContainer the container holding the objects
+     * \param folder the folder name
+     *
+     * \return true if the folder exists (at least one object in it or one
+     * of its subfolders).
+     */
+    static bool HasFolder( const gd::ClassWithObjects & objectsContainer, const gd::String & folder );
+
+    static bool MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, std::size_t position = gd::String::npos );
+
+private:
+    static std::size_t GetFirstObjectInFolderAbsolutePosition( const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders = false );
+
+    static std::vector<gd::String> GetSubFolders( const gd::ClassWithObjects & objectsContainer, const gd::String & folder );
 };
 
 }

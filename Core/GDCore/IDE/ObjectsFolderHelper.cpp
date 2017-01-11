@@ -17,7 +17,7 @@
 namespace gd
 {
 
-std::size_t ObjectsFolderHelper::GetObjectsCount(const gd::String & folder, const gd::ClassWithObjects & objectsContainer)
+std::size_t ObjectsFolderHelper::GetObjectsCount(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, bool subFolders)
 {
     return std::count_if(
         objectsContainer.cbegin(),
@@ -25,16 +25,11 @@ std::size_t ObjectsFolderHelper::GetObjectsCount(const gd::String & folder, cons
         [&folder](const std::unique_ptr<gd::Object> & object) { return object->GetFolder() == folder; } );
 }
 
-std::size_t ObjectsFolderHelper::GetObjectsCount(const gd::String & folder, const gd::Layout & layout, const gd::Project & project)
-{
-    return GetObjectsCount(folder, layout) + GetObjectsCount(folder, project);
-}
-
-const gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t position)
+const gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t position, bool subFolders)
 {
     for( std::size_t i = 0; i < objectsContainer.GetObjectsCount(); ++i )
     {
-        if( objectsContainer.GetObject(i).GetFolder() == folder )
+        if( !subFolders && objectsContainer.GetObject(i).GetFolder() == folder || subFolders && objectsContainer.GetObject(i).GetFolder().substr( 0, folder.size() ) == folder )
         {
             if( position > 0 )
                 --position;
@@ -46,11 +41,11 @@ const gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, c
     throw std::out_of_range("");
 }
 
-gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, gd::ClassWithObjects & objectsContainer, std::size_t position)
+gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, gd::ClassWithObjects & objectsContainer, std::size_t position, bool subFolders)
 {
     for( std::size_t i = 0; i < objectsContainer.GetObjectsCount(); ++i )
     {
-        if( objectsContainer.GetObject(i).GetFolder() == folder )
+        if( !subFolders && objectsContainer.GetObject(i).GetFolder() == folder || subFolders && objectsContainer.GetObject(i).GetFolder().substr( 0, folder.size() ) == folder )
         {
             if( position > 0 )
                 --position;
@@ -62,7 +57,7 @@ gd::Object & ObjectsFolderHelper::GetObjectAt(const gd::String & folder, gd::Cla
     throw std::out_of_range("");
 }
 
-std::size_t ObjectsFolderHelper::GetObjectPositionInFolder(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, const gd::String & objectName)
+std::size_t ObjectsFolderHelper::GetObjectPositionInFolder(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, const gd::String & objectName, bool subFolders)
 {
     std::size_t absolutePosition = objectsContainer.GetObjectPosition( objectName );
 
@@ -72,14 +67,14 @@ std::size_t ObjectsFolderHelper::GetObjectPositionInFolder(const gd::String & fo
     return std::count_if( // Count the objects of the same folder before it
         objectsContainer.cbegin(),
         objectsContainer.cbegin() + absolutePosition,
-        [&folder](const std::unique_ptr<gd::Object> & object) { return object->GetFolder() == folder; } );
+        [&folder, &subFolders](const std::unique_ptr<gd::Object> & object) { return !subFolders && object->GetFolder() == folder || subFolders && object->GetFolder().substr( 0, folder.size() ) == folder; } );
 }
 
-std::size_t ObjectsFolderHelper::GetObjectAbsolutePosition(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder)
+std::size_t ObjectsFolderHelper::GetObjectAbsolutePosition(const gd::String & folder, const gd::ClassWithObjects & objectsContainer, std::size_t positionInFolder, bool subFolders)
 {
     for( std::size_t i = 0; i < objectsContainer.GetObjectsCount(); ++i )
     {
-        if( objectsContainer.GetObject(i).GetFolder() == folder )
+        if( !subFolders && objectsContainer.GetObject(i).GetFolder() == folder || subFolders && objectsContainer.GetObject(i).GetFolder().substr( 0, folder.size() ) == folder )
         {
             if( positionInFolder > 0 )
                 --positionInFolder;
@@ -117,6 +112,101 @@ void ObjectsFolderHelper::ChangeObjectFolder(gd::ClassWithObjects & objectsConta
     // Third step:
     // Insert it as "newPositionInFolder" relative to the newFolder
     objectsContainer.InsertObject( std::move(object), GetObjectAbsolutePosition( newFolder, objectsContainer, newPositionInFolder ) );
+}
+
+bool ObjectsFolderHelper::HasFolder( const gd::ClassWithObjects & objectsContainer, const gd::String & folder )
+{
+    return std::any_of(
+        objectsContainer.cbegin(),
+        objectsContainer.cend(),
+        [&folder]( const std::unique_ptr<gd::Object> & object ) { return object->GetFolder().substr( 0, folder.size() ) == folder; } );
+}
+
+bool ObjectsFolderHelper::MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, std::size_t position )
+{
+    if( !HasFolder( objectsContainer, folder ) || HasFolder( objectsContainer, newFolder ) )
+        return false;
+
+    // Remove the objects that are about to be moved (done before so that they can be the subfolders listed afterwards)
+    std::vector<std::unique_ptr<gd::Object>> objectsToMove;
+    while( GetObjectsCount( folder, objectsContainer, true ) > 0 )
+    {
+        objectsToMove.push_back( std::move( objectsContainer.RemoveObject( GetObjectAt( folder, objectsContainer, 0, true ).GetName() ) ) );
+        // Note: they are push in reverse order!
+    }
+
+    std::size_t lastSepPos = newFolder.rfind("/");
+    gd::String newParentFolder = newFolder.substr(0, lastSepPos);
+
+    // TODO: Check if the newParentFolder still exists after all objects deletion ( not a subfolder of the original folder! )
+    // TODO: If not, revert the change and return false
+
+    // Get the subfolders
+    auto subFolders = GetSubFolders( objectsContainer, newParentFolder );
+
+    std::size_t insertionPosition =
+        position < subFolders.size() ?
+            GetFirstObjectInFolderAbsolutePosition( objectsContainer, subFolders[position], true ) + 1 /* to insert just after it */ :
+            gd::String::npos;
+
+    // Insert them back and set their folder
+    for( auto & object : objectsToMove )
+    {
+        object->SetFolder( newFolder ); //TODO: Put the subfolder part to the new folder (e.g. if an object is in A/B/C but we move A/B to E/F, it has to be in E/F/C, not E/F)
+        objectsContainer.InsertObject( std::move( object ), insertionPosition ); // Invert again their order to get the new order
+    }
+
+    return true;
+}
+
+std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition( const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders )
+{
+    auto foundIt = objectsContainer.cend();
+
+    if( subFolders )
+    {
+        foundIt = std::find_if(
+            objectsContainer.cbegin(),
+            objectsContainer.cend(),
+            [&folder]( const std::unique_ptr<gd::Object> & object )
+            {
+                return object->GetFolder().substr( 0, folder.size() ) == folder;
+            });
+    }
+    else
+    {
+        foundIt = std::find_if(
+            objectsContainer.cbegin(),
+            objectsContainer.cend(),
+            [&folder]( const std::unique_ptr<gd::Object> & object )
+            {
+                return object->GetFolder() == folder;
+            });
+    }
+
+    if( foundIt == objectsContainer.cend() )
+        return gd::String::npos;
+
+    return std::distance( objectsContainer.cbegin(), foundIt );
+}
+
+std::vector<gd::String> ObjectsFolderHelper::GetSubFolders( const gd::ClassWithObjects & objectsContainer, const gd::String & folder )
+{
+    std::vector<gd::String> subFolders; // std::set would be more efficient, but we need to preserve the order of the subfolders
+
+    for( const auto & object : objectsContainer )
+    {
+        if( object->GetFolder().substr( 0, folder.size() ) == folder )
+        {
+            std::size_t sepPos = object->GetFolder().find( "/", folder.size() + 1 /* To avoid the "/" after the parent folder */ );
+            gd::String subFolder = object->GetFolder().substr( folder.size(), sepPos - folder.size() );
+
+            if( std::find( subFolders.cbegin(), subFolders.cend(), subFolder ) == subFolders.cend() )
+                subFolders.push_back( object->GetFolder() );
+        }
+    }
+
+    return subFolders;
 }
 
 }

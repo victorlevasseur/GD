@@ -127,7 +127,7 @@ private:
      */
     int MakeObjectItemThumbnail(wxTreeCtrl * objectsList, const gd::Object & object);
 
-    wxTreeItemId GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem);
+    wxTreeItemId GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem, bool global);
 
     wxTreeItemId GetLastObjectsFolderItem(wxTreeCtrl * objectsList, const gd::String & inFolder, wxTreeItemId rootItem) const;
     #endif

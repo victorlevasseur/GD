@@ -124,7 +124,9 @@ public:
      */
     static bool HasFolder( const gd::ClassWithObjects & objectsContainer, const gd::String & folder );
 
-    static bool MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, std::size_t position = gd::String::npos );
+    static bool IsSubFolder( const gd::String & folder, const gd::String & parentFolder, bool subFolders = true );
+
+    static bool MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, const gd::String & beforeSubFolder = gd::String() );
 
 private:
     static std::size_t GetFirstObjectInFolderAbsolutePosition( const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders = false );

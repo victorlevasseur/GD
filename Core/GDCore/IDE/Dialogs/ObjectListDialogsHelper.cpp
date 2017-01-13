@@ -137,7 +137,7 @@ wxTreeItemId ObjectListDialogsHelper::AddObjectsToList(wxTreeCtrl * objectsList,
         if ((objectTypeAllowed.empty() || objects.GetObject(i).GetType() == objectTypeAllowed ) &&
             ( !searching || (searching && name.CaseFold().find(searchText.CaseFold()) != gd::String::npos)) )
         {
-            wxTreeItemId item = objectsList->AppendItem(GetOrMakeObjectsFolderItem(objects.GetObject(i).GetFolder(), objectsList, globalObjects ? globalRootItem : layoutRootItem), "theobject");
+            wxTreeItemId item = objectsList->AppendItem(GetOrMakeObjectsFolderItem(objects.GetObject(i).GetFolder(), objectsList, globalObjects ? globalRootItem : layoutRootItem, globalObjects), "theobject");
             MakeObjectItem(objectsList, item, objects.GetObject(i), globalObjects);
 
             lastAddedItem = item;
@@ -219,7 +219,7 @@ gd::String ObjectListDialogsHelper::GetObjectsFolderFromItem(wxTreeCtrl * object
     return data->GetSecondString();
 }
 
-wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem)
+wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::String & folder, wxTreeCtrl * objectsList, wxTreeItemId rootItem, bool global)
 {
     if(GetObjectsFolderItem(folder, rootItem).IsOk())
     {
@@ -240,7 +240,7 @@ wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::Strin
             folderSuffix = folder;
         }
 
-        wxTreeItemId parentItem = GetOrMakeObjectsFolderItem(folderPrefix, objectsList, rootItem);
+        wxTreeItemId parentItem = GetOrMakeObjectsFolderItem(folderPrefix, objectsList, rootItem, global);
         wxTreeItemId lastFolderItem = GetLastObjectsFolderItem(objectsList, folderPrefix, rootItem);
 
         wxTreeItemId folderItem;
@@ -251,7 +251,7 @@ wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::Strin
                 lastFolderItem,
                 folderSuffix,
                 2, -1,
-                new gd::TreeItemStringData("ObjectsFolder", folder));
+                new gd::TreeItemStringData(global ? "GlobalObjectsFolder" : "ObjectsFolder", folder));
         }
         else
         {
@@ -259,7 +259,7 @@ wxTreeItemId ObjectListDialogsHelper::GetOrMakeObjectsFolderItem(const gd::Strin
                 parentItem,
                 folderSuffix,
                 2, -1,
-                new gd::TreeItemStringData("ObjectsFolder", folder));
+                new gd::TreeItemStringData(global ? "GlobalObjectsFolder" : "ObjectsFolder", folder));
         }
         objectsList->SetItemBold(folderItem);
 

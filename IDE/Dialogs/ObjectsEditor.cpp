@@ -68,140 +68,189 @@ namespace
 
         virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& text)
         {
-            gd::String objectName = text;
+            gd::String content = text;
 
             //Try to workaround a wxMac making string not ending properly
             //See: http://trac.wxwidgets.org/ticket/9522#comment:4
-            gd::String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
-            objectName = objectName.substr(0, objectName.find_first_not_of(allowedCharacters));
+            gd::String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/";
+            content = content.substr(0, content.find_first_not_of(allowedCharacters));
 
-            //Get the item under the mouse
-            int dropFlags;
-            wxTreeItemId itemUnderMouse = treeCtrl->HitTest(wxPoint(x, y), dropFlags);
+            gd::String typeOfDrop = content.substr(0, 3);
 
-            if(!itemUnderMouse.IsOk())
-                return false; //If not on an item, stop.
-
-            //Find if the item is a group (global ? local ?)
-            gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(treeCtrl->GetItemData(itemUnderMouse));
-
-            if( data && (data->GetString() == "LayoutGroup" || data->GetString() == "GlobalGroup") )
+            if( typeOfDrop == "OBJ" ) // An object is dropped
             {
-                std::vector<gd::ObjectGroup> *groups = NULL;
-                if(data->GetString() == "LayoutGroup")
-                    groups = &layout.GetObjectGroups();
-                else if(data->GetString() == "GlobalGroup")
-                    groups = &project.GetObjectGroups();
-                else
-                    return false;
+                gd::String objectName = content.substr(3);
 
-                //Find the group
-                std::vector< gd::ObjectGroup >::iterator group = find_if(groups->begin(), groups->end(),
-                    bind2nd(gd::GroupHasTheSameName(), treeCtrl->GetItemText(itemUnderMouse)));
-                if ( group != groups->end() && !group->Find(objectName))
+                //Get the item under the mouse
+                int dropFlags;
+                wxTreeItemId itemUnderMouse = treeCtrl->HitTest(wxPoint(x, y), dropFlags);
+
+                if(!itemUnderMouse.IsOk())
+                    return false; //If not on an item, stop.
+
+                //Find if the item is a group (global ? local ?)
+                gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(treeCtrl->GetItemData(itemUnderMouse));
+
+                if( data && (data->GetString() == "LayoutGroup" || data->GetString() == "GlobalGroup") )
                 {
-                    //Add the object in the group
-                    group->AddObject(objectName);
-                    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
-                        project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupEdited(
-                            project, data->GetString() == "GlobalGroup" ? NULL : &layout, group->GetName()
-                            );
-                }
-                else
-                {
-                    return false;
-                }
-
-                //Add the corresponding tree item into the group tree item
-                wxTreeItemId objectIntoGroupItem = treeCtrl->AppendItem(itemUnderMouse, objectName, 0);
-                treeCtrl->SetItemTextColour(objectIntoGroupItem, wxColour(128, 128, 128));
-                treeCtrl->SetItemData(objectIntoGroupItem, new gd::TreeItemStringData("ObjectInGroup"));
-
-                treeCtrl->Expand(itemUnderMouse);
-            }
-            else if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem ||
-                (data && (data->GetString() == "ObjectsFolder" || data->GetString() == "LayoutObject" || data->GetString() == "GlobalObject")) )
-            {
-                gd::String folder;
-                std::size_t insertionPosInNewFolder;
-
-                if(!layout.HasObjectNamed(objectName) && !project.HasObjectNamed(objectName))
-                    return false; // The object being dragged doesn't exist!
-
-                bool isGlobal = !layout.HasObjectNamed(objectName);
-                gd::ClassWithObjects & currentObjectsList = layout.HasObjectNamed(objectName) ?
-                    dynamic_cast<gd::ClassWithObjects&>(layout) : dynamic_cast<gd::ClassWithObjects&>(project);
-
-                if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem )
-                {
-                    //TODO: Create a uniquely named folder
-                    if( itemUnderMouse == objectsRootItem && isGlobal || itemUnderMouse == globalObjectsRootItem && !isGlobal )
+                    std::vector<gd::ObjectGroup> *groups = NULL;
+                    if(data->GetString() == "LayoutGroup")
+                        groups = &layout.GetObjectGroups();
+                    else if(data->GetString() == "GlobalGroup")
+                        groups = &project.GetObjectGroups();
+                    else
                         return false;
-                    folder = _("NewFolder");
-                    insertionPosInNewFolder = 0;
-                }
-                else if( data->GetString() == "ObjectsFolder" )
-                {
-                    folder = data->GetSecondString();
-                    insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectsCount( folder, currentObjectsList );
-                }
-                else // On an object
-                {
-                    gd::String hoveredObjectName = treeCtrl->GetItemText(itemUnderMouse);
 
-                    if(!layout.HasObjectNamed(hoveredObjectName) && !project.HasObjectNamed(hoveredObjectName))
-                        return false; // The hovered object doesn't exist!
-
-                    gd::ClassWithObjects & hoveredObjectsList = layout.HasObjectNamed(hoveredObjectName) ?
-                        dynamic_cast<gd::ClassWithObjects&>(layout) : dynamic_cast<gd::ClassWithObjects&>(project);
-                    bool isHoveredGlobal = !layout.HasObjectNamed(hoveredObjectName);
-
-                    gd::Object & hoveredObject = hoveredObjectsList.GetObject(hoveredObjectName);
-
-                    folder = hoveredObject.GetFolder();
-                    // If both are local or global, then insert the moved object to the position of the hovered object
-                    if(isHoveredGlobal == isGlobal)
+                    //Find the group
+                    std::vector< gd::ObjectGroup >::iterator group = find_if(groups->begin(), groups->end(),
+                        bind2nd(gd::GroupHasTheSameName(), treeCtrl->GetItemText(itemUnderMouse)));
+                    if ( group != groups->end() && !group->Find(objectName))
                     {
-                        insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectPositionInFolder( folder, hoveredObjectsList, hoveredObjectName );
+                        //Add the object in the group
+                        group->AddObject(objectName);
+                        for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
+                            project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupEdited(
+                                project, data->GetString() == "GlobalGroup" ? NULL : &layout, group->GetName()
+                                );
                     }
                     else
                     {
                         return false;
                     }
+
+                    //Add the corresponding tree item into the group tree item
+                    wxTreeItemId objectIntoGroupItem = treeCtrl->AppendItem(itemUnderMouse, objectName, 0);
+                    treeCtrl->SetItemTextColour(objectIntoGroupItem, wxColour(128, 128, 128));
+                    treeCtrl->SetItemData(objectIntoGroupItem, new gd::TreeItemStringData("ObjectInGroup"));
+
+                    treeCtrl->Expand(itemUnderMouse);
+                }
+                else if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem ||
+                    (data && (data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" || data->GetString() == "LayoutObject" || data->GetString() == "GlobalObject")) )
+                {
+                    gd::String folder;
+                    std::size_t insertionPosInNewFolder;
+
+                    if(!layout.HasObjectNamed(objectName) && !project.HasObjectNamed(objectName))
+                        return false; // The object being dragged doesn't exist!
+
+                    bool isGlobal = !layout.HasObjectNamed(objectName);
+                    gd::ClassWithObjects & currentObjectsList = layout.HasObjectNamed(objectName) ?
+                        dynamic_cast<gd::ClassWithObjects&>(layout) : dynamic_cast<gd::ClassWithObjects&>(project);
+
+                    if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem )
+                    {
+                        //TODO: Create a uniquely named folder
+                        if( itemUnderMouse == objectsRootItem && isGlobal || itemUnderMouse == globalObjectsRootItem && !isGlobal )
+                            return false;
+                        folder = _("NewFolder");
+                        insertionPosInNewFolder = 0;
+                    }
+                    else if( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" )
+                    {
+                        //TODO: Check if global or layout object <-> global or layout folder
+                        folder = data->GetSecondString();
+                        insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectsCount( folder, currentObjectsList );
+                    }
+                    else // On an object
+                    {
+                        gd::String hoveredObjectName = treeCtrl->GetItemText(itemUnderMouse);
+
+                        if(!layout.HasObjectNamed(hoveredObjectName) && !project.HasObjectNamed(hoveredObjectName))
+                            return false; // The hovered object doesn't exist!
+
+                        gd::ClassWithObjects & hoveredObjectsList = layout.HasObjectNamed(hoveredObjectName) ?
+                            dynamic_cast<gd::ClassWithObjects&>(layout) : dynamic_cast<gd::ClassWithObjects&>(project);
+                        bool isHoveredGlobal = !layout.HasObjectNamed(hoveredObjectName);
+
+                        gd::Object & hoveredObject = hoveredObjectsList.GetObject(hoveredObjectName);
+
+                        folder = hoveredObject.GetFolder();
+                        // If both are local or global, then insert the moved object to the position of the hovered object
+                        if(isHoveredGlobal == isGlobal)
+                        {
+                            insertionPosInNewFolder = gd::ObjectsFolderHelper::GetObjectPositionInFolder( folder, hoveredObjectsList, hoveredObjectName );
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    // Change the folder of the object
+                    gd::ObjectsFolderHelper::ChangeObjectFolder( currentObjectsList, objectName, folder, insertionPosInNewFolder );
+                }
+                else if( itemUnderMouse == groupsRootItem || itemUnderMouse == globalGroupsRootItem )
+                {
+                    //Create a new group
+                    gd::ObjectGroup newGroup;
+                    newGroup.AddObject(text);
+
+                    std::vector<gd::ObjectGroup> & objectsGroups = itemUnderMouse == groupsRootItem ? layout.GetObjectGroups() : project.GetObjectGroups();
+
+                    gd::String name = gd::NewNameGenerator::Generate(text + "Group", [&objectsGroups](const gd::String & name){
+                        return std::find_if(objectsGroups.begin(), objectsGroups.end(), std::bind2nd(gd::GroupHasTheSameName(), name))
+                            != objectsGroups.end();
+                    });
+
+                    newGroup.SetName(name);
+                    objectsGroups.push_back(newGroup);
+
+                    //Notify the game of the new group
+                    for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
+                        project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, &layout, name);
+                    gd::LogStatus( _( "The group was correctly added." ) );
+
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
 
-                // Change the folder of the object
-                gd::ObjectsFolderHelper::ChangeObjectFolder( currentObjectsList, objectName, folder, insertionPosInNewFolder );
-            }
-            else if( itemUnderMouse == groupsRootItem || itemUnderMouse == globalGroupsRootItem )
-            {
-                //Create a new group
-                gd::ObjectGroup newGroup;
-                newGroup.AddObject(text);
-
-                std::vector<gd::ObjectGroup> & objectsGroups = itemUnderMouse == groupsRootItem ? layout.GetObjectGroups() : project.GetObjectGroups();
-
-                gd::String name = gd::NewNameGenerator::Generate(text + "Group", [&objectsGroups](const gd::String & name){
-                    return std::find_if(objectsGroups.begin(), objectsGroups.end(), std::bind2nd(gd::GroupHasTheSameName(), name))
-                        != objectsGroups.end();
-                });
-
-                newGroup.SetName(name);
-                objectsGroups.push_back(newGroup);
-
-                //Notify the game of the new group
-                for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
-                    project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupAdded(project, &layout, name);
-                gd::LogStatus( _( "The group was correctly added." ) );
-
                 return true;
+            }
+            else if( typeOfDrop == "FOL" ) // A folder is dropped
+            {
+                bool global = content.substr(3, 3) == "GLO" ? true : false;
+                gd::String folder = content.substr(6);
+
+                //Get the item under the mouse
+                int dropFlags;
+                wxTreeItemId itemUnderMouse = treeCtrl->HitTest(wxPoint(x, y), dropFlags);
+
+                if(!itemUnderMouse.IsOk())
+                    return false; //If not on an item, stop.
+
+                //Find if the item is a group (global ? local ?)
+                gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(treeCtrl->GetItemData(itemUnderMouse));
+
+                auto folderComponents = folder.Split( U'/' );
+                gd::String folderSuffixName = folderComponents[ folderComponents.size() - 1 ];
+
+                if( data && ( !global && data->GetString() == "ObjectsFolder" || global && data->GetString() == "GlobalObjectsFolder" ) )
+                {
+                    return gd::ObjectsFolderHelper::MoveFolder(
+                        global ? dynamic_cast<gd::ClassWithObjects&>( project ) : dynamic_cast<gd::ClassWithObjects&>( layout ),
+                        folder,
+                        data->GetSecondString() + "/" + folderSuffixName );
+                }
+                else if( !global && itemUnderMouse == objectsRootItem || global && itemUnderMouse == globalObjectsRootItem )
+                {
+                    return gd::ObjectsFolderHelper::MoveFolder(
+                        global ? dynamic_cast<gd::ClassWithObjects&>( project ) : dynamic_cast<gd::ClassWithObjects&>( layout ),
+                        folder,
+                        folderSuffixName );
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
                 return false;
             }
-
-            return true;
         }
 
     private:
@@ -1523,7 +1572,7 @@ void ObjectsEditor::OnobjectsListBeginDrag(wxTreeEvent& event)
         gd::Object * object = GetSelectedObject();
         if ( !object ) return;
 
-        wxTextDataObject objectName(object->GetName());
+        wxTextDataObject objectName("OBJ" + object->GetName());
         wxDropSource dragSource( this );
         dragSource.SetData( objectName );
         dragSource.DoDragDrop( true );
@@ -1532,6 +1581,15 @@ void ObjectsEditor::OnobjectsListBeginDrag(wxTreeEvent& event)
         objectsList->SetItemText(globalObjectsRootItem, _("Global objects"));
         objectsList->SetItemText(groupsRootItem, _("Groups"));
         objectsList->SetItemText(globalGroupsRootItem, _("Global groups"));
+
+        Refresh();
+    }
+    else if ( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" )
+    {
+        wxTextDataObject folderName("FOL" + ( data->GetString() == "ObjectsFolder" ? gd::String("LAY") : gd::String("GLO") ) + data->GetSecondString());
+        wxDropSource dragSource( this );
+        dragSource.SetData( folderName );
+        dragSource.DoDragDrop( true );
 
         Refresh();
     }

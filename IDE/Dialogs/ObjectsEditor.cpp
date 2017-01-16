@@ -140,10 +140,17 @@ namespace
 
                     if( itemUnderMouse == objectsRootItem || itemUnderMouse == globalObjectsRootItem )
                     {
-                        //TODO: Create a uniquely named folder
                         if( itemUnderMouse == objectsRootItem && isGlobal || itemUnderMouse == globalObjectsRootItem && !isGlobal )
                             return false;
+
+                        std::size_t i = 1;
                         folder = _("NewFolder");
+                        while( gd::ObjectsFolderHelper::HasFolder( currentObjectsList, folder ) )
+                        {
+                            folder = _("NewFolder") + gd::String::From(i);
+                            ++i;
+                        }
+
                         insertionPosInNewFolder = 0;
                     }
                     else if( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" )

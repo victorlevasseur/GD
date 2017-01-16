@@ -116,7 +116,7 @@ void ObjectsFolderHelper::ChangeObjectFolder(gd::ClassWithObjects & objectsConta
     objectsContainer.InsertObject( std::move(object), GetObjectAbsolutePosition( newFolder, objectsContainer, newPositionInFolder ) );
 }
 
-bool ObjectsFolderHelper::HasFolder( const gd::ClassWithObjects & objectsContainer, const gd::String & folder )
+bool ObjectsFolderHelper::HasFolder(const gd::ClassWithObjects & objectsContainer, const gd::String & folder)
 {
     if( folder == "" )
         return true;
@@ -127,14 +127,14 @@ bool ObjectsFolderHelper::HasFolder( const gd::ClassWithObjects & objectsContain
         [&folder]( const std::unique_ptr<gd::Object> & object ) { return object->GetFolder().substr( 0, folder.size() ) == folder; } );
 }
 
-bool ObjectsFolderHelper::IsSubFolder( const gd::String & folder, const gd::String & parentFolder, bool subFolders )
+bool ObjectsFolderHelper::IsSubFolder(const gd::String & folder, const gd::String & parentFolder, bool subFolders)
 {
     return folder != parentFolder &&
         folder.substr( 0, parentFolder.size() ) == parentFolder &&
         ( subFolders || folder.substr( parentFolder.size() + 1 ).find( "/" ) == gd::String::npos );
 }
 
-bool ObjectsFolderHelper::MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, const gd::String & beforeSubFolder )
+bool ObjectsFolderHelper::MoveFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, const gd::String & beforeSubFolder)
 {
     if( !HasFolder( objectsContainer, folder ) ||
         newFolder != folder && HasFolder( objectsContainer, newFolder ) ||
@@ -175,7 +175,7 @@ bool ObjectsFolderHelper::MoveFolder( gd::ClassWithObjects & objectsContainer, c
     return true;
 }
 
-std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition( const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders )
+std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders)
 {
     auto foundIt = objectsContainer.cend();
 
@@ -206,13 +206,13 @@ std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition( const g
     return std::distance( objectsContainer.cbegin(), foundIt );
 }
 
-std::vector<gd::String> ObjectsFolderHelper::GetSubFolders( const gd::ClassWithObjects & objectsContainer, const gd::String & folder )
+std::vector<gd::String> ObjectsFolderHelper::GetSubFolders(const gd::ClassWithObjects & objectsContainer, const gd::String & folder)
 {
     std::vector<gd::String> subFolders; // std::set would be more efficient, but we need to preserve the order of the subfolders
 
     for( const auto & object : objectsContainer )
     {
-        if( object->GetFolder().substr( 0, folder.size() ) == folder )
+        if( object->GetFolder() != folder && object->GetFolder().substr( 0, folder.size() ) == folder )
         {
             std::size_t sepPos = object->GetFolder().find( "/", folder.size() + 1 /* To avoid the "/" after the parent folder */ );
             gd::String subFolder = object->GetFolder().substr( folder.size(), sepPos - folder.size() );

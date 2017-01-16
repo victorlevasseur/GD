@@ -122,16 +122,16 @@ public:
      * \return true if the folder exists (at least one object in it or one
      * of its subfolders).
      */
-    static bool HasFolder( const gd::ClassWithObjects & objectsContainer, const gd::String & folder );
+    static bool HasFolder(const gd::ClassWithObjects & objectsContainer, const gd::String & folder);
 
-    static bool IsSubFolder( const gd::String & folder, const gd::String & parentFolder, bool subFolders = true );
+    static bool IsSubFolder(const gd::String & folder, const gd::String & parentFolder, bool subFolders = true);
 
-    static bool MoveFolder( gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, const gd::String & beforeSubFolder = gd::String() );
+    static bool MoveFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newFolder, const gd::String & beforeSubFolder = gd::String());
 
 private:
-    static std::size_t GetFirstObjectInFolderAbsolutePosition( const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders = false );
+    static std::size_t GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders = false);
 
-    static std::vector<gd::String> GetSubFolders( const gd::ClassWithObjects & objectsContainer, const gd::String & folder );
+    static std::vector<gd::String> GetSubFolders(const gd::ClassWithObjects & objectsContainer, const gd::String & folder);
 };
 
 }

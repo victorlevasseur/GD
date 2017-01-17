@@ -1268,6 +1268,13 @@ void ObjectsEditor::OnMoveupSelected(wxCommandEvent& event)
             gd::ObjectsFolderHelper::GetObjectAbsolutePosition( folder, objects, positionInFolder ),
             gd::ObjectsFolderHelper::GetObjectAbsolutePosition( folder, objects, positionInFolder - 1 ) );
     }
+    else if( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" )
+    {
+        bool globalObject = data->GetString() == "GlobalObjectsFolder";
+        gd::ClassWithObjects & objects = !globalObject ? static_cast<gd::ClassWithObjects&>(layout) : project;
+
+        gd::ObjectsFolderHelper::OffsetFolder( objects, data->GetSecondString(), -1 );
+    }
 
     Refresh();
     SelectItem(objectsRootItem, name, dataStr, dataStr2); //Select again the moved item
@@ -1296,6 +1303,13 @@ void ObjectsEditor::OnMoveDownSelected(wxCommandEvent& event)
         objects.SwapObjects(
             gd::ObjectsFolderHelper::GetObjectAbsolutePosition( folder, objects, positionInFolder ),
             gd::ObjectsFolderHelper::GetObjectAbsolutePosition( folder, objects, positionInFolder + 1 ) );
+    }
+    else if( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" )
+    {
+        bool globalObject = data->GetString() == "GlobalObjectsFolder";
+        gd::ClassWithObjects & objects = !globalObject ? static_cast<gd::ClassWithObjects&>(layout) : project;
+
+        gd::ObjectsFolderHelper::OffsetFolder( objects, data->GetSecondString(), 1 );
     }
 
     Refresh();

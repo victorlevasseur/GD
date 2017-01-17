@@ -869,6 +869,18 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
                 project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupRenamed(project, globalGroup ? NULL : &layout, newName, oldName);
         }
     }
+    //Rename a folder
+    else if( data && (data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder") )
+    {
+        bool global = data->GetString() == "GlobalObjectsFolder";
+        gd::ClassWithObjects & objects = !global ? static_cast<gd::ClassWithObjects&>(layout) : project;
+
+        if( !gd::ObjectsFolderHelper::RenameFolder( objects, data->GetSecondString(), newName ) )
+        {
+            event.Veto();
+            return;
+        }
+    }
     else
     {
         //Undo the item text change
@@ -1273,7 +1285,8 @@ void ObjectsEditor::OnMoveupSelected(wxCommandEvent& event)
         bool globalObject = data->GetString() == "GlobalObjectsFolder";
         gd::ClassWithObjects & objects = !globalObject ? static_cast<gd::ClassWithObjects&>(layout) : project;
 
-        gd::ObjectsFolderHelper::OffsetFolder( objects, data->GetSecondString(), -1 );
+        if( objectsList->GetPrevSibling( lastSelectedItem ).IsOk() )
+            gd::ObjectsFolderHelper::OffsetFolder( objects, data->GetSecondString(), -1 );
     }
 
     Refresh();

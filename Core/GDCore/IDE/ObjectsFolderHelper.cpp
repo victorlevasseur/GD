@@ -206,6 +206,23 @@ void ObjectsFolderHelper::OffsetFolder(gd::ClassWithObjects & objectsContainer, 
     MoveFolder( objectsContainer, folder, folder, folderThere );
 }
 
+bool ObjectsFolderHelper::RenameFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newName)
+{
+    if( !HasFolder( objectsContainer, folder ) || folder == "" ) // Can't offset the root or a non-existing folder
+        return false;
+
+    gd::String newFolderFullPath = GetParentFolder( folder ) != "" ? GetParentFolder( folder ) + "/" + newName : newName;
+    if( HasFolder( objectsContainer, newFolderFullPath ) )
+        return false;
+
+    const auto subFolders = GetSubFolders( objectsContainer, GetParentFolder( folder ) );
+    std::size_t folderPos = std::distance( subFolders.cbegin(), std::find( subFolders.cbegin(), subFolders.cend(), folder ) );
+
+    gd::String folderAfter = folderPos >= subFolders.size() - 1 ? "" : subFolders[folderPos + 1];
+
+    return MoveFolder( objectsContainer, folder, newFolderFullPath, folderAfter );
+}
+
 std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders)
 {
     auto foundIt = objectsContainer.cend();

@@ -162,7 +162,7 @@ bool ObjectsFolderHelper::MoveFolder(gd::ClassWithObjects & objectsContainer, co
 
     std::size_t insertionPosition =
         beforeSubFolder != "" ?
-            GetFirstObjectInFolderAbsolutePosition( objectsContainer, beforeSubFolder, true ) + 1 /* to insert just after it */ :
+            GetFirstObjectInFolderAbsolutePosition( objectsContainer, beforeSubFolder, true ) /* to insert just before it */ :
             gd::String::npos;
 
     // Insert them back and set their folder
@@ -186,20 +186,24 @@ void ObjectsFolderHelper::OffsetFolder(gd::ClassWithObjects & objectsContainer, 
 
     const auto & subFolders = GetSubFolders( objectsContainer, GetParentFolder( folder ) );
 
-    std::cout << "Offsetting " << folder << " from " << GetParentFolder( folder );
-
     // Calculate the new position of the folder
-    std::size_t folderPos = std::distance( subFolders.cbegin(), std::find( subFolders.cbegin(), subFolders.cend(), folder ) );
-    std::cout << " at " << folderPos;
+    std::size_t originalPos;
+    std::size_t folderPos = originalPos = std::distance( subFolders.cbegin(), std::find( subFolders.cbegin(), subFolders.cend(), folder ) );
 
     folderPos += offset;
     if( folderPos >= subFolders.size() )
         folderPos = subFolders.size() - 1;
 
-    std::cout << " to " << folderPos << std::endl;
-
     // Find the folder at that new position to insert the folder there
-    gd::String folderThere = subFolders[folderPos];
+    gd::String folderThere;
+    if( folderPos >= subFolders.size() - 1 )
+        folderThere = "";
+    else if( folderPos > originalPos )
+        folderThere = subFolders[ folderPos + 1 ];
+    else
+        folderThere = subFolders[ folderPos ];
+
+    MoveFolder( objectsContainer, folder, folder, folderThere );
 }
 
 std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders)

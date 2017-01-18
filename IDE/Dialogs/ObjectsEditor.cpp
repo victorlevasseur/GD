@@ -880,6 +880,9 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
             event.Veto();
             return;
         }
+
+        event.Veto(); //Need to veto the event before refreshing to ignore it, avoiding a crash
+        Refresh();
     }
     else
     {

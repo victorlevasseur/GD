@@ -1168,7 +1168,7 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
             if ( objects.HasObjectNamed(objectName) )
             {
                 //Remove objects
-                objects.RemoveObject(objectName);
+                gd::ObjectsFolderHelper::RemoveObject( objects, objectName );
 
                 if ( !globalObject)
                 {

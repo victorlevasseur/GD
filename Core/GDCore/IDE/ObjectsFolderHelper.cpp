@@ -97,13 +97,14 @@ void ObjectsFolderHelper::ChangeObjectFolder(gd::ClassWithObjects & objectsConta
     // If the object's old folder contain another object after it,
     // swap it to keep the old folder positioning.
     const gd::String oldFolder = objectsContainer.GetObject( objectName ).GetFolder();
-    std::size_t objectPositionInFolder = GetObjectPositionInFolder( oldFolder, objectsContainer, objectName );
+    std::size_t objectPositionInFolder = GetObjectPositionInFolder( oldFolder, objectsContainer, objectName, true );
+    // Take into account objects from subfolders as they also may create the folder's tree item
 
-    if( objectPositionInFolder < GetObjectsCount( oldFolder, objectsContainer ) - 1 ) // If it contains an object after it
+    if( objectPositionInFolder < GetObjectsCount( oldFolder, objectsContainer, true ) - 1 ) // If it contains an object after it
     {
         objectsContainer.SwapObjects(
-            GetObjectAbsolutePosition( oldFolder, objectsContainer, objectPositionInFolder ),
-            GetObjectAbsolutePosition( oldFolder, objectsContainer, objectPositionInFolder + 1 ) );
+            GetObjectAbsolutePosition( oldFolder, objectsContainer, objectPositionInFolder, true ),
+            GetObjectAbsolutePosition( oldFolder, objectsContainer, objectPositionInFolder + 1, true ) );
     }
 
     // Second step:
@@ -114,6 +115,27 @@ void ObjectsFolderHelper::ChangeObjectFolder(gd::ClassWithObjects & objectsConta
     // Third step:
     // Insert it as "newPositionInFolder" relative to the newFolder
     objectsContainer.InsertObject( std::move(object), GetObjectAbsolutePosition( newFolder, objectsContainer, newPositionInFolder ) );
+}
+
+void ObjectsFolderHelper::RemoveObject(gd::ClassWithObjects & objectsContainer, const gd::String & objectName)
+{
+    if( !objectsContainer.HasObjectNamed( objectName ) )
+        return;
+
+    gd::String objectFolder = objectsContainer.GetObject( objectName ).GetFolder();
+    std::size_t objectPositionInFolder = GetObjectPositionInFolder( objectFolder, objectsContainer, objectName, true );
+    // Also take the objects in sub folders into account because they may the first to create the folder tree item
+
+    if( objectPositionInFolder < GetObjectsCount( objectFolder, objectsContainer, true ) - 1 )
+    {
+        // Swap it with the next object in the folder or one of its subfolders
+        // to keep the folder ordering
+        objectsContainer.SwapObjects(
+            GetObjectAbsolutePosition( objectFolder, objectsContainer, objectPositionInFolder, true ),
+            GetObjectAbsolutePosition( objectFolder, objectsContainer, objectPositionInFolder + 1, true ) );
+    }
+
+    objectsContainer.RemoveObject( objectName );
 }
 
 bool ObjectsFolderHelper::HasFolder(const gd::ClassWithObjects & objectsContainer, const gd::String & folder)

@@ -44,6 +44,7 @@ public:
      *
      * \param folder the folder
      * \param objectsContainer the container holding all the objects
+     * \param subFolders true to take objects in subfolders of **folder** into account
      *
      * \return the number of objects in the specified folder
      */
@@ -55,6 +56,7 @@ public:
      * \param folder the folder where the object is
      * \param objectsContainer the container holding the objects
      * \param positionInFolder the index of the object in the folder
+     * \param subFolders true to take objects in subfolders of **folder** into account
      *
      * \return the specified object
      */
@@ -66,6 +68,7 @@ public:
      * \param folder the folder where the object is
      * \param objectsContainer the container holding the objects
      * \param positionInFolder the index of the object in the folder
+     * \param subFolders true to take objects in subfolders of **folder** into account
      *
      * \return the specified object
      */
@@ -77,6 +80,7 @@ public:
      * \param folder the folder where the object is
      * \param objectsContainer the container holding the objects
      * \param objectName the object's name
+     * \param subFolders true to take objects in subfolders of **folder** into account
      *
      * \return the index (position) of the object in the folder, npos if not in the folder
      */
@@ -88,6 +92,7 @@ public:
      * \param folder the folder where the object is
      * \param objectsContainer the container holding the objects
      * \param positionInFolder the relative position (index) of the object in its folder
+     * \param subFolders true to take objects in subfolders of **folder** into account
      *
      * \return the absolute index of the object in the container
      */
@@ -109,6 +114,11 @@ public:
      * be just moved in that folder.
      */
     static void ChangeObjectFolder(gd::ClassWithObjects & objectsContainer, const gd::String & objectName, const gd::String & newFolder, std::size_t newPositionInFolder = gd::String::npos);
+
+    /**
+     * Delete an object.
+     */
+    static void RemoveObject(gd::ClassWithObjects & objectsContainer, const gd::String & objectName);
 
     /**
      * Checks if a folder exists.

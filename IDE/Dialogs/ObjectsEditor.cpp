@@ -642,7 +642,8 @@ void ObjectsEditor::OnobjectsListItemMenu(wxTreeEvent& event)
     else if (lastSelectedItem == objectsRootItem ||
         lastSelectedItem == globalObjectsRootItem ||
         lastSelectedItem == groupsRootItem ||
-        lastSelectedItem == globalGroupsRootItem)
+        lastSelectedItem == globalGroupsRootItem ||
+        ( data && (data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder") ) )
         PopupMenu( &emptyContextMenu );
     else if ( data && (data->GetString() == "GlobalObject" || data->GetString() == "LayoutObject") )
     {

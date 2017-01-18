@@ -873,11 +873,25 @@ void ObjectsEditor::OnobjectsListEndLabelEdit(wxTreeEvent& event)
     //Rename a folder
     else if( data && (data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder") )
     {
+        if( !project.ValidateObjectName(newName) )
+        {
+            wxRichToolTip tip(_("Invalid name"), project.GetBadObjectNameWarning());
+            tip.SetIcon(wxICON_INFORMATION);
+            tip.ShowFor(this);
+
+            event.Veto();
+            return;
+        }
+
         bool global = data->GetString() == "GlobalObjectsFolder";
         gd::ClassWithObjects & objects = !global ? static_cast<gd::ClassWithObjects&>(layout) : project;
 
         if( !gd::ObjectsFolderHelper::RenameFolder( objects, data->GetSecondString(), newName ) )
         {
+            wxRichToolTip tip(_("Invalid name"), "This folder already exists!");
+            tip.SetIcon(wxICON_INFORMATION);
+            tip.ShowFor(this);
+
             event.Veto();
             return;
         }

@@ -16,15 +16,15 @@
 namespace gd
 {
 
-struct TreeCtrlRestorerItem
+struct GD_CORE_API TreeCtrlRestorerItem
 {
     bool expanded;
     bool selected;
-    
+
     std::map<std::size_t, TreeCtrlRestorerItem> children;
 };
 
-class TreeCtrlRestorer
+class GD_CORE_API TreeCtrlRestorer
 {
 public:
     using ItemHashFunction = std::function<std::size_t(const wxTreeCtrl*, wxTreeItemId)>;

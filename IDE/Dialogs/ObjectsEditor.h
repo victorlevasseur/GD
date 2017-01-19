@@ -139,6 +139,11 @@ protected:
     static const long idRibbonHelp;
     static const long idRibbonRefresh;
 
+    static const long idMoveUpFolderMenuItem;
+    static const long idMoveDownFolderMenuItem;
+    static const long idRenameFolderMenuItem;
+    static const long idDeleteFolderMenuItem;
+
 private:
 
     //(*Declarations(ObjectsEditor)
@@ -167,6 +172,8 @@ private:
     wxMenuItem* MenuItem9;
     wxMenuItem* pasteMenuI;
     //*)
+
+    wxMenu folderContextMenu;
 
     //(*Handlers(ObjectsEditor)
     void OnobjectsListItemActivated(wxTreeEvent& event);

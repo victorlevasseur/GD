@@ -36,7 +36,7 @@ namespace gd
  * problematics, for example, ChangeObjectFolder() can change the position/index and the
  * folder of an object without causing strange behaviors.
  */
-class ObjectsFolderHelper
+class GD_CORE_API ObjectsFolderHelper
 {
 public:
     /**

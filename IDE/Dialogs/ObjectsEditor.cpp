@@ -315,6 +315,11 @@ const long ObjectsEditor::idRibbonPaste = wxNewId();
 const long ObjectsEditor::idRibbonHelp = wxNewId();
 const long ObjectsEditor::idRibbonRefresh = wxNewId();
 
+const long ObjectsEditor::idMoveUpFolderMenuItem = wxNewId();
+const long ObjectsEditor::idMoveDownFolderMenuItem = wxNewId();
+const long ObjectsEditor::idRenameFolderMenuItem = wxNewId();
+const long ObjectsEditor::idDeleteFolderMenuItem = wxNewId();
+
 wxRibbonButtonBar *ObjectsEditor::objectsRibbonBar = NULL;
 wxRibbonButtonBar *ObjectsEditor::selectionRibbonBar = NULL;
 wxRibbonButtonBar *ObjectsEditor::clipboardRibbonBar = NULL;
@@ -423,6 +428,34 @@ ObjectsEditor::ObjectsEditor(wxWindow* parent, gd::Project & project_, gd::Layou
     MenuItem10 = new wxMenuItem((&emptyContextMenu), ID_MENUITEM6, _("Paste"), wxEmptyString, wxITEM_NORMAL);
     MenuItem10->SetBitmap(gd::SkinHelper::GetIcon("paste", 16));
     emptyContextMenu.Append(MenuItem10);
+
+    // Folder context menu
+    {
+        wxMenuItem * item = new wxMenuItem((&folderContextMenu), idRenameFolderMenuItem, _("Rename\tF2"), wxEmptyString, wxITEM_NORMAL);
+        item->SetBitmap(gd::SkinHelper::GetIcon("rename", 16));
+        folderContextMenu.Append(item);
+        Connect(idRenameFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnMenuRenameSelected);
+    }
+    {
+        wxMenuItem * item = new wxMenuItem((&folderContextMenu), idDeleteFolderMenuItem, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
+        item->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
+        folderContextMenu.Append(item);
+        Connect(idRenameFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnDeleteSelected);
+    }
+    folderContextMenu.AppendSeparator();
+    {
+        wxMenuItem * item = new wxMenuItem((&folderContextMenu), idMoveUpFolderMenuItem, _("Move up\tCtrl-Up"), wxEmptyString, wxITEM_NORMAL);
+        item->SetBitmap(gd::SkinHelper::GetIcon("up", 16));
+        folderContextMenu.Append(item);
+        Connect(idMoveUpFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnMoveupSelected);
+    }
+    {
+        wxMenuItem * item = new wxMenuItem((&folderContextMenu), idMoveDownFolderMenuItem, _("Move down\tCtrl-Down"), wxEmptyString, wxITEM_NORMAL);
+        item->SetBitmap(gd::SkinHelper::GetIcon("down", 16));
+        folderContextMenu.Append(item);
+        Connect(idMoveDownFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnMoveDownSelected);
+    }
+
     FlexGridSizer1->Fit(this);
     FlexGridSizer1->SetSizeHints(this);
 
@@ -617,8 +650,20 @@ void ObjectsEditor::OnobjectsListItemActivated(wxTreeEvent& event)
     ConnectEvents();
 
     lastSelectedItem = event.GetItem();
-    wxCommandEvent useless;
-    OnMenuEditObjectSelected( useless );
+
+    gd::TreeItemStringData * data = dynamic_cast<gd::TreeItemStringData*>(objectsList->GetItemData(lastSelectedItem));
+    if( data && ( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" ) )
+    {
+        if( objectsList->IsExpanded( lastSelectedItem ) )
+            objectsList->Collapse( lastSelectedItem );
+        else
+            objectsList->Expand( lastSelectedItem );
+    }
+    else
+    {
+        wxCommandEvent useless;
+        OnMenuEditObjectSelected( useless );
+    }
 }
 
 void ObjectsEditor::OnobjectsListItemRightClick(wxTreeEvent& event)
@@ -639,21 +684,24 @@ void ObjectsEditor::OnobjectsListItemMenu(wxTreeEvent& event)
     {
         PopupMenu( &multipleContextMenu );
     }
-    else if (lastSelectedItem == objectsRootItem ||
+    else if ( lastSelectedItem == objectsRootItem ||
         lastSelectedItem == globalObjectsRootItem ||
         lastSelectedItem == groupsRootItem ||
-        lastSelectedItem == globalGroupsRootItem ||
-        ( data && (data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder") ) )
+        lastSelectedItem == globalGroupsRootItem )
         PopupMenu( &emptyContextMenu );
-    else if ( data && (data->GetString() == "GlobalObject" || data->GetString() == "LayoutObject") )
+    else if ( data && ( data->GetString() == "GlobalObject" || data->GetString() == "LayoutObject" ) )
     {
         contextMenu.Enable(ID_SETGLOBALITEM, data->GetString() == "LayoutObject");
         PopupMenu( &contextMenu );
     }
-    else if ( data && (data->GetString() == "GlobalGroup" || data->GetString() == "LayoutGroup") )
+    else if ( data && ( data->GetString() == "GlobalGroup" || data->GetString() == "LayoutGroup" ) )
     {
         contextMenu.Enable(ID_SETGLOBALITEM, data->GetString() == "LayoutGroup");
         PopupMenu( &groupContextMenu );
+    }
+    else if ( data && ( data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder" ) )
+    {
+        PopupMenu( &folderContextMenu );
     }
 }
 

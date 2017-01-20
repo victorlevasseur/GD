@@ -43,6 +43,8 @@ private:
     ItemHashFunction hashFunction;
 
     TreeCtrlRestorerItem treeRoot;
+    int horizontalScrollPos;
+    int verticalScrollPos;
 };
 
 }

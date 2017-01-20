@@ -16,6 +16,9 @@ void TreeCtrlRestorer::SaveState(const wxTreeCtrl * treeCtrl)
     treeRoot.selected = false;
     treeRoot.children.clear();
 
+    horizontalScrollPos = treeCtrl->GetScrollPos( wxHORIZONTAL );
+    verticalScrollPos = treeCtrl->GetScrollPos( wxVERTICAL );
+
     SaveItemState( treeCtrl, treeCtrl->GetRootItem(), treeRoot );
 }
 
@@ -25,6 +28,15 @@ void TreeCtrlRestorer::RestoreState(wxTreeCtrl * treeCtrl) const
         return;
 
     RestoreItemState( treeCtrl, treeCtrl->GetRootItem(), treeRoot );
+
+    treeCtrl->SetScrollPos( wxHORIZONTAL, horizontalScrollPos );
+    treeCtrl->SetScrollPos( wxVERTICAL, verticalScrollPos );
+
+    wxArrayTreeItemIds selection;
+    if( treeCtrl->GetSelections( selection ) == 1 )
+    {
+        treeCtrl->ScrollTo( selection[0] );
+    }
 }
 
 void TreeCtrlRestorer::SaveItemState(const wxTreeCtrl * treeCtrl, wxTreeItemId item, TreeCtrlRestorerItem & parentRestoredItem)

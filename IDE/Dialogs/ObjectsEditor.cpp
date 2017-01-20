@@ -351,6 +351,7 @@ ObjectsEditor::ObjectsEditor(wxWindow* parent, gd::Project & project_, gd::Layou
     FlexGridSizer1->AddGrowableCol(0);
     FlexGridSizer1->AddGrowableRow(0);
     objectsList = new wxTreeCtrl(this, ID_TREECTRL1, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS|wxTR_HIDE_ROOT|wxTR_MULTIPLE|wxTR_DEFAULT_STYLE|wxNO_BORDER, wxDefaultValidator, _T("ID_TREECTRL1"));
+    objectsList->SetDoubleBuffered(true);
     FlexGridSizer1->Add(objectsList, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
     searchCtrl = new wxSearchCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, wxDefaultValidator, _T("ID_TEXTCTRL1"));
     FlexGridSizer1->Add(searchCtrl, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
@@ -440,7 +441,7 @@ ObjectsEditor::ObjectsEditor(wxWindow* parent, gd::Project & project_, gd::Layou
         wxMenuItem * item = new wxMenuItem((&folderContextMenu), idDeleteFolderMenuItem, _("Delete\tDEL"), wxEmptyString, wxITEM_NORMAL);
         item->SetBitmap(gd::SkinHelper::GetIcon("delete", 16));
         folderContextMenu.Append(item);
-        Connect(idRenameFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnDeleteSelected);
+        Connect(idDeleteFolderMenuItem, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ObjectsEditor::OnDeleteSelected);
     }
     folderContextMenu.AppendSeparator();
     {
@@ -577,6 +578,8 @@ void ObjectsEditor::ConnectEvents()
 
 void ObjectsEditor::Refresh()
 {
+    objectsList->Freeze();
+
     gd::TreeCtrlRestorer restorer( [](const wxTreeCtrl * ctrl, wxTreeItemId item) -> std::size_t
     {
         std::size_t itemNameHash = std::hash<std::string>{}( gd::String( ctrl->GetItemText( item ) ).ToUTF8() );
@@ -602,6 +605,8 @@ void ObjectsEditor::Refresh()
     objectsList->SetDropTarget(new ObjectsListDnd(objectsList, objectsRootItem, globalObjectsRootItem, groupsRootItem, globalGroupsRootItem, project, layout));
 
     restorer.RestoreState( objectsList );
+
+    objectsList->Thaw();
 
     if (onRefreshedCb) onRefreshedCb();
 }
@@ -1303,17 +1308,9 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
                 g->RemoveObject(objectName);
             }
         }
-
-        //Delete the item from the tree control
-        objectsList->Delete(selection[i]);
     }
 
-    //Update the groups items (without refreshing the entire tree control)
-    wxTreeItemIdValue cookie;
-    for(wxTreeItemId groupItem = objectsList->GetFirstChild(groupsRootItem, cookie); groupItem.IsOk(); groupItem = objectsList->GetNextChild(groupsRootItem, cookie))
-    {
-        UpdateGroup(groupItem);
-    }
+    Refresh();
 
     //Call the notifiers
     for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)

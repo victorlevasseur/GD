@@ -245,6 +245,24 @@ bool ObjectsFolderHelper::RenameFolder(gd::ClassWithObjects & objectsContainer, 
     return MoveFolder( objectsContainer, folder, newFolderFullPath, folderAfter );
 }
 
+void ObjectsFolderHelper::RemoveFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool deleteObjects)
+{
+    if( !HasFolder( objectsContainer, folder ) || folder == "" )
+        return;
+
+    const gd::String parentFolder = GetParentFolder( folder );
+
+    while( GetObjectsCount( folder, objectsContainer, true ) > 0 )
+    {
+        gd::String objectName = GetObjectAt( folder, objectsContainer, 0, true ).GetName();
+
+        if( deleteObjects )
+            RemoveObject( objectsContainer, objectName );
+        else
+            ChangeObjectFolder( objectsContainer, objectName, parentFolder );
+    }
+}
+
 std::size_t ObjectsFolderHelper::GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders)
 {
     auto foundIt = objectsContainer.cend();

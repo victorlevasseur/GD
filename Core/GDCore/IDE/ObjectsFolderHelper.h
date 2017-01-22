@@ -145,6 +145,8 @@ public:
     static void OffsetFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, std::size_t offset);
 
     static bool RenameFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, const gd::String & newName);
+
+    static void RemoveFolder(gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool deleteObjects);
 private:
     static std::size_t GetFirstObjectInFolderAbsolutePosition(const gd::ClassWithObjects & objectsContainer, const gd::String & folder, bool subFolders = false);
 };

@@ -1193,8 +1193,8 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
     std::vector < gd::String > objectsDeleted;
     std::vector < gd::String > gObjectsDeleted;
 
-    //Detect if only group's sub-objects have been selected (to avoid showing the next question)
-    int objectsInGroupCount = 0;
+    //Detect if only group's sub-objects and folders have been selected (to avoid showing the next question)
+    int objectsInGroupAndFoldersCount = 0;
     for(std::size_t i = 0;i<selection.GetCount();++i)
     {
         if (!selection[i].IsOk()) continue;
@@ -1202,16 +1202,16 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
         if (!data)
             continue;
 
-        if(data->GetString() == "ObjectInGroup")
-            objectsInGroupCount++;
+        if(data->GetString() == "ObjectInGroup" || data->GetString() == "ObjectsFolder" || data->GetString() == "GlobalObjectsFolder")
+            objectsInGroupAndFoldersCount++;
     }
 
     int answer = -1;
 
-    if(objectsInGroupCount != selection.GetCount())
+    if(objectsInGroupAndFoldersCount != selection.GetCount())
     {
         answer = wxMessageBox(selection.GetCount() <= 1 ? wxString(_("Delete also all references to this item in groups and events ( i.e. Actions and conditions using the object )\?")) :
-                                                          wxString::Format(wxString(_("Delete also all references to these %i items in groups and events ( i.e. Actions and conditions using the objects )\?")), selection.GetCount() - objectsInGroupCount),
+                                                          wxString::Format(wxString(_("Delete also all references to these %i items in groups and events ( i.e. Actions and conditions using the objects )\?")), selection.GetCount() - objectsInGroupAndFoldersCount),
                               _("Confirm deletion"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT);
 
         if ( answer == wxCANCEL ) return;
@@ -1281,6 +1281,14 @@ void ObjectsEditor::OnDeleteSelected(wxCommandEvent& event)
 
             for ( std::size_t j = 0; j < project.GetUsedPlatforms().size();++j)
                 project.GetUsedPlatforms()[j]->GetChangesNotifier().OnObjectGroupDeleted(project, globalGroup ? NULL : &layout, groupName);
+        }
+        else if( data->GetString() == "ObjectsFolder" )
+        {
+            gd::ObjectsFolderHelper::RemoveFolder( layout, data->GetSecondString(), false );
+        }
+        else if( data->GetString() == "GlobalObjectsFolder" )
+        {
+            gd::ObjectsFolderHelper::RemoveFolder( project, data->GetSecondString(), false );
         }
         else if( data->GetString() == "ObjectInGroup")
         {
